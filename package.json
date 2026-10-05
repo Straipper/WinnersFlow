@@ -1,0 +1,25 @@
+{
+  "name": "dt-flow-backend",
+  "version": "1.0.0-step31",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "migrate": "node src/db/migrate.js",
+    "bootstrap-admin": "node scripts/bootstrap-admin.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "zod": "^4.1.5",
+    "pg": "^8.16.3",
+    "bcryptjs": "^3.0.2",
+    "ws": "^8.18.3",
+    "stripe": "^18.5.0",
+    "resend": "^6.5.2"
+  }
+}
