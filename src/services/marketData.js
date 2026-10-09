@@ -1,5 +1,6 @@
 import { decorateQuote } from './marketSession.js';
 const DEFAULT_SYMBOLS = ['NVDA','AAPL','MSFT','AMD','TSLA','META'];
+const ALPACA_BASE_URL = 'https://data.alpaca.markets';
 const BASE_URL = 'https://api.twelvedata.com';
 
 const mockBases = { NVDA:184.10, AAPL:255.20, MSFT:510.40, AMD:166.30, TSLA:447.80, META:744.60 };
@@ -10,6 +11,9 @@ function config() {
     apiKey: process.env.MARKET_DATA_API_KEY || '',
     baseUrl: process.env.MARKET_DATA_BASE_URL || BASE_URL,
     prepost: process.env.MARKET_DATA_PREPOST === 'true',
+    alpacaKey: process.env.ALPACA_API_KEY || '',
+    alpacaSecret: process.env.ALPACA_API_SECRET || '',
+    alpacaBaseUrl: process.env.ALPACA_DATA_BASE_URL || ALPACA_BASE_URL,
   };
 }
 
@@ -36,6 +40,50 @@ function mockQuote(symbol) {
     timestamp: new Date().toISOString(),
     marketOpen: false,
     source: 'mock',
+  };
+}
+
+async function alpacaData(path, params = {}) {
+  const { alpacaKey, alpacaSecret, alpacaBaseUrl } = config();
+  if (!alpacaKey || !alpacaSecret) throw new Error("ALPACA_API_KEY and ALPACA_API_SECRET are required");
+  const url = new URL(`${alpacaBaseUrl}${path}`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") url.searchParams.set(key, String(value));
+  });
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      "APCA-API-KEY-ID": alpacaKey,
+      "APCA-API-SECRET-KEY": alpacaSecret
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(`Alpaca market data HTTP ${response.status}: ${data.message || "provider error"}`);
+  return data;
+}
+
+async function alpacaQuote(symbol) {
+  const s = normalizeSymbol(symbol);
+  const data = await alpacaData("/v2/stocks/bars/latest", { symbols: s, feed: "iex" });
+  const bar = data.bars?.[s];
+  const price = Number(bar?.c);
+  return {
+    symbol: s,
+    name: s,
+    exchange: "IEX",
+    price: Number.isFinite(price) ? price : null,
+    open: Number(bar?.o) || null,
+    high: Number(bar?.h) || null,
+    low: Number(bar?.l) || null,
+    close: Number(bar?.c) || null,
+    volume: Number(bar?.v) || 0,
+    change: 0,
+    changePct: 0,
+    currency: "USD",
+    timestamp: bar?.t || new Date().toISOString(),
+    marketOpen: true,
+    extendedPrice: null,
+    source: "alpaca_iex"
   };
 }
 
@@ -84,6 +132,7 @@ export function getProvider() {
 
 export async function getQuote(symbol) {
   const s = normalizeSymbol(symbol);
+  if (config().provider === 'alpaca') return decorateQuote(await alpacaQuote(s));
   if (config().provider !== 'twelve_data') return decorateQuote(mockQuote(s));
   const data = await twelveData('/quote', { symbol: s, prepost: config().prepost });
   return decorateQuote(parseQuote(data));

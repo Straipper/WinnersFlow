@@ -36,7 +36,7 @@ function prune(events, now, windowMs) {
  * side / individual trade size. Therefore this is NOT exchange-grade tape/order flow.
  * It classifies incremental volume by uptick/downtick direction.
  */
-export function processFlowTick({ symbol, price, dayVolume = 0, timestamp = new Date().toISOString() }, options = {}) {
+export function processFlowTick({ symbol, price, dayVolume = 0, tradeSize = 0, tradeId, exchange, tradeSide, timestamp = new Date().toISOString() }, options = {}) {
   const s = normalizeSymbol(symbol);
   const p = num(price, NaN);
   if (!s || !Number.isFinite(p)) return null;
@@ -47,8 +47,36 @@ export function processFlowTick({ symbol, price, dayVolume = 0, timestamp = new 
   const previousPrice = state.lastPrice;
   const previousDayVolume = state.lastDayVolume;
   const currentDayVolume = num(dayVolume, NaN);
+const currentTradeSize = num(tradeSize, 0);
 
-  let volumeDelta = 0;
+if (currentTradeSize > 0) {
+  const normalizedTradeSide = tradeSide === "buy" || tradeSide === "sell" ? tradeSide : null;
+  const inferredTradeSide = normalizedTradeSide ?? (previousPrice !== null && p > previousPrice + cfg.minPriceMove ? "buy" : previousPrice !== null && p < previousPrice - cfg.minPriceMove ? "sell" : "neutral");
+
+  const event = {
+    id: `${s}-${now}-${Math.round(Math.random() * 1e6)}`,
+    symbol: s,
+    side: tradeSide,
+    price: p,
+    volume: currentTradeSize,
+    notional: p * currentTradeSize,
+    timestamp: new Date(now).toISOString(),
+    timestampMs: now,
+    large: p * currentTradeSize >= 100000,
+    tradeId,
+    exchange,
+    source: 'alpaca_trade',
+  };
+
+  state.events.push(event);
+  state.events = prune(state.events, now, cfg.windowMs);
+  state.lastPrice = p;
+  if (Number.isFinite(currentDayVolume)) state.lastDayVolume = currentDayVolume;
+
+  return summarizeFlow(s, p, state.events, now, cfg);
+}
+
+let volumeDelta = 0;
   if (Number.isFinite(currentDayVolume) && Number.isFinite(previousDayVolume) && currentDayVolume >= previousDayVolume) {
     volumeDelta = currentDayVolume - previousDayVolume;
   }
@@ -123,8 +151,8 @@ function summarizeFlow(symbol, price, events, now, cfg) {
     largeSells,
     eventCount: events.length,
     latestEvents: events.slice(-20).reverse(),
-    source: 'quote_volume_proxy',
-    caveat: 'Flow is inferred from live price direction and incremental cumulative volume; provider does not expose aggressor-side trade data here.',
+    source: events.some(e => e.tradeId !== undefined && e.tradeId !== null) ? 'live_trade_tape' : 'quote_volume_proxy',
+    caveat: events.some(e => e.tradeId !== undefined && e.tradeId !== null) ? 'Flow is based on live trade events with buy/sell side inference from bid/ask.' : 'Flow is inferred from live price direction and incremental cumulative volume.',
   };
 }
 

@@ -40,8 +40,6 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
       billing_address_collection: 'auto',
       subscription_data: {
         trial_period_days: 3,
-        trial_settings: { missing_payment_method: { type: 'cancel' } },
-        payment_settings: { save_default_payment_method: 'on_subscription' },
         metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro', trial_days: '3', monthly_price_usd: '29' },
       },
       metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro' },
