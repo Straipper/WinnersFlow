@@ -56,7 +56,7 @@ if (currentTradeSize > 0) {
   const event = {
     id: `${s}-${now}-${Math.round(Math.random() * 1e6)}`,
     symbol: s,
-    side: tradeSide,
+    side: inferredTradeSide,
     price: p,
     volume: currentTradeSize,
     notional: p * currentTradeSize,
