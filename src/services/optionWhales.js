@@ -2,7 +2,7 @@ import WebSocket from 'ws';
 
 const BASE = 'https://api.optionwhales.io/v1';
 
-function key(){ return process.env.OPTIONWHALES_API_KEY || ''; }
+function key(){ return process.env.OPTIONFLOW_API_KEY || ''; }
 function headers(){ return { 'X-API-Key': key(), 'Accept': 'application/json' }; }
 function requireKey(){ if(!key()) throw new Error('OptionWhales API is not configured'); }
 
