@@ -1,2 +1,63 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login — DT FLOW</title><meta name="description" content="Log in to DT FLOW."><style>
-:root{--bg:#030205;--card:#0c0812;--line:#2a2035;--text:#f5f1fa;--muted:#aaa0b5;--violet:#9b5cff;--pink:#ef9cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#241034 0,#08050d 38%,#030205 75%);color:var(--text);font:15px Inter,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}.wrap{width:min(440px,100%)}.brand{text-align:center;font-weight:900;font-size:30px;letter-spacing:-1.5px;margin-bottom:28px}.brand span{color:var(--pink);font-style:italic}.card{background:rgba(12,8,18,.94);border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.55)}h1{margin:0 0 8px;font-size:30px;letter-spacing:-1px}.sub{color:var(--muted);line-height:1.6;margin:0 0 24px}label{display:block;font-size:12px;color:#c8c0cf;margin:16px 0 7px}input{width:100%;padding:14px 15px;border-radius:12px;border:1px solid #33273f;background:#07050a;color:#fff;outline:none}input:focus{border-color:#9b5cff;box-shadow:0 0 0 3px rgba(155,92,255,.12)}button{width:100%;margin-top:22px;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#fff,#d8baff);color:#09060d;font-weight:900;cursor:pointer}.error{display:none;margin-top:15px;padding:12px;border-radius:10px;background:#2a1019;border:1px solid #673045;color:#ffb6c9;font-size:13px}.links{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}.links a{color:#e0c7ff}.back{display:block;text-align:center;margin-top:18px;color:#aaa0b5;text-decoration:none;font-size:13px}.tiny{margin-top:20px;color:#776d80;font-size:11px;text-align:center;line-height:1.5}</style></head><body><main class="wrap"><div class="brand">DT <span>FLOW</span></div><section class="card"><h1>Welcome back.</h1><p class="sub">Log in to continue to your DT FLOW workspace.</p><form id="form"><label>Email</label><input id="email" type="email" autocomplete="email" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="submit">LOGIN →</button><div id="error" class="error"></div></form><div class="links">New to DT FLOW? <a href="register.html?plan=trial">Start your 3-day trial</a></div></section><a class="back" href="index.html">← Back to DT FLOW</a><div class="tiny">Your card details are handled by Stripe. DT FLOW does not store card numbers or CVC.</div></main><script src="auth.js"></script><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit'),err=document.getElementById('error');err.style.display='none';b.disabled=true;b.textContent='SIGNING IN…';try{const data=await DTAuth.request('/api/auth/login',{method:'POST',body:JSON.stringify({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value})});DTAuth.saveAuth(data);location.href='welcome.html?from=login';}catch(x){err.textContent=x.message||'Login failed.';err.style.display='block';b.disabled=false;b.textContent='LOGIN →';}});</script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login — WinnersFlow</title><meta name="description" content="Log in to WinnersFlow."><style>
+:root{--bg:#030205;--card:#0c0812;--line:#2a2035;--text:#f5f1fa;--muted:#aaa0b5;--violet:#9b5cff;--pink:#ef9cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#241034 0,#08050d 38%,#030205 75%);color:var(--text);font:15px Inter,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}.wrap{width:min(440px,100%)}.brand{text-align:center;font-weight:900;font-size:30px;letter-spacing:-1.5px;margin-bottom:28px}.brand span{color:var(--pink);font-style:italic}.card{background:rgba(12,8,18,.94);border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.55)}h1{margin:0 0 8px;font-size:30px;letter-spacing:-1px}.sub{color:var(--muted);line-height:1.6;margin:0 0 24px}label{display:block;font-size:12px;color:#c8c0cf;margin:16px 0 7px}input{width:100%;padding:14px 15px;border-radius:12px;border:1px solid #33273f;background:#07050a;color:#fff;outline:none}input:focus{border-color:#9b5cff;box-shadow:0 0 0 3px rgba(155,92,255,.12)}button{width:100%;margin-top:22px;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#fff,#d8baff);color:#09060d;font-weight:900;cursor:pointer}.error{display:none;margin-top:15px;padding:12px;border-radius:10px;background:#2a1019;border:1px solid #673045;color:#ffb6c9;font-size:13px}.links{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}.links a{color:#e0c7ff}.back{display:block;text-align:center;margin-top:18px;color:#aaa0b5;text-decoration:none;font-size:13px}.tiny{margin-top:20px;color:#776d80;font-size:11px;text-align:center;line-height:1.5}
+/* Shared WinnersFlow spectrum logo */
+.brand.wf-spectrum{display:flex;align-items:center;justify-content:center;gap:10px;min-width:max-content;height:58px;margin:0 auto 28px;text-decoration:none;position:relative}
+.brand.wf-spectrum .wf-spectrum-mark{display:inline-flex;width:52px;height:36px;flex:0 0 52px;align-items:center}
+.brand.wf-spectrum .wf-spectrum-mark svg{display:block;width:100%;height:100%;overflow:visible}
+.brand.wf-spectrum .wf-spectrum-word{display:inline-flex;align-items:baseline;white-space:nowrap;line-height:.9;margin:0;padding:0}
+.brand.wf-spectrum .wf-spectrum-winners,.brand.wf-spectrum .wf-spectrum-flow{display:inline-block;margin:0;padding:0;font-family:"Cormorant Garamond","Bodoni 72","Didot","Times New Roman",serif;font-style:normal;font-size:27px;font-weight:600;letter-spacing:-1.05px;background:linear-gradient(180deg,#fff 0%,#e7edf2 52%,#bac5cf 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand.wf-spectrum .wf-spectrum-flow{background:linear-gradient(100deg,#62E7A9 0%,#7CCBFF 28%,#B78CFF 54%,#FF8EDB 78%,#F5C76A 100%);-webkit-background-clip:text;background-clip:text}
+@media(max-width:380px){.brand.wf-spectrum{gap:7px}.brand.wf-spectrum .wf-spectrum-mark{width:44px;flex-basis:44px}.brand.wf-spectrum .wf-spectrum-winners,.brand.wf-spectrum .wf-spectrum-flow{font-size:24px}}
+</style></head><body><main class="wrap"><a href="index.html" class="brand winners-logo wf-spectrum" aria-label="WinnersFlow">
+  <span class="wf-spectrum-mark" aria-hidden="true">
+    <svg viewBox="0 0 118 72" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wfSpectrumA" x1="0" y1="0" x2="118" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#62E7A9"/>
+          <stop offset=".30" stop-color="#7CCBFF"/>
+          <stop offset=".58" stop-color="#B78CFF"/>
+          <stop offset=".82" stop-color="#FF8EDB"/>
+          <stop offset="1" stop-color="#F5C76A"/>
+        </linearGradient>
+        <linearGradient id="wfSpectrumB" x1="118" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF8EDB"/>
+          <stop offset=".34" stop-color="#B78CFF"/>
+          <stop offset=".66" stop-color="#7CCBFF"/>
+          <stop offset="1" stop-color="#62E7A9"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Ultra-thin geometric WF monogram: designed as one continuous signal form. -->
+      <path d="M7 12H23L32 50L42 22L52 50L63 12H79"
+            fill="none"
+            stroke="url(#wfSpectrumA)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <path d="M62 12H111L101 30H78L72 43H94"
+            fill="none"
+            stroke="url(#wfSpectrumB)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <!-- Precision inner geometry -->
+      <path d="M23 12L32 50L42 22L52 50L63 12"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width=".65"
+            opacity=".62"/>
+
+      <!-- Tiny color nodes, like market intelligence points rather than decoration -->
+      <circle cx="7" cy="12" r="2.1" fill="#62E7A9"/>
+      <circle cx="42" cy="22" r="1.9" fill="#B78CFF"/>
+      <circle cx="79" cy="12" r="2.1" fill="#7CCBFF"/>
+      <circle cx="111" cy="12" r="2.1" fill="#FF8EDB"/>
+    </svg>
+  </span>
+
+  <span class="wf-spectrum-word" aria-label="WinnersFlow">
+    <span class="wf-spectrum-winners">WINNERS</span><span class="wf-spectrum-flow">FLOW</span>
+  </span>
+</a><section class="card"><h1>Welcome back.</h1><p class="sub">Log in to continue to your WinnersFlow workspace.</p><form id="form"><label>Email</label><input id="email" type="email" autocomplete="email" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><button id="submit">LOGIN →</button><div id="error" class="error"></div></form><div class="links">New to WinnersFlow? <a href="register.html?plan=trial">Start your 3-day trial</a></div></section><a class="back" href="index.html">← Back to WinnersFlow</a><div class="tiny">Your card details are handled by Stripe. WinnersFlow does not store card numbers or CVC.</div></main><script src="auth.js"></script><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit'),err=document.getElementById('error');err.style.display='none';b.disabled=true;b.textContent='SIGNING IN…';try{const data=await DTAuth.request('/api/auth/login',{method:'POST',body:JSON.stringify({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value})});DTAuth.saveAuth(data);location.href='welcome.html?from=login';}catch(x){err.textContent=x.message||'Login failed.';err.style.display='block';b.disabled=false;b.textContent='LOGIN →';}});</script></body></html>
