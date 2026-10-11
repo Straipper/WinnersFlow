@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DT FLOW — Trading Intelligence</title>
+<title>WinnersFlow — Live Market Intelligence</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700;6..96,900&family=Audiowide&family=Barlow+Condensed:wght@600;700;800;900&family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Michroma&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -141,7 +141,7 @@ nav{
   letter-spacing:-3px;
 }
 
-.logo-flow{
+.logo-word{\n  font-family:"Manrope",sans-serif;\n  font-size:20px;\n  font-weight:800;\n  letter-spacing:-.6px;\n  color:#fff;\n}\n.logo-flow{
   font-family:"Space Grotesk",sans-serif;
   font-size:17px;
   font-weight:700;
@@ -311,7 +311,7 @@ nav{
   box-shadow:0 0 30px rgba(255,255,255,.08);
 }
 
-/* DT FLOW hero proof + trial CTA refinement */
+/* WinnersFlow hero proof + trial CTA refinement */
 .hero-proof{
   color:#d7b56d;
 }
@@ -328,7 +328,9 @@ nav{
 }
 
 .hero-trial-btn{
-  background:linear-gradient(135deg,#e5c36b 0%,#c9a34e 50%,#e2c16a 100%);
+  background:linear-gradient(112deg,#fff1b8 0%,#d9b75f 13%,#7b5718 25%,#f4d77e 39%,#8f6824 52%,#e8c866 66%,#5f4212 79%,#f7df91 91%,#b88827 100%);
+  background-size:220% 100%;
+  background-position:0% 50%;
   color:#08070a;
   border:1px solid rgba(255,220,130,.9);
   box-shadow:0 0 28px rgba(215,181,109,.18);
@@ -464,8 +466,8 @@ nav{
 
 .radar:before{
   background:
-    linear-gradient(90deg,transparent 49.8%,rgba(99,230,255,.12) 50%,transparent 50.2%),
-    linear-gradient(0deg,transparent 49.8%,rgba(99,230,255,.12) 50%,transparent 50.2%);
+    linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.06) 50%,transparent 50.2%),
+    linear-gradient(0deg,transparent 49.8%,rgba(255,255,255,.06) 50%,transparent 50.2%);
 }
 
 .radar:after{
@@ -1041,44 +1043,194 @@ section{
 }
 
 /* =========================
-   STRATEGIES
+   OUR STRATEGY — SCAN / SEE / CONFIRM / FOLLOW
 ========================= */
 
-.strategy-grid{
+.strategy-flow-shell{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(139,92,246,.18);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 72% 16%,rgba(109,69,153,.13),transparent 34%),
+    linear-gradient(145deg,#050407 0%,#08060d 58%,#050407 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 24px 60px rgba(0,0,0,.24);
+}
+
+.strategy-flow-shell:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 0%,rgba(216,186,255,.025) 48%,transparent 72%);
+}
+
+.strategy-flow-top{
+  position:relative;
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
+  grid-template-columns:minmax(0,1fr) 280px;
+  gap:28px;
+  padding:28px 30px 24px;
+  border-bottom:1px solid rgba(255,255,255,.055);
 }
 
-.strategy{
-  padding:17px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#06050a;
+.strategy-flow-kicker{
+  color:#806e98;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
 }
 
-.strategy-number{
-  color:#7259aa;
-  font-family:"Space Grotesk";
-  font-size:10px;
+.strategy-flow-title{
+  margin:9px 0 0;
+  max-width:720px;
+  font-family:"Space Grotesk","Manrope",sans-serif;
+  font-size:clamp(27px,3.6vw,43px);
+  line-height:1.02;
+  letter-spacing:-1.35px;
+  font-weight:650;
 }
 
-.strategy h3{
-  font-size:14px;
-  margin:10px 0 6px;
+.strategy-flow-title .accent{
+  color:transparent;
+  background:linear-gradient(110deg,#fff 0%,#cbb7df 34%,#74528f 66%,#e1d5eb 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
 }
 
-.strategy p{
-  color:#827b8b;
+.strategy-flow-intro{
+  max-width:650px;
+  margin:13px 0 0;
+  color:#817987;
   font-size:11px;
-  line-height:1.65;
-  margin:0;
+  line-height:1.72;
 }
 
-.strategy-line{
-  margin-top:15px;
-  height:2px;
-  background:linear-gradient(90deg,var(--purple),transparent);
+.strategy-proof{
+  align-self:center;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+.strategy-proof-card{
+  padding:13px 15px;
+  border:1px solid rgba(224,186,91,.24);
+  border-radius:9px;
+  background:linear-gradient(145deg,rgba(224,186,91,.055),rgba(8,6,10,.78));
+  box-shadow:inset 0 1px 0 rgba(255,235,172,.035);
+}
+
+.strategy-proof-value{
+  display:block;
+  color:#f3d487;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:24px;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:-.8px;
+}
+
+.strategy-proof-label{
+  display:block;
+  margin-top:5px;
+  color:#776f7d;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:1.25px;
+  text-transform:uppercase;
+}
+
+.strategy-flow-steps{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:25px 24px 27px;
+}
+
+.strategy-flow-line{
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:51px;
+  height:1px;
+  background:linear-gradient(90deg,rgba(112,78,145,.25),rgba(193,166,217,.52),rgba(112,78,145,.25));
+}
+
+.strategy-step{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:0 12px;
+}
+
+.strategy-step-node{
+  width:17px;
+  height:17px;
+  margin:0 auto 13px;
+  border:1px solid rgba(213,191,229,.65);
+  border-radius:50%;
+  background:#09070d;
+  box-shadow:0 0 0 5px rgba(139,92,246,.035),0 0 16px rgba(139,92,246,.10);
+}
+
+.strategy-step-node:after{
+  content:"";
+  display:block;
+  width:5px;
+  height:5px;
+  margin:5px;
+  border-radius:50%;
+  background:#bda4d2;
+}
+
+.strategy-step-number{
+  color:#71627e;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:7px;
+  font-weight:700;
+  letter-spacing:1.35px;
+}
+
+.strategy-step h3{
+  margin:6px 0 5px;
+  color:#eeeaf2;
+  font-size:12px;
+  letter-spacing:.25px;
+  text-transform:uppercase;
+}
+
+.strategy-step p{
+  max-width:190px;
+  margin:0 auto;
+  color:#746d79;
+  font-size:9px;
+  line-height:1.55;
+}
+
+.strategy-flow-footer{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:14px 20px;
+  border-top:1px solid rgba(255,255,255,.045);
+  color:#a89bb3;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+}
+
+.strategy-flow-footer span{color:#5f5369}
+
+.strategy-flow-disclaimer{
+  padding:0 20px 17px;
+  color:#514b55;
+  text-align:center;
+  font-size:7px;
+  letter-spacing:.2px;
 }
 
 /* =========================
@@ -1361,6 +1513,56 @@ section{
   margin-right:6px;
 }
 
+
+/* WinnersFlow PRO feature visibility refinement */
+.pro-includes-label{
+  margin:24px 0 10px;
+  text-align:left;
+  color:#d8baff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.8px;
+}
+.features{
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin:0 0 22px;
+}
+.feature{
+  min-height:78px;
+  padding:13px 13px 12px;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:10px;
+  background:linear-gradient(145deg,#0d0913,#09070d);
+  color:#fff;
+  font-size:11px;
+  line-height:1.45;
+}
+.feature:before{
+  content:"✓";
+  color:var(--green);
+  margin-right:6px;
+  font-weight:800;
+}
+.feature strong{
+  display:inline;
+  color:#f4f0f8;
+  font-size:11px;
+  font-weight:800;
+}
+.feature span{
+  display:block;
+  margin-top:5px;
+  padding-left:15px;
+  color:#9d96a7;
+  font-size:10px;
+  line-height:1.5;
+}
+@media(max-width:620px){
+  .features{grid-template-columns:1fr;}
+  .feature{min-height:auto;}
+}
+
 /* =========================
    FAQ
 ========================= */
@@ -1538,9 +1740,10 @@ footer{
     grid-template-columns:1fr;
   }
 
-  .strategy-grid{
-    grid-template-columns:1fr;
-  }
+  .strategy-flow-top{grid-template-columns:1fr;gap:18px;padding:23px 20px 20px}
+  .strategy-proof{grid-template-columns:repeat(2,1fr)}
+  .strategy-flow-steps{grid-template-columns:1fr 1fr;gap:25px 0}
+  .strategy-flow-line{display:none}
 
   .reviews{
     grid-template-columns:1fr;
@@ -1582,13 +1785,12 @@ footer{
     font-size:34px;
   }
 
-  .logo-flow{
+  .logo-word{\n  font-family:"Manrope",sans-serif;\n  font-size:20px;\n  font-weight:800;\n  letter-spacing:-.6px;\n  color:#fff;\n}\n.logo-flow{
     font-size:15px;
   }
 
   .nav-login{
-    display:inline-flex;
-    align-items:center;
+    display:none;
   }
 
   .hero h1{
@@ -1655,6 +1857,49 @@ footer{
 .hero-proof-gold{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
 .hero-proof-gold *{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
 .hero-proof-gold strong,.hero-proof-gold b{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
+
+/* WinnersFlow landing terminal — portal-style market cockpit */
+.wf-portal-chart{padding:0!important;background:#030405!important;overflow:hidden;}
+.wf-chart-head{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #111416;background:#030405;}
+.wf-chart-head h3{font:700 13px "Manrope",sans-serif!important;letter-spacing:-.2px;}
+.wf-chart-head>div:first-child{display:flex;align-items:baseline;gap:7px;}
+.wf-chart-head>div:first-child span{font:500 7px "DM Mono",monospace;color:#4f575d;}
+.wf-chart-quote{text-align:right;}
+.wf-chart-quote strong{font:700 14px "DM Mono",monospace;}
+.wf-chart-quote em{font:600 7px "DM Mono",monospace;font-style:normal;color:#35d58b;margin-left:5px;}
+.wf-chart-toolbar{height:30px;display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid #0d1012;font:500 7px "DM Mono",monospace;color:#4e565c;background:#050607;}
+.wf-chart-toolbar i{flex:1;}
+.wf-chart-toolbar span.active{color:#e1e5e7;}
+.wf-candle-chart{height:270px;position:relative;overflow:hidden;background:#030405;}
+.wf-chart-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:54px 54px;}
+.wf-y-axis{position:absolute;right:4px;top:10px;bottom:25px;display:flex;flex-direction:column;justify-content:space-between;color:#3e464b;font:500 6px "DM Mono",monospace;}
+.wf-time-axis{position:absolute;left:12px;right:30px;bottom:5px;display:flex;justify-content:space-between;color:#3e464b;font:500 6px "DM Mono",monospace;}
+.wf-candles{position:absolute;left:14px;right:30px;top:16px;bottom:25px;}
+.wf-candles i{position:absolute;left:var(--x);top:var(--y);height:var(--h);width:7px;background:#35d58b;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.1);}
+.wf-candles i:before{content:"";position:absolute;left:50%;top:-8px;bottom:-8px;width:1px;background:currentColor;transform:translateX(-50%);opacity:.85;}
+.wf-candles i.up{color:#35d58b;background:#35d58b;}
+.wf-candles i.down{color:#ff596d;background:#ff596d;}
+.wf-price-line{position:absolute;left:0;right:0;height:1px;z-index:3;}
+.wf-price-line span{position:absolute;right:4px;top:-7px;padding:3px 5px;font:600 6px "DM Mono",monospace;}
+.wf-resistance{top:29%;border-top:1px solid rgba(215,182,109,.68);}
+.wf-resistance span{background:#0b0a07;color:#d7b66d;}
+.wf-vwap{top:42%;border-top:1px dashed rgba(82,215,197,.55);}
+.wf-vwap span{background:#06100e;color:#52d7c5;}
+.wf-support{top:75%;border-top:1px dashed rgba(53,213,139,.45);}
+.wf-support span{background:#06100c;color:#35d58b;}
+.wf-flow-marker{position:absolute;z-index:5;padding:3px 5px;background:#0a1110;border:1px solid rgba(53,213,139,.35);color:#d7dfe0;font:600 6px "DM Mono",monospace;}
+.wf-flow-marker.green{color:#35d58b;}
+.wf-volume{position:absolute;left:14px;right:30px;bottom:0;height:25px;display:flex;align-items:end;gap:5px;z-index:2;}
+.wf-volume i{flex:1;background:#334047;opacity:.7;min-width:2px;}
+.wf-volume i:nth-child(3n){background:#35d58b;}
+.wf-volume i:nth-child(4n){background:#ff596d;}
+.wf-chart-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #111416;background:#030405;}
+.wf-chart-stats>div{padding:9px 10px;border-right:1px solid #111416;}
+.wf-chart-stats>div:last-child{border:0;}
+.wf-chart-stats small{display:block;color:#4e565b;font:500 6px "DM Mono",monospace;}
+.wf-chart-stats b{display:block;font:600 8px "DM Mono",monospace;margin-top:4px;}
+@media(max-width:760px){.wf-chart-stats{grid-template-columns:repeat(2,1fr)}.wf-chart-stats>div:nth-child(2){border-right:0}.wf-chart-stats>div:nth-child(-n+2){border-bottom:1px solid #111416}.wf-candle-chart{height:250px}}
+
 </style>
 
 <style id="dtflow-about-home-css">
@@ -1725,6 +1970,1302 @@ footer{
   border-radius:50% !important;
 }
 </style>
+
+<style id="winnersflow-logo-only">
+/* WINNERSFLOW — cinematic techno-finance wordmark */
+.winners-logo{
+  gap:13px;
+  min-width:max-content;
+  height:60px;
+  align-items:center;
+  position:relative;
+}
+
+.winners-logo .wf-mark{
+  width:60px;
+  height:60px;
+  flex:0 0 60px;
+  display:block;
+  filter:
+    drop-shadow(0 0 12px rgba(255,255,255,.10))
+    drop-shadow(0 0 9px rgba(255,255,255,.06));
+}
+
+.winners-logo .wf-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/* The wordmark is deliberately custom-looking: wide, engineered, sharp. */
+.winners-logo .wf-wordmark{
+  display:flex;
+  align-items:baseline;
+  gap:0;
+  white-space:nowrap;
+  line-height:.82;
+  position:relative;
+  transform:skewX(-7deg);
+  filter:drop-shadow(0 4px 15px rgba(0,0,0,.72));
+  letter-spacing:0;
+}
+
+/* Micro bevel + hairline architecture make the type feel like a brand mark,
+   rather than ordinary navigation text. */
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  position:relative;
+  display:inline-block;
+  font-style:normal;
+  text-transform:uppercase;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+
+/* WINNERS — high-fashion / motorsport / terminal hybrid */
+.winners-logo .wf-wordmark b{
+  font-family:"Michroma","Space Grotesk",sans-serif;
+  font-size:18px;
+  font-weight:400;
+  letter-spacing:-1.05px;
+  color:#fff;
+  background:
+    linear-gradient(180deg,
+      #ffffff 0%,
+      #ffffff 20%,
+      #f1eff7 38%,
+      #bcb7c7 49%,
+      #ffffff 55%,
+      #d9d6e0 73%,
+      #ffffff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* FLOW — more aggressive and recognizable, like an elite trading terminal */
+.winners-logo .wf-wordmark i{
+  margin-left:8px;
+  padding-left:9px;
+  font-family:"Orbitron","Space Grotesk",sans-serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:.35px;
+  color:#fff;
+  background:
+    linear-gradient(180deg,
+      #ffffff 0%,
+      #f3efff 28%,
+      #d8baff 49%,
+      #a887ff 67%,
+      #63e6ff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Split seam — signature WinnersFlow detail. */
+.winners-logo .wf-wordmark i:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:-1px;
+  width:1px;
+  height:21px;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(216,186,255,.9) 18%,
+    rgba(99,230,255,.9) 52%,
+    transparent 100%);
+  transform:skewX(-10deg);
+  box-shadow:0 0 8px rgba(99,230,255,.18);
+}
+
+/* Ascending micro-baseline — subtly references a rising price chart. */
+.winners-logo .wf-wordmark:after{
+  content:"";
+  position:absolute;
+  left:2px;
+  right:-2px;
+  bottom:-7px;
+  height:2px;
+  background:
+    linear-gradient(100deg,
+      transparent 0%,
+      rgba(216,186,255,.0) 8%,
+      rgba(216,186,255,.55) 38%,
+      rgba(99,230,255,.85) 77%,
+      rgba(99,230,255,0) 100%);
+  clip-path:polygon(0 45%,74% 45%,80% 0%,100% 0%,82% 100%,0 100%);
+  opacity:.72;
+}
+
+/* Tiny vertical signal ticks make the logo feel engineered at close range. */
+.winners-logo .wf-wordmark i:after{
+  content:"01";
+  position:absolute;
+  right:-13px;
+  top:-9px;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:5px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:rgba(99,230,255,.58);
+  -webkit-text-fill-color:rgba(99,230,255,.58);
+  transform:skewX(7deg);
+}
+
+.winners-logo:hover .wf-mark{
+  transform:translateY(-1px) scale(1.025);
+}
+.winners-logo:hover .wf-wordmark{
+  filter:
+    drop-shadow(0 4px 16px rgba(139,92,246,.16))
+    drop-shadow(0 0 8px rgba(99,230,255,.06));
+}
+.winners-logo .wf-mark,
+.winners-logo .wf-wordmark{
+  transition:all .2s ease;
+}
+
+@media(max-width:760px){
+  .winners-logo{gap:8px;height:46px}
+  .winners-logo .wf-mark{width:46px;height:46px;flex-basis:46px}
+  .winners-logo .wf-wordmark b{
+    font-size:13px;
+    letter-spacing:-.75px;
+  }
+  .winners-logo .wf-wordmark i{
+    margin-left:5px;
+    padding-left:6px;
+    font-size:13px;
+    letter-spacing:.1px;
+  }
+  .winners-logo .wf-wordmark i:before{
+    height:15px;
+  }
+  .winners-logo .wf-wordmark i:after{
+    right:-10px;
+    top:-7px;
+    font-size:4px;
+  }
+  .winners-logo .wf-wordmark:after{
+    bottom:-5px;
+  }
+}
+</style>
+
+<style id="winnersflow-winning-wordmark-v10">
+/* WINNERSFLOW — unified winner wordmark. Logo-only refinement. */
+.winners-logo{
+  gap:9px;
+  min-width:max-content;
+  height:60px;
+  align-items:center;
+  position:relative;
+}
+.winners-logo .wf-mark{
+  width:48px;
+  height:48px;
+  flex:0 0 48px;
+  display:block;
+  filter:drop-shadow(0 5px 12px rgba(0,0,0,.8));
+}
+.winners-logo .wf-mark svg{width:100%;height:100%;display:block;overflow:visible}
+.winners-logo .wf-wordmark{
+  display:flex;
+  align-items:baseline;
+  gap:0;
+  white-space:nowrap;
+  line-height:.82;
+  position:relative;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.78));
+  transform:skewX(-5deg);
+}
+/* One visual lock-up: WINNERS + FLOW reads as one brand, not two labels. */
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  display:inline-block;
+  position:relative;
+  font-style:normal;
+  text-transform:uppercase;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+.winners-logo .wf-wordmark b{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif;
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:-1.35px;
+  color:#fff;
+  background:linear-gradient(180deg,#fff 0%,#fff 30%,#d8d8d8 54%,#fff 72%,#a9a9a9 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.winners-logo .wf-wordmark i{
+  margin-left:3px;
+  padding-left:0;
+  font-family:"Audiowide","Barlow Condensed",sans-serif;
+  font-size:22px;
+  font-weight:400;
+  letter-spacing:.35px;
+  color:#fff;
+  background:linear-gradient(180deg,#fff 0%,#f4f4f4 35%,#c4c4c4 55%,#fff 78%,#b0b0b0 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Remove decorative micro-labels/seams/underlines: the silhouette itself is the logo. */
+.winners-logo .wf-wordmark:after,
+.winners-logo .wf-wordmark i:before,
+
+.winners-logo:hover .wf-mark{transform:translateY(-1px) scale(1.025)}
+.winners-logo:hover .wf-wordmark{filter:drop-shadow(0 5px 15px rgba(255,255,255,.12)) drop-shadow(0 4px 12px rgba(0,0,0,.78))}
+.winners-logo .wf-mark,.winners-logo .wf-wordmark{transition:all .2s ease}
+@media(max-width:760px){
+  .winners-logo{gap:6px;height:48px}
+  .winners-logo .wf-mark{width:39px;height:39px;flex-basis:39px}
+  .winners-logo .wf-wordmark b{font-size:20px;letter-spacing:-1px}
+  .winners-logo .wf-wordmark i{font-size:16px;letter-spacing:.15px;margin-left:2px}
+}
+/* WINNERSFLOW DIAMOND-SPECTRUM LOGO FINAL OVERRIDE */
+.winners-logo .wf-mark svg{
+  filter:drop-shadow(0 0 10px rgba(220,235,255,.08));
+}
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  /* faceted diamond chrome with tiny spectral color points */
+  background:
+    radial-gradient(circle at 12% 34%, rgba(142,234,255,.95) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 27% 70%, rgba(216,186,255,.9) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 43% 23%, rgba(255,185,232,.9) 0 .9px, transparent 1.7px),
+    radial-gradient(circle at 58% 66%, rgba(159,238,255,.9) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 76% 31%, rgba(214,186,255,.9) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 91% 73%, rgba(255,190,226,.8) 0 .9px, transparent 1.7px),
+    linear-gradient(112deg,#858e98 0%,#ffffff 13%,#c9d1d9 28%,#ffffff 39%,#8f9aa5 51%,#f9fcff 65%,#b1bbc4 79%,#ffffff 90%,#89939e 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(210,225,240,.08);
+}
+.winners-logo .wf-wordmark i:before{
+  background:linear-gradient(180deg,transparent,rgba(190,242,255,.95),rgba(218,186,255,.85),transparent);
+  box-shadow:0 0 8px rgba(190,230,255,.16);
+}
+.winners-logo .wf-wordmark:after{
+  background:
+    radial-gradient(circle at 30% 50%,rgba(142,234,255,.9) 0 1px,transparent 1.7px),
+    radial-gradient(circle at 67% 50%,rgba(216,186,255,.9) 0 1px,transparent 1.7px),
+    linear-gradient(100deg,transparent 0%,rgba(220,235,250,.35) 38%,rgba(160,230,255,.65) 77%,transparent 100%);
+}
+</style>
+
+<style id="winnersflow-wf-logo-final">
+/* WINNERSFLOW — NEW WF MONOGRAM */
+.winners-logo{
+  gap:10px;
+  height:60px;
+  min-width:max-content;
+  align-items:center;
+}
+.winners-logo .wf-monogram{
+  width:70px;
+  height:44px;
+  flex:0 0 70px;
+  display:block;
+  filter:drop-shadow(0 0 12px rgba(220,235,255,.10));
+}
+.winners-logo .wf-monogram svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+.winners-logo .wf-wordmark{
+  display:flex;
+  align-items:baseline;
+  gap:0;
+  white-space:nowrap;
+  line-height:.82;
+  position:relative;
+  transform:none;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.78));
+}
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  display:inline-block;
+  position:relative;
+  font-style:normal;
+  text-transform:uppercase;
+  -webkit-font-smoothing:antialiased;
+}
+.winners-logo .wf-wordmark b{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif;
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:-1.35px;
+  background:
+    radial-gradient(circle at 15% 32%,rgba(142,234,255,.9) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 43% 70%,rgba(216,186,255,.9) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 76% 27%,rgba(255,190,226,.85) 0 .9px,transparent 1.7px),
+    linear-gradient(112deg,#858e98,#fff 15%,#c9d1d9 30%,#fff 44%,#8f9aa5 55%,#f9fcff 68%,#b1bbc4 82%,#fff 94%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.winners-logo .wf-wordmark i{
+  margin-left:3px;
+  font-family:"Audiowide","Barlow Condensed",sans-serif;
+  font-size:22px;
+  font-weight:400;
+  letter-spacing:.35px;
+  background:linear-gradient(112deg,#8a949e,#fff 22%,#b9c2ca 45%,#fff 62%,#8c97a1 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+/* No decorative slash, underline, seam, or top line. */
+.winners-logo .wf-wordmark:after,
+.winners-logo .wf-wordmark:before,
+.winners-logo .wf-wordmark b:after,
+.winners-logo .wf-wordmark b:before,
+.winners-logo .wf-wordmark i:after,
+.winners-logo .wf-wordmark i:before{
+  content:none !important;
+  display:none !important;
+}
+.winners-logo:hover .wf-monogram{transform:translateY(-1px) scale(1.025)}
+.winners-logo:hover .wf-wordmark{filter:drop-shadow(0 5px 15px rgba(255,255,255,.12))}
+.winners-logo .wf-monogram,
+.winners-logo .wf-wordmark{transition:all .2s ease}
+@media(max-width:760px){
+  .winners-logo{gap:7px;height:48px}
+  .winners-logo .wf-monogram{width:52px;height:34px;flex-basis:52px}
+  .winners-logo .wf-wordmark b{font-size:20px;letter-spacing:-1px}
+  .winners-logo .wf-wordmark i{font-size:16px;letter-spacing:.15px;margin-left:2px}
+}
+</style>
+
+
+<style id="wf-diamond-logo-only">
+/* ONLY the WinnersFlow logo is modified here. No page/layout rules are changed. */
+.wf-diamond-only{
+  gap:8px !important;
+}
+.wf-diamond-only .wf-diamond-mark{
+  width:58px !important;
+  height:44px !important;
+  flex:0 0 58px !important;
+  display:block !important;
+  filter:drop-shadow(0 0 7px rgba(255,255,255,.10));
+  transition:transform .2s ease,filter .2s ease;
+}
+.wf-diamond-only .wf-diamond-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+.wf-diamond-only .wf-diamond-wordmark{
+  display:inline-flex !important;
+  align-items:baseline !important;
+  gap:5px !important;
+}
+.wf-diamond-only .wf-diamond-wordmark b,
+.wf-diamond-only .wf-diamond-wordmark i{
+  position:relative !important;
+  display:inline-block !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-style:normal !important;
+  color:#fff !important;
+  background:linear-gradient(180deg,#fff 0%,#dce2e7 25%,#fff 45%,#9ca6b0 62%,#f9fbfd 78%,#aeb8c1 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+.wf-diamond-only .wf-diamond-wordmark b{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif !important;
+  font-size:27px !important;
+  font-weight:900 !important;
+  letter-spacing:-1.35px !important;
+}
+.wf-diamond-only .wf-diamond-wordmark i{
+  font-family:"Audiowide","Barlow Condensed",sans-serif !important;
+  font-size:22px !important;
+  font-weight:400 !important;
+  letter-spacing:.2px !important;
+}
+/* tiny diamond light points on the lettering */
+.wf-diamond-only .wf-diamond-wordmark b:before,
+.wf-diamond-only .wf-diamond-wordmark i:before{
+  content:"✦" !important;
+  position:absolute !important;
+  font-family:Arial,sans-serif !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 0 5px #fff,0 0 10px rgba(220,240,255,.55);
+  font-size:4px !important;
+  line-height:1 !important;
+  opacity:.9 !important;
+  pointer-events:none !important;
+}
+.wf-diamond-only .wf-diamond-wordmark b:before{
+  right:3px !important;
+  top:-6px !important;
+}
+.wf-diamond-only .wf-diamond-wordmark i:before{
+  left:6px !important;
+  top:-7px !important;
+}
+.wf-diamond-only .wf-diamond-wordmark:after{
+  content:"✦" !important;
+  position:absolute !important;
+  margin-left:100% !important;
+  margin-top:-18px !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-size:5px !important;
+  text-shadow:0 0 5px #fff,0 0 10px rgba(220,240,255,.55);
+}
+.wf-diamond-only:hover .wf-diamond-mark{
+  transform:translateY(-1px) scale(1.025);
+  filter:drop-shadow(0 0 11px rgba(255,255,255,.18));
+}
+@media(max-width:760px){
+  .wf-diamond-only{gap:6px !important;}
+  .wf-diamond-only .wf-diamond-mark{
+    width:45px !important;
+    height:36px !important;
+    flex-basis:45px !important;
+  }
+  .wf-diamond-only .wf-diamond-wordmark{gap:3px !important;}
+  .wf-diamond-only .wf-diamond-wordmark b{
+    font-size:20px !important;
+    letter-spacing:-1px !important;
+  }
+  .wf-diamond-only .wf-diamond-wordmark i{
+    font-size:16px !important;
+    letter-spacing:.1px !important;
+  }
+}
+</style>
+
+
+<style id="wf-unified-logo-only">
+/* ONLY the WinnersFlow logo/wordmark is changed. */
+.wf-diamond-only{
+  gap:9px !important;
+  align-items:center !important;
+}
+.wf-diamond-only .wf-diamond-mark{
+  width:66px !important;
+  height:50px !important;
+  flex:0 0 66px !important;
+  display:block !important;
+  filter:
+    drop-shadow(0 0 5px rgba(255,255,255,.30))
+    drop-shadow(0 0 13px rgba(225,240,255,.16)) !important;
+  transition:transform .2s ease,filter .2s ease;
+}
+.wf-diamond-only .wf-diamond-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/* WINNERS + FLOW now use exactly the same premium type treatment. */
+.wf-diamond-only .wf-unified-wordmark{
+  display:inline-flex !important;
+  align-items:baseline !important;
+  gap:0 !important;
+  position:relative !important;
+  white-space:nowrap !important;
+  line-height:.9 !important;
+}
+.wf-diamond-only .wf-unified-wordmark b,
+.wf-diamond-only .wf-unified-wordmark i{
+  position:relative !important;
+  display:inline-block !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-family:"Audiowide","Orbitron","Barlow Condensed",sans-serif !important;
+  font-style:normal !important;
+  font-weight:400 !important;
+  color:#fff !important;
+  background:linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f8fbfd 18%,
+    #cfd7de 38%,
+    #ffffff 50%,
+    #a6b0ba 66%,
+    #f8fbfd 82%,
+    #aeb8c2 100%
+  ) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.10),
+    0 1px 0 rgba(255,255,255,.18) !important;
+}
+
+/* Same size/style, visually joined as one name. */
+.wf-diamond-only .wf-unified-wordmark b{
+  font-size:23px !important;
+  letter-spacing:.05px !important;
+}
+.wf-diamond-only .wf-unified-wordmark i{
+  font-size:23px !important;
+  letter-spacing:.05px !important;
+}
+
+/* Tiny luxury diamond glints, not a separate decoration. */
+.wf-diamond-only .wf-unified-wordmark b:after,
+.wf-diamond-only .wf-unified-wordmark i:after{
+  content:"✦" !important;
+  position:absolute !important;
+  font-family:Arial,sans-serif !important;
+  font-style:normal !important;
+  font-size:4px !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 0 5px #fff,0 0 10px rgba(225,242,255,.65) !important;
+  opacity:.9 !important;
+  pointer-events:none !important;
+}
+.wf-diamond-only .wf-unified-wordmark b:after{
+  right:1px !important;
+  top:-7px !important;
+}
+.wf-diamond-only .wf-unified-wordmark i:after{
+  right:2px !important;
+  top:-7px !important;
+}
+.wf-diamond-only:hover .wf-diamond-mark{
+  transform:translateY(-1px) scale(1.035);
+  filter:
+    drop-shadow(0 0 7px rgba(255,255,255,.40))
+    drop-shadow(0 0 17px rgba(225,240,255,.22)) !important;
+}
+@media(max-width:760px){
+  .wf-diamond-only{gap:6px !important;}
+  .wf-diamond-only .wf-diamond-mark{
+    width:51px !important;
+    height:40px !important;
+    flex-basis:51px !important;
+  }
+  .wf-diamond-only .wf-unified-wordmark{
+    gap:0 !important;
+  }
+  .wf-diamond-only .wf-unified-wordmark b,
+  .wf-diamond-only .wf-unified-wordmark i{
+    font-size:17px !important;
+    letter-spacing:0 !important;
+  }
+}
+</style>
+
+
+<style id="wf-institutional-logo-only">
+/* WinnersFlow premium institutional identity — logo/wordmark only. */
+.wf-institutional{
+  gap:10px !important;
+  align-items:center !important;
+}
+.wf-institutional .wf-institutional-mark{
+  width:70px !important;
+  height:52px !important;
+  flex:0 0 70px !important;
+  display:block !important;
+  filter:drop-shadow(0 0 8px rgba(255,255,255,.14)) !important;
+  transition:transform .2s ease,filter .2s ease;
+}
+.wf-institutional .wf-institutional-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/* One continuous premium wordmark. */
+.wf-institutional .wf-institutional-wordmark{
+  display:inline-flex !important;
+  align-items:baseline !important;
+  gap:0 !important;
+  white-space:nowrap !important;
+  line-height:.88 !important;
+  position:relative !important;
+}
+.wf-institutional .wf-institutional-wordmark b,
+.wf-institutional .wf-institutional-wordmark i{
+  display:inline-block !important;
+  margin:0 !important;
+  padding:0 !important;
+  position:relative !important;
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif !important;
+  font-style:normal !important;
+  font-weight:800 !important;
+  font-size:28px !important;
+  letter-spacing:-1.05px !important;
+  color:#fff !important;
+  background:linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #eef2f5 23%,
+    #b7c0c8 43%,
+    #ffffff 51%,
+    #a2adb7 69%,
+    #f7f9fa 84%,
+    #b0bac3 100%
+  ) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.14) !important;
+}
+.wf-institutional .wf-institutional-wordmark i{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif !important;
+  font-weight:800 !important;
+  letter-spacing:-.95px !important;
+}
+
+/* Optical joining: virtually no gap, but a tiny weight change gives hierarchy. */
+.wf-institutional .wf-institutional-wordmark i{
+  margin-left:1px !important;
+}
+
+/* Minimal luxury sparkle — no decorative underline/slash. */
+.wf-institutional .wf-institutional-wordmark:after{
+  content:"✦" !important;
+  position:absolute !important;
+  right:-8px !important;
+  top:-7px !important;
+  font-family:Arial,sans-serif !important;
+  font-size:4px !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 0 5px #fff,0 0 10px rgba(225,240,255,.45) !important;
+  opacity:.8 !important;
+}
+.wf-institutional:hover .wf-institutional-mark{
+  transform:translateY(-1px) scale(1.025);
+  filter:drop-shadow(0 0 11px rgba(255,255,255,.20)) !important;
+}
+@media(max-width:760px){
+  .wf-institutional{gap:6px !important;}
+  .wf-institutional .wf-institutional-mark{
+    width:53px !important;
+    height:41px !important;
+    flex-basis:53px !important;
+  }
+  .wf-institutional .wf-institutional-wordmark b,
+  .wf-institutional .wf-institutional-wordmark i{
+    font-size:20px !important;
+    letter-spacing:-.75px !important;
+  }
+}
+</style>
+
+
+<style id="wf-smart-logo-only">
+/* Smart/minimal WinnersFlow identity. Only the logo is changed. */
+.wf-smart{
+  gap:10px !important;
+  align-items:center !important;
+}
+.wf-smart .wf-smart-mark{
+  width:64px !important;
+  height:43px !important;
+  flex:0 0 64px !important;
+  display:block !important;
+  filter:none !important;
+  transition:transform .2s ease;
+}
+.wf-smart .wf-smart-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/* One word, restrained premium financial typography. */
+.wf-smart .wf-smart-wordmark{
+  display:inline-block !important;
+  white-space:nowrap !important;
+  line-height:.9 !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-family:"Inter","Helvetica Neue",Arial,sans-serif !important;
+  font-size:25px !important;
+  font-weight:720 !important;
+  letter-spacing:-1.45px !important;
+  color:#e9edf0 !important;
+  background:linear-gradient(180deg,#ffffff 0%,#e8ecef 48%,#b8c0c7 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+
+/* Subtle optical distinction between the two brand roots without creating two styles. */
+.wf-smart .wf-smart-wordmark::after{
+  content:"" !important;
+  display:inline-block !important;
+  width:0 !important;
+  height:0 !important;
+}
+
+.wf-smart:hover .wf-smart-mark{
+  transform:translateY(-1px);
+}
+
+@media(max-width:760px){
+  .wf-smart{gap:7px !important;}
+  .wf-smart .wf-smart-mark{
+    width:48px !important;
+    height:34px !important;
+    flex-basis:48px !important;
+  }
+  .wf-smart .wf-smart-wordmark{
+    font-size:19px !important;
+    letter-spacing:-1.05px !important;
+  }
+}
+</style>
+
+
+<style id="wf-brandmark-only">
+/* NEW WinnersFlow brand identity — logo/wordmark only. */
+.wf-brandmark{
+  gap:11px !important;
+  align-items:center !important;
+}
+.wf-brandmark .wf-brandmark-icon{
+  width:67px !important;
+  height:46px !important;
+  flex:0 0 67px !important;
+  display:block !important;
+  filter:none !important;
+  transition:transform .2s ease;
+}
+.wf-brandmark .wf-brandmark-icon svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/*
+  Wordmark:
+  custom-feeling, architectural, financial — deliberately not futuristic/casino.
+*/
+.wf-brandmark .wf-brandmark-word{
+  display:inline-block !important;
+  white-space:nowrap !important;
+  margin:0 !important;
+  padding:0 !important;
+  line-height:.88 !important;
+  font-family:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif !important;
+  font-size:28px !important;
+  font-weight:700 !important;
+  letter-spacing:-1.15px !important;
+  color:#f2f4f6 !important;
+  background:linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #edf0f2 43%,
+    #c4cbd1 72%,
+    #f7f9fa 100%
+  ) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  text-rendering:geometricPrecision !important;
+}
+
+/* One subtle optical break makes WINNERSFLOW readable without splitting the logo. */
+.wf-brandmark .wf-brandmark-word{
+  word-spacing:0 !important;
+}
+
+/* No sparkle, no underline, no slash, no pseudo-decoration. */
+.wf-brandmark .wf-brandmark-word:before,
+.wf-brandmark .wf-brandmark-word:after{
+  content:none !important;
+  display:none !important;
+}
+
+.wf-brandmark:hover .wf-brandmark-icon{
+  transform:translateY(-1px);
+}
+
+@media(max-width:760px){
+  .wf-brandmark{gap:7px !important;}
+  .wf-brandmark .wf-brandmark-icon{
+    width:50px !important;
+    height:35px !important;
+    flex-basis:50px !important;
+  }
+  .wf-brandmark .wf-brandmark-word{
+    font-size:20px !important;
+    letter-spacing:-.82px !important;
+  }
+}
+</style>
+
+
+<style id="wf-spectrum-logo-only">
+/* Signature geometric identity — only logo/wordmark. */
+.wf-spectrum{
+  gap:10px !important;
+  align-items:center !important;
+}
+.wf-spectrum .wf-spectrum-mark{
+  width:70px !important;
+  height:44px !important;
+  flex:0 0 70px !important;
+  display:block !important;
+  filter:none !important;
+  transition:transform .22s ease;
+}
+.wf-spectrum .wf-spectrum-mark svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}
+
+/* Custom editorial/architectural wordmark: elegant, sharp, not casino/techno. */
+.wf-spectrum .wf-spectrum-word{
+  display:inline-flex !important;
+  align-items:baseline !important;
+  white-space:nowrap !important;
+  line-height:.9 !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+.wf-spectrum .wf-spectrum-winners,
+.wf-spectrum .wf-spectrum-flow{
+  display:inline-block !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-family:"Cormorant Garamond","Bodoni 72","Didot","Times New Roman",serif !important;
+  font-style:normal !important;
+  font-size:29px !important;
+  font-weight:600 !important;
+  letter-spacing:-1.05px !important;
+  color:#fff !important;
+  background:linear-gradient(180deg,#ffffff 0%,#e7edf2 52%,#bac5cf 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+.wf-spectrum .wf-spectrum-flow{
+  margin-left:5px !important;
+  font-weight:500 !important;
+  letter-spacing:-.8px !important;
+}
+
+/* Very subtle chromatic detail in the wordmark — no glow. */
+.wf-spectrum .wf-spectrum-winners::first-letter{
+  color:#fff !important;
+}
+.wf-spectrum .wf-spectrum-flow::first-letter{
+  background:linear-gradient(90deg,#7CCBFF,#B78CFF,#FF8EDB) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+
+.wf-spectrum:hover .wf-spectrum-mark{
+  transform:translateY(-1px) scale(1.015);
+}
+
+@media(max-width:760px){
+  .wf-spectrum{gap:7px !important;}
+  .wf-spectrum .wf-spectrum-mark{
+    width:52px !important;
+    height:34px !important;
+    flex-basis:52px !important;
+  }
+  .wf-spectrum .wf-spectrum-winners,
+  .wf-spectrum .wf-spectrum-flow{
+    font-size:20px !important;
+    letter-spacing:-.7px !important;
+  }
+  .wf-spectrum .wf-spectrum-flow{margin-left:3px !important;}
+}
+</style>
+
+
+<style id="wf-aurora-flow-effect">
+.hero h1.wf-aurora-headline .wf-aurora-flow{position:relative;display:inline-block;color:transparent;-webkit-background-clip:text;background-clip:text;background-image:linear-gradient(112deg,#fff 0%,#bda9d8 10%,#4b286d 18%,#76509a 27%,#24102f 36%,#a98ac5 45%,#321445 54%,#69428c 64%,#1d0b29 73%,#9a79b8 82%,#3a1954 91%,#d8c8e7 100%);background-size:100% 100%;filter:drop-shadow(0 0 12px rgba(91,45,125,.16))}
+
+
+</style>
+
+<style id="winnersflow-ai-terminal-v2">
+/* WinnersFlow AI setup terminal — mirrors the portal's 5M confirmation logic */
+.coach-rule-copy{margin-top:12px!important;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:10.5px!important;line-height:1.7!important;color:#8f8897!important}.coach-rule-copy strong{color:#bdb5c5;font-size:9px;letter-spacing:.5px}.wf-ai-terminal{background:#050409!important}.wf-terminal-live{font:700 8px "Space Grotesk",sans-serif;color:#55e6a4}.wf-confirm-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid #151d1b;background:linear-gradient(145deg,#070b0a,#040706)}.wf-confirm-head b{display:block;font:800 8px "Space Grotesk",sans-serif;letter-spacing:1.4px;color:#dfe9e4}.wf-confirm-head small{display:block;margin-top:3px;font:6px "Space Grotesk",sans-serif;color:#5d6a65;letter-spacing:1px}.wf-confirm-head>span{font:700 6px "Space Grotesk",sans-serif;letter-spacing:1px;color:#73817a;white-space:nowrap}.wf-confirm-head>span i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#39d98a;box-shadow:0 0 10px rgba(57,217,138,.65);vertical-align:middle}.wf-traffic-lights{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:11px}.wf-traffic-light{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 8px;border:1px solid #1b2321;background:#080c0b;border-radius:6px}.wf-traffic-light>i{width:9px;height:9px;border-radius:50%;background:#303a36;flex:none}.wf-traffic-light b{display:block;font:700 6px "Space Grotesk",sans-serif;letter-spacing:.8px;color:#9ba7a1;white-space:nowrap}.wf-traffic-light small{display:block;margin-top:3px;font:6px "Space Grotesk",sans-serif;color:#56635d;letter-spacing:.7px}.wf-traffic-light.flow>i{background:#ff5fd2;box-shadow:0 0 12px rgba(255,95,210,.7)}.wf-traffic-light.level>i{background:#b79cff;box-shadow:0 0 12px rgba(183,156,255,.65)}.wf-traffic-light.waiting>i{background:#d7b66d;box-shadow:0 0 12px rgba(215,182,109,.55);animation:wfWaitingLight 1.15s ease-in-out infinite}@keyframes wfWaitingLight{50%{opacity:.28;transform:scale(.72)}}.wf-alert{display:flex;align-items:center;gap:10px;margin:0 11px 11px;padding:10px 11px;border:1px solid #2b2921;background:#0d0b07;color:#d7b66d;border-radius:6px}.wf-alert .wf-spinner{width:14px;height:14px;border:2px solid #3b3526;border-top-color:#d7b66d;border-radius:50%;animation:wfSpin .9s linear infinite;flex:none}@keyframes wfSpin{to{transform:rotate(360deg)}}.wf-alert b{font:800 7px "Space Grotesk",sans-serif;letter-spacing:1px}.wf-alert span{display:block;font:6px "Space Grotesk",sans-serif;color:#756c59;margin-top:3px;line-height:1.45}.wf-state-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 11px 11px}.wf-state-row>div{padding:9px;border:1px solid #171f1d;background:#070a09;border-radius:6px}.wf-state-row small{display:block;font:6px "Space Grotesk",sans-serif;color:#5d6963;letter-spacing:.8px}.wf-state-row b{display:block;margin-top:5px;font:800 7px "Space Grotesk",sans-serif;letter-spacing:.7px}.wf-state-row .confirmed{color:#39d98a}.wf-state-row .not-confirmed{color:#ff6685}.wf-sofia-panel{margin:0 11px 11px;border:1px solid rgba(111,231,255,.13);border-radius:7px;background:radial-gradient(circle at 100% 0,rgba(111,231,255,.06),transparent 40%),linear-gradient(145deg,#080d14,#05070b);overflow:hidden}.wf-sofia-head{display:flex;align-items:center;gap:8px;padding:10px 11px;border-bottom:1px solid rgba(111,231,255,.08)}.wf-sofia-mark{width:23px;height:23px;border:1px solid rgba(111,231,255,.2);border-radius:6px;display:grid;place-items:center;color:#6fe7ff;font-size:12px}.wf-sofia-head b{display:block;font:800 7px "Space Grotesk",sans-serif;color:#e6f3f5;letter-spacing:1px}.wf-sofia-head small{display:block;margin-top:2px;font:6px "Space Grotesk",sans-serif;color:#62727b;letter-spacing:.6px}.wf-sofia-head>span{margin-left:auto;font:6px "Space Grotesk",sans-serif;color:#d7b66d;letter-spacing:.7px}.wf-sofia-content{display:grid;grid-template-columns:1fr 145px;gap:12px;padding:12px}.wf-sofia-content>div>small{font:6px "Space Grotesk",sans-serif;color:#6f7d84;letter-spacing:1px}.wf-sofia-content h4{margin:5px 0 5px;font-size:10px;color:#e9edf0}.wf-sofia-content p{margin:0;color:#7d8990;font-size:7px;line-height:1.65}.wf-sofia-facts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.wf-sofia-facts>div{padding:7px;border:1px solid rgba(255,255,255,.055);background:#080d13;border-radius:5px}.wf-sofia-facts small{display:block;font:5.5px "Space Grotesk",sans-serif;color:#64727a;letter-spacing:.7px}.wf-sofia-facts b{display:block;margin-top:3px;font:700 9px "Space Grotesk",sans-serif;color:#dbe3e7}.wf-sofia-next{display:flex;gap:7px;align-items:center;padding:9px 11px;border-top:1px solid rgba(111,231,255,.08)}.wf-sofia-next span{font:6px "Space Grotesk",sans-serif;color:#6fe7ff;letter-spacing:.8px;white-space:nowrap}.wf-sofia-next b{font:600 6.5px "Space Grotesk",sans-serif;color:#78858b;line-height:1.45}@media(max-width:760px){.wf-traffic-lights{grid-template-columns:1fr}.wf-state-row{grid-template-columns:1fr}.wf-sofia-content{grid-template-columns:1fr}.wf-sofia-head>span{display:none}}
+</style>
+
+<style id="winnersflow-sofia-albert-refinement">
+/* Refined SOFIA + ALBERT presentation: premium, calm, legible. */
+.coach-info > .eyebrow{
+  border:1px solid rgba(168,133,220,.30);
+  background:linear-gradient(135deg,rgba(25,17,36,.96),rgba(11,8,16,.98));
+  color:#d9c9ec;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.18);
+  letter-spacing:1.35px;
+}
+.coach-info > .eyebrow::before{
+  content:"";
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#b99bd9;
+  box-shadow:0 0 9px rgba(185,155,217,.35);
+}
+.coach-info > .eyebrow{
+  gap:7px;
+}
+.coach-info h2{
+  margin:16px 0 12px;
+  font-family:"Manrope",sans-serif;
+  font-size:clamp(25px,3vw,34px);
+  line-height:1.08;
+  letter-spacing:-1.35px;
+  font-weight:700;
+  color:#f4f0f7;
+}
+.coach-info h2 .wf-heading-accent{
+  color:#b9adbf;
+  font-weight:600;
+}
+</style>
+
+
+<style id="winnersflow-about-and-coach-final-refinement">
+/* WinnersFlow signature controls — Wall Street gold / institutional finish */
+.dtflow-about-home .wf-about-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:8px 15px;
+  border-radius:7px;
+  border:1px solid rgba(224,186,91,.72);
+  background:
+    linear-gradient(145deg,#070604 0%,#0d0a05 52%,#171106 100%);
+  color:#f3d487 !important;
+  font-family:"Manrope",sans-serif;
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:1.35px;
+  text-transform:uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255,239,184,.10),
+    inset 0 0 0 1px rgba(112,79,24,.16),
+    0 10px 26px rgba(0,0,0,.34),
+    0 0 18px rgba(207,163,61,.06);
+  position:relative;
+  overflow:hidden;
+  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease,color .25s ease;
+}
+.dtflow-about-home .wf-about-button:before{
+  content:"";
+  width:6px;
+  height:6px;
+  margin-right:9px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#fff1b0 0%,#e5bd58 28%,#a97822 67%,#4d350e 100%);
+  box-shadow:
+    0 0 0 1px rgba(235,198,106,.42),
+    0 0 7px rgba(222,178,69,.42),
+    0 0 13px rgba(191,139,35,.14);
+  flex:0 0 6px;
+}
+.dtflow-about-home .wf-about-button:after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:-34%;
+  width:24%;
+  background:linear-gradient(90deg,transparent,rgba(255,225,139,.22),transparent);
+  transform:skewX(-18deg);
+  transition:left .7s ease;
+}
+.dtflow-about-home .wf-about-button:hover{
+  transform:translateY(-1px);
+  border-color:rgba(247,211,117,.94);
+  color:#ffe4a0 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,239,184,.14),
+    inset 0 0 0 1px rgba(154,111,34,.22),
+    0 13px 32px rgba(0,0,0,.42),
+    0 0 24px rgba(211,166,59,.13);
+}
+.dtflow-about-home .wf-about-button:hover:after{left:110%;}
+
+.wf-ai-setup-label{
+  display:inline-flex;
+  align-items:center;
+  min-height:31px;
+  padding:7px 11px 7px 9px;
+  border:1px solid rgba(104,70,132,.42);
+  border-radius:6px;
+  background:linear-gradient(135deg,#040306 0%,#09060e 58%,#0d0814 100%);
+  color:#ddd7e3;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:8px;
+  font-weight:600;
+  letter-spacing:1.25px;
+  line-height:1;
+  text-transform:uppercase;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(0,0,0,.25);
+  position:relative;
+  overflow:hidden;
+}
+.wf-ai-setup-label:after{
+  content:"";
+  position:absolute;
+  top:-20%;
+  bottom:-20%;
+  left:-35%;
+  width:22%;
+  background:linear-gradient(90deg,transparent,rgba(190,153,218,.13),transparent);
+  transform:skewX(-18deg);
+  transition:left .7s ease;
+}
+.wf-ai-setup-label:hover:after{left:112%;}
+.wf-ai-orb{
+  width:7px;
+  height:7px;
+  margin-right:9px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#e6d5f1 0%,#bd94d6 28%,#71418e 62%,#2c163b 100%);
+  box-shadow:0 0 0 1px rgba(190,151,218,.16),0 0 10px rgba(139,92,167,.34);
+  flex:0 0 7px;
+}
+.wf-ai-main{color:#f3eff6;font-weight:700;}
+.wf-ai-sep{color:#76518b;margin:0 6px;font-weight:500;}
+.wf-ai-setup-label>span:last-child{color:#a79eae;font-weight:600;}
+.wf-ai-setup-label:hover{border-color:rgba(160,123,188,.56);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 28px rgba(0,0,0,.34),0 0 20px rgba(105,65,136,.07);}
+
+/* SOFIA + ALBERT — dark aurora typography, matched to the hero FLOW */
+.coach-info h2{
+  margin:15px 0 14px;
+  font-family:"Manrope",sans-serif;
+  font-size:clamp(29px,3.35vw,42px);
+  line-height:.99;
+  letter-spacing:-2.05px;
+  font-weight:800;
+  max-width:520px;
+  text-wrap:balance;
+  color:transparent;
+  background-image:linear-gradient(
+    112deg,
+    #fff 0%,
+    #bda9d8 10%,
+    #4b286d 18%,
+    #76509a 27%,
+    #24102f 36%,
+    #a98ac5 45%,
+    #321445 54%,
+    #69428c 64%,
+    #1d0b29 73%,
+    #9a79b8 82%,
+    #3a1954 91%,
+    #d8c8e7 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 12px rgba(91,45,125,.12));
+}
+.coach-info h2 .wf-heading-accent{
+  display:inline-block;
+  color:inherit;
+  background:inherit;
+  -webkit-background-clip:text;
+  background-clip:text;
+  font-weight:800;
+  letter-spacing:-2.15px;
+}
+.coach-info h2 .wf-albert-line{
+  margin-top:3px;
+  font-size:.78em;
+  letter-spacing:-1.35px;
+  opacity:.92;
+}
+@media(max-width:760px){
+  .coach-info h2{font-size:clamp(27px,8vw,36px);letter-spacing:-1.55px}
+  .coach-info h2 .wf-heading-accent{letter-spacing:-1.65px}
+}
+</style>
+
+<style>
+    /* Checkout payment trust marks */
+    .pricing-payment-trust{
+      margin-top:13px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:7px;
+      color:#706a78;
+      font-size:9px;
+      letter-spacing:.55px;
+      text-transform:uppercase;
+    }
+    .pricing-payment-logos{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      min-height:18px;
+      opacity:.82;
+    }
+    .pricing-payment-logo{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:19px;
+      color:#aaa4b1;
+    }
+    .pricing-payment-logo.stripe{
+      font-family:Arial,Helvetica,sans-serif;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:-.55px;
+      text-transform:lowercase;
+    }
+    .pricing-payment-logo.paypal{
+      gap:3px;
+      font-family:Arial,Helvetica,sans-serif;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:-.35px;
+    }
+    .pricing-payment-logo.paypal .pp-mark{
+      position:relative;
+      width:13px;
+      height:15px;
+      display:inline-block;
+    }
+    .pricing-payment-logo.paypal .pp-mark::before,
+    .pricing-payment-logo.paypal .pp-mark::after{
+      content:"";
+      position:absolute;
+      width:7px;
+      height:12px;
+      border-radius:2px 5px 2px 2px;
+      transform:skew(-9deg);
+    }
+    .pricing-payment-logo.paypal .pp-mark::before{
+      left:1px;
+      top:0;
+      background:#8e8996;
+    }
+    .pricing-payment-logo.paypal .pp-mark::after{
+      left:4px;
+      top:3px;
+      background:#625d69;
+    }
+    .pricing-payment-note{
+      font-size:8.5px;
+      letter-spacing:.2px;
+      text-transform:none;
+      color:#625d69;
+    }
+</style>
+
+<style id="wf-gold-aurora-heading">
+.wf-gold-aurora-heading{
+  color:transparent !important;
+  -webkit-background-clip:text;
+  background-clip:text;
+  background-image:linear-gradient(112deg,
+    #fff7d6 0%,
+    #d8b45a 10%,
+    #6f4b13 19%,
+    #f3d27a 28%,
+    #8b641d 38%,
+    #fff0b1 48%,
+    #5b3c0d 57%,
+    #c79a38 67%,
+    #f7df91 78%,
+    #765018 88%,
+    #fff4c5 100%
+  );
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 12px rgba(207,163,61,.14));
+}
+.wf-gold-aurora-heading span{
+  color:inherit;
+}
+</style>
+
+<style id="winnersflow-about-full-gold-aurora">
+/* Full ABOUT WinnersFlow section — Wall Street gold aurora treatment */
+.dtflow-about-home .wf-about-button,
+.dtflow-about-home .wf-gold-aurora-heading,
+.dtflow-about-home .dtflow-five-line{
+  color:transparent !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  background-image:linear-gradient(112deg,
+    #fff8d9 0%,
+    #d9b65b 11%,
+    #725018 20%,
+    #f4d47b 30%,
+    #8a611b 40%,
+    #fff1b4 50%,
+    #5b3d0d 59%,
+    #c99c3c 68%,
+    #f8e095 78%,
+    #765018 88%,
+    #fff5c9 100%
+  ) !important;
+  background-size:100% 100% !important;
+  -webkit-text-fill-color:transparent !important;
+  filter:drop-shadow(0 0 10px rgba(207,163,61,.10));
+}
+.dtflow-about-home .wf-about-button{
+  border-color:rgba(224,186,91,.88) !important;
+  background-image:linear-gradient(112deg,
+    #fff8d9 0%,#d9b65b 14%,#7a5518 28%,#f3d179 43%,#9a7023 58%,#ffe9a2 73%,#78521a 88%,#fff5c9 100%
+  ) !important;
+  background-color:transparent !important;
+  -webkit-text-fill-color:#090806 !important;
+  color:#090806 !important;
+  filter:drop-shadow(0 0 8px rgba(207,163,61,.08));
+}
+.dtflow-about-home .wf-about-button:before{
+  background:radial-gradient(circle at 32% 28%,#fff4b9 0%,#e6be5a 30%,#9f7122 70%,#4b330d 100%) !important;
+  box-shadow:none !important;
+}
+.dtflow-about-home .dtflow-five-line{
+  font-weight:850;
+}
+
+
+/* Requested white copy inside ABOUT WinnersFlow */
+.dtflow-about-home .wf-about-button{
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  background-image:none !important;
+}
+.dtflow-about-home .dtflow-about-home-grid > div:first-child > p,
+.dtflow-about-home .dtflow-five-block > p{
+  color:#fff !important;
+  background:none !important;
+  -webkit-background-clip:initial !important;
+  background-clip:initial !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:none !important;
+}
+</style>
 </head>
 
 <body>
@@ -1735,22 +3276,71 @@ footer{
 <nav>
   <div class="container nav-inner">
 
-    <a href="#" class="logo">
-      <span class="logo-dt">DT</span>
-      <span class="logo-flow">FLOW</span>
-    </a>
+    <a href="#" class="logo winners-logo wf-spectrum" aria-label="WinnersFlow">
+  <span class="wf-spectrum-mark" aria-hidden="true">
+    <svg viewBox="0 0 118 72" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wfSpectrumA" x1="0" y1="0" x2="118" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#62E7A9"/>
+          <stop offset=".30" stop-color="#7CCBFF"/>
+          <stop offset=".58" stop-color="#B78CFF"/>
+          <stop offset=".82" stop-color="#FF8EDB"/>
+          <stop offset="1" stop-color="#F5C76A"/>
+        </linearGradient>
+        <linearGradient id="wfSpectrumB" x1="118" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF8EDB"/>
+          <stop offset=".34" stop-color="#B78CFF"/>
+          <stop offset=".66" stop-color="#7CCBFF"/>
+          <stop offset="1" stop-color="#62E7A9"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Ultra-thin geometric WF monogram: designed as one continuous signal form. -->
+      <path d="M7 12H23L32 50L42 22L52 50L63 12H79"
+            fill="none"
+            stroke="url(#wfSpectrumA)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <path d="M62 12H111L101 30H78L72 43H94"
+            fill="none"
+            stroke="url(#wfSpectrumB)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <!-- Precision inner geometry -->
+      <path d="M23 12L32 50L42 22L52 50L63 12"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width=".65"
+            opacity=".62"/>
+
+      <!-- Tiny color nodes, like market intelligence points rather than decoration -->
+      <circle cx="7" cy="12" r="2.1" fill="#62E7A9"/>
+      <circle cx="42" cy="22" r="1.9" fill="#B78CFF"/>
+      <circle cx="79" cy="12" r="2.1" fill="#7CCBFF"/>
+      <circle cx="111" cy="12" r="2.1" fill="#FF8EDB"/>
+    </svg>
+  </span>
+
+  <span class="wf-spectrum-word" aria-label="WinnersFlow">
+    <span class="wf-spectrum-winners">WINNERS</span><span class="wf-spectrum-flow">FLOW</span>
+  </span>
+</a>
 
     <div class="nav-links">
       <a href="#flow">Flow</a>
-      <a href="#coach">Setup Coach</a>
-      <a href="#strategies">Strategies</a>
+      <a href="#coach">SOFIA + ALBERT</a>
+      <a href="#strategies">Our Strategy</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
 
     <div class="nav-actions">
-      <a href="login.html" class="nav-login">Login</a>
-      <a href="register.html?plan=trial" class="nav-cta">Start Free</a>
+      <a href="#" class="nav-login">Login</a>
+      <a href="#pricing" class="nav-cta">Start Free</a>
     </div>
 
   </div>
@@ -1791,25 +3381,24 @@ footer{
         LIVE MARKET INTELLIGENCE
       </div>
 
-      <h1>
-        SEE THE <span>FLOW</span><br>
+      <h1 class="wf-aurora-headline">
+        SEE THE <span class="wf-aurora-flow">FLOW</span><br>
         KNOW THE SETUP<br>
         TRADE WITH A SYSTEM
       </h1>
 
       <p class="hero-proof">
-        70%+ historical win rate across 12,000+ backtested setups.<br>
-        DT FLOW combines market flow, key levels and price confirmation
-        to identify structured trading setups you can understand and evaluate.
+        Real-time market flow, setup scanning and AI-assisted confirmation — in one trading terminal.<br>
+        Track options flow, stock prints and dark pools. Find setups around key levels, understand the context, and wait for confirmation.
       </p>
 
       <div class="hero-buttons">
-        <a href="register.html?plan=trial" class="btn btn-secondary hero-trial-btn">
-          3 DAY TRIAL →
+        <a href="#pricing" class="btn btn-secondary hero-trial-btn">
+          3 DAY TRIAL
         </a>
 
         <a href="#flow" class="btn btn-secondary">
-          Explore Flow →
+          VIEW TERMINAL
         </a>
       </div>
 
@@ -1824,7 +3413,8 @@ footer{
 
         <div>
           <div class="stars">★★★★★</div>
-          <div class="trust-text">Used by 1,000+ professional traders</div>
+          <div class="trust-text">Used by over 1,000+ traders</div>
+          <div class="trust-text">$0 today · Then $29/month · Cancel anytime</div>
         </div>
 
       </div>
@@ -1879,7 +3469,7 @@ footer{
 
 
 <!-- FLOW -->
-<section id="flow" class="flow-section">
+<section id="flow" class="flow-section" style="scroll-margin-top:50px;">
 
   <div class="container">
 
@@ -1887,12 +3477,12 @@ footer{
 
       <div>
         <div class="section-kicker">01 — FLOW</div>
-        <h2>See where money is moving. Understand the pressure.</h2>
+        <h2>See the flow. Understand what is happening.</h2>
       </div>
 
       <p>
-        Stock prints and options flow give you different pieces of market activity.
-        DT FLOW puts them together so you can investigate what is happening before you decide what to do.
+        Real-time options flow, stock prints and dark pools show different parts of market activity.
+        WinnersFlow brings them together with key levels and price confirmation so you can evaluate the setup before you act.
       </p>
 
     </div>
@@ -1903,11 +3493,11 @@ footer{
       <div class="flow-intro-grid">
 
         <div>
-          <h3>Market flow, without the noise.</h3>
+          <h3>Market flow, in context.</h3>
           <p>
-            Normal Stock Prints show actual activity in the underlying stock.
-            Options Flow shows notable call and put activity.
-            DT FLOW separates them so you can read each signal in context.
+            Real-time stock prints show notable activity in the underlying stock.
+            Options Flow shows notable call and put activity. Dark Pools add off-exchange context.
+            WinnersFlow puts each signal into the larger setup.
           </p>
         </div>
 
@@ -2223,28 +3813,25 @@ footer{
 
       <div class="insight-card">
 
-        <div class="section-kicker">WHY FLOW MATTERS</div>
+        <div class="section-kicker">WHY THE WORKFLOW MATTERS</div>
 
-        <h3>Flow is not the answer. It's context.</h3>
+        <h3>Flow is not the answer. It is the starting point.</h3>
 
         <p>
-          A large transaction doesn't automatically mean price will rise.
-          The useful part is combining flow with price structure,
-          volume, support and resistance.
+          A large transaction does not automatically mean price will move.
+          The useful part is combining flow with levels, price action,
+          confirmation and a defined setup.
         </p>
 
         <div class="pipeline">
 
           <div class="pipeline-item">FLOW</div>
           <span class="pipeline-arrow">→</span>
-
-          <div class="pipeline-item">STRUCTURE</div>
+          <div class="pipeline-item">LEVEL</div>
           <span class="pipeline-arrow">→</span>
-
-          <div class="pipeline-item">CONTEXT</div>
+          <div class="pipeline-item">SETUP</div>
           <span class="pipeline-arrow">→</span>
-
-          <div class="pipeline-item">ALERT</div>
+          <div class="pipeline-item">CONFIRM</div>
 
         </div>
 
@@ -2255,12 +3842,11 @@ footer{
 
         <div class="section-kicker">DESIGNED FOR CLARITY</div>
 
-        <h3>One screen. Less guessing.</h3>
+        <h3>One workflow. Better context.</h3>
 
         <p>
-          Instead of jumping between charts, flow scanners and
-          separate research tools, DT FLOW puts the important context
-          into one workflow.
+          Instead of jumping between charts, flow scanners and separate research tools,
+          WinnersFlow connects the information that matters in one workflow.
         </p>
 
       </div>
@@ -2273,6 +3859,93 @@ footer{
 
 
 <!-- SETUP COACH -->
+<section id="strategies">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+        <div class="section-kicker">02 — OUR SYSTEM</div>
+      </div>
+
+    </div>
+
+
+    <div class="strategy-flow-shell">
+
+      <div class="strategy-flow-top">
+        <div>
+          <div class="strategy-flow-kicker">12,000+ BACKTESTED SETUPS</div>
+          <h3 class="strategy-flow-title">
+            <span>SCAN THE MARKET.</span><br>
+            <span>SEE THE <span class="accent">SETUP.</span></span><br>
+            <span>FOLLOW THE SYSTEM.</span>
+          </h3>
+          <p class="strategy-flow-intro">
+            We backtested the conditions behind ALBERT’s setup confirmations across more than <strong>12,000 historical setups</strong>. The results showed that <strong>over 70% of those setups would have finished profitably</strong> when the defined conditions were followed consistently and the corresponding rules were respected.
+          </p>
+        </div>
+
+        <div class="strategy-proof">
+          <div class="strategy-proof-card">
+            <span class="strategy-proof-value">12,000+</span>
+            <span class="strategy-proof-label">Historical setups tested</span>
+          </div>
+          <div class="strategy-proof-card">
+            <span class="strategy-proof-value">70%+</span>
+            <span class="strategy-proof-label">Historically profitable</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="strategy-flow-steps">
+        <div class="strategy-flow-line"></div>
+
+        <div class="strategy-step">
+          <div class="strategy-step-node"></div>
+          <div class="strategy-step-number">01 — SCAN</div>
+          <h3>Scan the market</h3>
+          <p>Find where flow, key levels and price action begin to align.</p>
+        </div>
+
+        <div class="strategy-step">
+          <div class="strategy-step-node"></div>
+          <div class="strategy-step-number">02 — SEE</div>
+          <h3>See the setup</h3>
+          <p>SOFIA connects the evidence and explains what is developing.</p>
+        </div>
+
+        <div class="strategy-step">
+          <div class="strategy-step-node"></div>
+          <div class="strategy-step-number">03 — CONFIRM</div>
+          <h3>Wait for ALBERT</h3>
+          <p>ALBERT waits for the required 5-minute confirmation before calling it confirmed.</p>
+        </div>
+
+        <div class="strategy-step">
+          <div class="strategy-step-node"></div>
+          <div class="strategy-step-number">04 — FOLLOW</div>
+          <h3>Follow the system</h3>
+          <p>Apply the defined conditions and rules consistently instead of trading from emotion.</p>
+        </div>
+      </div>
+
+      <div class="strategy-flow-footer">
+        <span>FLOW</span> → <span>LEVEL</span> → <span>SETUP</span> → <span>5M CONFIRM</span> → <span>ALBERT</span>
+      </div>
+
+      <div class="strategy-flow-disclaimer">
+        Historical backtest results. Not a guarantee of future performance.
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
 <section id="coach">
 
   <div class="container">
@@ -2280,13 +3953,13 @@ footer{
     <div class="section-head">
 
       <div>
-        <div class="section-kicker">02 — SETUP COACH</div>
-        <h2>Turn flow into a setup you can evaluate.</h2>
+        <div class="section-kicker">03 — SOFIA + ALBERT</div>
+        <h2>Understand the setup. Confirm the conditions.</h2>
       </div>
 
       <p>
-        Once Flow catches your attention, Setup Coach connects it with
-        support, resistance and price confirmation to create structured market context.
+        SOFIA explains the flow, levels, price action and confirmation context.
+        ALBERT is the final confirmation layer: it waits for the required conditions before calling a setup confirmed.
       </p>
 
     </div>
@@ -2298,147 +3971,85 @@ footer{
 
         <div class="coach-info">
 
-          <div class="eyebrow">
-            AI-ASSISTED MARKET CONTEXT
+          <div class="wf-ai-setup-label">
+            <span class="wf-ai-orb"></span><span class="wf-ai-main">AI-ASSISTED</span><span class="wf-ai-sep">/</span><span>SETUP ANALYSIS</span>
           </div>
 
-          <h2>Stop chasing signals.<br>Start reading the setup.</h2>
+          <h2 class="wf-setup-heading"><span class="wf-white-heading">SOFIA EXPLAINS</span><br><span class="wf-white-heading">THE SETUP.</span><br><span class="wf-white-heading">ALBERT CONFIRMS.</span></h2>
 
           <p>
-            Setup Coach watches the relationship between price, support, resistance
-            and flow activity. It helps explain whether price is confirming or rejecting
-            an important level in plain English.
+            SOFIA is the market analyst inside WinnersFlow. She explains what the setup is showing by connecting flow, key levels, price action and the 5-minute confirmation context.
+            ALBERT is the final confirmation layer: he monitors the required conditions and stays fail-closed until the completed 5-minute candle satisfies the rule.
+          </p>
+
+          <p class="coach-rule-copy">
+            <strong>CONFIRMED:</strong> BUY NOW | SETUP CONFIRMED &nbsp;·&nbsp;
+            <strong>NOT CONFIRMED:</strong> ALBERT does not issue the confirmation until the required conditions are met.
           </p>
 
           <div class="coach-tags">
-            <span class="coach-tag">Resistance</span>
-            <span class="coach-tag">Support</span>
-            <span class="coach-tag">Resistance</span>
-            <span class="coach-tag">Flow</span>
-            <span class="coach-tag">Confirmation</span>
+            <span class="coach-tag">SOFIA — MARKET ANALYST</span>
+            <span class="coach-tag">ALBERT — AUTO-MONITOR</span>
+            <span class="coach-tag">FLOW</span>
+            <span class="coach-tag">KEY LEVEL</span>
+            <span class="coach-tag">5M CLOSE</span>
           </div>
 
         </div>
 
 
-        <div class="terminal">
+        <div class="terminal wf-ai-terminal">
 
           <div class="terminal-top">
-
-            <div class="window-dots">
-              <i></i><i></i><i></i>
-            </div>
-
-            <div class="terminal-title">
-              DT FLOW / SETUP COACH
-            </div>
-
-            <div style="font-size:8px;color:#55e6a4">
-              ● ACTIVE
-            </div>
-
+            <div class="window-dots"><i></i><i></i><i></i></div>
+            <div class="terminal-title">WinnersFlow / SOFIA + ALBERT</div>
+            <div class="wf-terminal-live">● LIVE</div>
           </div>
 
-
-          <div class="chart-area">
-
-            <svg class="chart-svg" viewBox="0 0 700 300" preserveAspectRatio="none">
-
-              <defs>
-
-                <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#ff6685"/>
-                  <stop offset="100%" stop-color="transparent"/>
-                </linearGradient>
-
-              </defs>
-
-              <path
-                class="chart-fill"
-                d="M0 230
-                   L50 220
-                   L90 226
-                   L130 195
-                   L170 205
-                   L210 170
-                   L250 182
-                   L290 150
-                   L330 158
-                   L370 125
-                   L410 137
-                   L450 105
-                   L490 120
-                   L530 92
-                   L570 105
-                   L610 72
-                   L650 84
-                   L700 45
-                   L700 300
-                   L0 300 Z"/>
-
-              <path
-                class="chart-line"
-                d="M0 230
-                   L50 220
-                   L90 226
-                   L130 195
-                   L170 205
-                   L210 170
-                   L250 182
-                   L290 150
-                   L330 158
-                   L370 125
-                   L410 137
-                   L450 105
-                   L490 120
-                   L530 92
-                   L570 105
-                   L610 72
-                   L650 84
-                   L700 45"/>
-
-              <line
-                class="breakout-line"
-                x1="0"
-                y1="120"
-                x2="700"
-                y2="120"/>
-
-            </svg>
-
-            <div class="breakout-label">
-              BREAKOUT WATCH
+          <div class="wf-confirm-head">
+            <div>
+              <b>5M CONFIRM</b>
+              <small>RULE-BASED MONITOR</small>
             </div>
-
-            <div class="price-label">
-              $188.20
-            </div>
-
+            <span><i></i> ALBERT AUTO-MONITOR</span>
           </div>
 
+          <div class="wf-traffic-lights">
+            <div class="wf-traffic-light flow"><i></i><div><b>FLOW</b><small>CONTEXT</small></div></div>
+            <div class="wf-traffic-light level"><i></i><div><b>LEVEL</b><small>ZONE</small></div></div>
+            <div class="wf-traffic-light waiting"><i></i><div><b>WAITING</b><small>5M CLOSE</small></div></div>
+          </div>
 
-          <div class="coach-bottom">
+          <div class="wf-alert waiting">
+            <i class="wf-spinner"></i>
+            <div><b>WAITING FOR CONFIRMATION</b><span>ALBERT is waiting for the completed 5-minute candle to close beyond the monitored level.</span></div>
+          </div>
 
-            <div class="metric">
-              <small>RESISTANCE</small>
-              <strong>$188.20</strong>
+          <div class="wf-state-row">
+            <div><small>WHEN CONFIRMED</small><b class="confirmed">✓ BUY NOW | SETUP CONFIRMED</b></div>
+            <div><small>IF CONDITIONS FAIL</small><b class="not-confirmed">NOT CONFIRMED</b></div>
+          </div>
+
+          <div class="wf-sofia-panel">
+            <div class="wf-sofia-head">
+              <div class="wf-sofia-mark">✦</div>
+              <div><b>SOFIA</b><small>SETUP CONTEXT · NVDA</small></div>
+              <span>CONFIRMATION WAITING</span>
             </div>
-
-            <div class="metric">
-              <small>CURRENT</small>
-              <strong>$183.42</strong>
+            <div class="wf-sofia-content">
+              <div>
+                <small>WHAT THE SETUP IS SHOWING</small>
+                <h4>NVDA · Breakout + Flow confirmation</h4>
+                <p>Flow is notable around the key level. Price is approaching resistance, so SOFIA explains the context and waits for price confirmation rather than treating flow alone as a completed setup.</p>
+              </div>
+              <div class="wf-sofia-facts">
+                <div><small>RESISTANCE</small><b>$184.10</b></div>
+                <div><small>PRICE</small><b>$183.42</b></div>
+                <div><small>SUPPORT</small><b>$179.80</b></div>
+                <div><small>CONTEXT</small><b>82</b></div>
+              </div>
             </div>
-
-            <div class="metric">
-              <small>VWAP</small>
-              <strong>$182.70</strong>
-            </div>
-
-            <div class="metric">
-              <small>CONTEXT</small>
-              <strong class="up">82 / 100</strong>
-            </div>
-
+            <div class="wf-sofia-next"><span>SOFIA NEXT CHECK</span><b>Watch for sustained acceptance above the key resistance level.</b></div>
           </div>
 
         </div>
@@ -2452,128 +4063,8 @@ footer{
 </section>
 
 
-<!-- STRATEGIES -->
-<section id="strategies">
+<!-- OUR STRATEGY -->
 
-  <div class="container">
-
-    <div class="section-head">
-
-      <div>
-        <div class="section-kicker">03 — STRATEGIES</div>
-        <h2>Support. Resistance. Flow. Confirmation.</h2>
-      </div>
-
-      <p>
-        DT FLOW combines key levels, market flow and price confirmation
-        into repeatable frameworks designed for historical testing and evaluation.
-      </p>
-
-    </div>
-
-
-    <div class="strategy-grid">
-
-      <div class="strategy">
-
-        <div class="strategy-number">01</div>
-
-        <h3>Breakout + Flow Confirmation</h3>
-
-        <p>
-          Price reaches resistance while buy-side activity increases.
-          DT FLOW waits for price confirmation before treating the move as a setup.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-
-      <div class="strategy">
-
-        <div class="strategy-number">02</div>
-
-        <h3>Breakout + Retest</h3>
-
-        <p>
-          Instead of chasing the first move, watch whether price
-          returns to the broken level and confirms the retest.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-
-      <div class="strategy">
-
-        <div class="strategy-number">03</div>
-
-        <h3>5-Bar Acceptance</h3>
-
-        <p>
-          A custom DT FLOW framework that watches repeated closes
-          above a defined resistance zone before treating acceptance as confirmed.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-
-      <div class="strategy">
-
-        <div class="strategy-number">04</div>
-
-        <h3>Absorption Setup</h3>
-
-        <p>
-          Watch for aggressive buying or selling being absorbed around
-          support or resistance before price confirms the setup.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-
-      <div class="strategy">
-
-        <div class="strategy-number">05</div>
-
-        <h3>Delta Divergence</h3>
-
-        <p>
-          Compare directional flow with price movement to identify
-          potential confirmation or divergence around key levels.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-
-      <div class="strategy">
-
-        <div class="strategy-number">06</div>
-
-        <h3>Stacked Imbalance</h3>
-
-        <p>
-          Stacked directional pressure can highlight areas where
-          flow may be confirming a move through an important level.
-        </p>
-
-        <div class="strategy-line"></div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
 
 
 <!-- DASHBOARD -->
@@ -2648,90 +4139,69 @@ footer{
         </div>
 
 
-        <div class="big-chart">
+        <div class="big-chart wf-portal-chart">
 
-          <h3>NVDA · PRICE ACTION</h3>
-
-          <div class="big-chart-price">
-            $183.42
-            <span class="up" style="font-size:10px"> +2.41%</span>
+          <div class="wf-chart-head">
+            <div>
+              <h3>NVDA · PRICE ACTION</h3>
+              <span>NASDAQ · 5M</span>
+            </div>
+            <div class="wf-chart-quote">
+              <strong>$183.42</strong>
+              <em>+2.41%</em>
+            </div>
           </div>
 
+          <div class="wf-chart-toolbar">
+            <span class="active">5M</span><span>15M</span><span>1H</span><span>4H</span><i></i><span class="active">CANDLES</span>
+          </div>
 
-          <svg class="big-svg" viewBox="0 0 700 240" preserveAspectRatio="none">
+          <div class="wf-candle-chart">
+            <div class="wf-chart-grid"></div>
+            <div class="wf-y-axis"><span>186.00</span><span>185.00</span><span>184.00</span><span>183.00</span><span>182.00</span><span>181.00</span></div>
+            <div class="wf-time-axis"><span>09:35</span><span>10:05</span><span>10:35</span><span>11:05</span><span>11:35</span><span>12:05</span></div>
 
-            <defs>
+            <div class="wf-price-line wf-resistance"><span>184.10 RESISTANCE</span></div>
+            <div class="wf-price-line wf-vwap"><span>183.62 VWAP</span></div>
+            <div class="wf-price-line wf-support"><span>179.80 SUPPORT</span></div>
 
-              <linearGradient id="bigGrad" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#ff6685"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </linearGradient>
+            <div class="wf-flow-marker" style="left:57%;top:29%;">$214K BUY</div>
+            <div class="wf-flow-marker green" style="left:71%;top:22%;">FLOW</div>
 
-            </defs>
+            <div class="wf-candles">
+              <i class="up" style="--x:2%;--y:65%;--h:12%;--w:22%"></i>
+              <i class="down" style="--x:7%;--y:60%;--h:15%;--w:25%"></i>
+              <i class="up" style="--x:12%;--y:61%;--h:9%;--w:18%"></i>
+              <i class="up" style="--x:17%;--y:53%;--h:13%;--w:24%"></i>
+              <i class="down" style="--x:22%;--y:55%;--h:8%;--w:20%"></i>
+              <i class="up" style="--x:27%;--y:47%;--h:16%;--w:27%"></i>
+              <i class="up" style="--x:32%;--y:43%;--h:10%;--w:19%"></i>
+              <i class="down" style="--x:37%;--y:45%;--h:9%;--w:22%"></i>
+              <i class="up" style="--x:42%;--y:37%;--h:17%;--w:26%"></i>
+              <i class="up" style="--x:47%;--y:31%;--h:12%;--w:21%"></i>
+              <i class="down" style="--x:52%;--y:34%;--h:9%;--w:20%"></i>
+              <i class="up" style="--x:57%;--y:28%;--h:14%;--w:24%"></i>
+              <i class="up" style="--x:62%;--y:23%;--h:12%;--w:22%"></i>
+              <i class="down" style="--x:67%;--y:26%;--h:8%;--w:19%"></i>
+              <i class="up" style="--x:72%;--y:19%;--h:15%;--w:25%"></i>
+              <i class="up" style="--x:77%;--y:14%;--h:13%;--w:23%"></i>
+              <i class="down" style="--x:82%;--y:17%;--h:8%;--w:19%"></i>
+              <i class="up" style="--x:87%;--y:10%;--h:14%;--w:25%"></i>
+              <i class="up" style="--x:92%;--y:7%;--h:11%;--w:23%"></i>
+              <i class="up" style="--x:97%;--y:4%;--h:9%;--w:22%"></i>
+            </div>
 
-            <path
-              d="M0 190
-                 L35 183
-                 L70 188
-                 L105 169
-                 L140 176
-                 L175 151
-                 L210 157
-                 L245 133
-                 L280 141
-                 L315 119
-                 L350 127
-                 L385 103
-                 L420 114
-                 L455 89
-                 L490 97
-                 L525 72
-                 L560 81
-                 L595 57
-                 L630 67
-                 L665 43
-                 L700 30
-                 L700 240
-                 L0 240 Z"
-              fill="url(#bigGrad)"
-              opacity=".12"/>
+            <div class="wf-volume">
+              <i style="height:35%"></i><i style="height:48%"></i><i style="height:28%"></i><i style="height:58%"></i><i style="height:40%"></i><i style="height:70%"></i><i style="height:45%"></i><i style="height:32%"></i><i style="height:66%"></i><i style="height:50%"></i><i style="height:43%"></i><i style="height:76%"></i><i style="height:58%"></i><i style="height:38%"></i><i style="height:82%"></i><i style="height:64%"></i><i style="height:46%"></i><i style="height:72%"></i><i style="height:55%"></i><i style="height:88%"></i>
+            </div>
+          </div>
 
-            <path
-              d="M0 190
-                 L35 183
-                 L70 188
-                 L105 169
-                 L140 176
-                 L175 151
-                 L210 157
-                 L245 133
-                 L280 141
-                 L315 119
-                 L350 127
-                 L385 103
-                 L420 114
-                 L455 89
-                 L490 97
-                 L525 72
-                 L560 81
-                 L595 57
-                 L630 67
-                 L665 43
-                 L700 30"
-              fill="none"
-              stroke="#ff6685"
-              stroke-width="2"/>
-
-            <line
-              x1="0"
-              y1="95"
-              x2="700"
-              y2="95"
-              stroke="#63e6ff"
-              stroke-width="1"
-              stroke-dasharray="5 5"/>
-
-          </svg>
+          <div class="wf-chart-stats">
+            <div><small>RESISTANCE</small><b>$184.10</b></div>
+            <div><small>PRICE</small><b>$183.42</b></div>
+            <div><small>SUPPORT</small><b>$179.80</b></div>
+            <div><small>FLOW</small><b class="up">BUY-SIDE</b></div>
+          </div>
 
         </div>
 
@@ -2801,7 +4271,7 @@ footer{
 
       <div class="stars">★★★★★</div>
 
-      <h2>Used by 1,000+ professional traders</h2>
+      <h2>Used by over 1,000+ traders</h2>
 
       <p>
         Stop reacting. Start reading the market.
@@ -2887,7 +4357,7 @@ footer{
 
       <div class="section-kicker">SIMPLE PRICING</div>
 
-      <h2>One terminal. One subscription.</h2>
+      <h2>One terminal. One workflow. One subscription.</h2>
 
       <p>
         Start with the tools you actually need.
@@ -2901,41 +4371,54 @@ footer{
       <div class="price-card">
 
         <div class="price-badge">
-          DT FLOW PRO
+          WinnersFlow PRO
         </div>
 
-        <h2>Trading Intelligence</h2>
+        <h2>Professional Market Intelligence</h2>
 
         <div class="price">
           $29<span>/month</span>
         </div>
 
         <p>
-          Real-time flow included in Pro. Cancel anytime.
+          Market intelligence for traders who want flow, levels, setup analysis and confirmation in one place. Cancel anytime.
         </p>
 
         <p>
-          <strong>60%+ historical win rate</strong><br>
-          Based on DT FLOW's historical testing of structured setups.
-          Historical results are not a guarantee of future performance.
+          <strong>12,000+ historical setups analyzed</strong><br>
+          Review defined setups with historical testing.
         </p>
+
+        <div class="pro-includes-label">WHAT YOU GET WITH PRO</div>
 
         <div class="features">
 
-          <div class="feature">Stock Prints</div>
-          <div class="feature">Real-Time Options Flow</div>
-          <div class="feature">Flow Radar</div>
-          <div class="feature">Setup Coach</div>
-          <div class="feature">Breakout Scanner</div>
-          <div class="feature">Support & Resistance</div>
-          <div class="feature">Strategy Backtesting</div>
-          <div class="feature">Flow & Breakout Alerts</div>
+          <div class="feature"><strong>ALBERT — SETUP COACH</strong><span>AI-assisted confirmation that monitors setup conditions and waits for confirmation.</span></div>
+          <div class="feature"><strong>Real-Time Options Flow</strong><span>See notable options activity, contracts, size and directional context.</span></div>
+          <div class="feature"><strong>Real-Time Stock Prints</strong><span>Track notable stock transactions and buying or selling activity.</span></div>
+          <div class="feature"><strong>Real-Time Dark Pools</strong><span>Monitor reported off-exchange activity and large prints.</span></div>
+          <div class="feature"><strong>Setup Scanner</strong><span>Find symbols approaching the conditions that matter around levels, momentum and volume.</span></div>
+          <div class="feature"><strong>Breakout Scanner</strong><span>Find breakout pressure and evaluate whether price is actually confirming the move.</span></div>
+          <div class="feature"><strong>Support &amp; Resistance</strong><span>See the key levels where price is being tested, rejected or accepted.</span></div>
+          <div class="feature"><strong>Flow &amp; Breakout Alerts</strong><span>Get alerted when the market conditions you care about line up.</span></div>
+          <div class="feature"><strong>Strategy Backtesting</strong><span>Test defined setups historically and review win rate, return and drawdown.</span></div>
+          <div class="feature"><strong>Watchlists</strong><span>Keep important symbols and developing setups in one focused workspace.</span></div>
+          <div class="feature"><strong>SOFIA — MARKET ANALYST</strong><span>Understand the flow, levels, price action and confirmation context behind a setup.</span></div>
+          <div class="feature"><strong>Connected Market Terminal</strong><span>Move from FLOW → LEVEL → SETUP → CONFIRM → TEST → ACT in one workflow.</span></div>
 
         </div>
 
-        <a href="register.html?plan=trial" class="btn btn-primary" style="display:block">
-          Start DT FLOW
+        <a href="#" class="btn btn-primary" style="display:block">
+          3 DAY TRIAL
         </a>
+
+        <div class="pricing-payment-trust" aria-label="Secure checkout with Stripe and PayPal">
+          <div class="pricing-payment-logos">
+            <span class="pricing-payment-logo stripe" aria-label="Stripe">stripe</span>
+            <span class="pricing-payment-logo paypal" aria-label="PayPal"><span class="pp-mark" aria-hidden="true"></span>PayPal</span>
+          </div>
+          <span class="pricing-payment-note">Secure checkout · Cancel anytime</span>
+        </div>
 
       </div>
 
@@ -2965,12 +4448,12 @@ footer{
       <div class="faq-item">
 
         <div class="faq-q">
-          What is DT FLOW?
+          What is WinnersFlow?
           <span>+</span>
         </div>
 
         <div class="faq-a">
-          DT FLOW is a trading intelligence terminal combining stock prints,
+          WinnersFlow is a trading intelligence terminal combining stock prints,
           options flow, support and resistance, price action and structured setup context.
         </div>
 
@@ -2986,7 +4469,7 @@ footer{
 
         <div class="faq-a">
           No. Flow is confirmation and context, not a guaranteed prediction.
-          DT FLOW combines flow with support or resistance and price confirmation
+          WinnersFlow combines flow with support or resistance and price confirmation
           so users can evaluate a setup rather than blindly follow a transaction.
         </div>
 
@@ -3012,7 +4495,7 @@ footer{
       <div class="faq-item">
 
         <div class="faq-q">
-          Can I use DT FLOW on mobile?
+          Can I use WinnersFlow on mobile?
           <span>+</span>
         </div>
 
@@ -3027,7 +4510,7 @@ footer{
       <div class="faq-item">
 
         <div class="faq-q">
-          Does DT FLOW provide financial advice?
+          Does WinnersFlow provide financial advice?
           <span>+</span>
         </div>
 
@@ -3059,12 +4542,11 @@ footer{
       <h2>SEE THE FLOW. KNOW THE SETUP. TRADE WITH A SYSTEM.</h2>
 
       <p>
-        Combine market flow, support and resistance and price confirmation
-        into a structured workflow built for research, testing and execution.
+        Real-time market flow, setup analysis and AI-assisted confirmation in one structured workflow — built for research, testing and execution.
       </p>
 
-      <a href="register.html?plan=trial" class="btn btn-primary">
-        Start with DT FLOW →
+      <a href="#pricing" class="btn btn-primary">
+        3 DAY TRIAL
       </a>
 
     </div>
@@ -3080,10 +4562,10 @@ footer{
   <div class="container">
     <div class="dtflow-about-home-grid">
       <div>
-        <div class="eyebrow">ABOUT DT FLOW</div>
-        <h2>Follow the market.<br><span>Understand the setup.</span></h2>
+        <div class="eyebrow wf-about-button">ABOUT WinnersFlow</div>
+        <h2 class="wf-gold-aurora-heading">Follow the market.<br><span>Understand the setup.</span></h2>
         <p>
-          DT FLOW combines market Flow, key levels and price confirmation
+          WinnersFlow combines flow, key levels, setup analysis and confirmation
           into one systematic trading workflow.
         </p>
       </div>
@@ -3092,8 +4574,8 @@ footer{
         <div class="dtflow-five-line">10% FOLLOW THE 5%.</div>
         <div class="dtflow-five-line">85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING.</div>
         <p>
-          DT FLOW is built to help you follow the information that matters —
-          then use Setup Coach to put it into context instead of reacting to Flow alone.
+          FIND → SEE → UNDERSTAND → CONFIRM → TEST → ACT.
+          SOFIA explains the setup. ALBERT confirms the conditions.
         </p>
       </div>
     </div>
@@ -3109,8 +4591,7 @@ footer{
       <div class="footer-brand">
 
         <a href="#" class="logo">
-          <span class="logo-dt">DT</span>
-          <span class="logo-flow">FLOW</span>
+          <span class="logo-word">WinnersFlow</span>
         </a>
 
         <p>
@@ -3170,7 +4651,7 @@ footer{
 
     <div class="footer-bottom">
 
-      <span>© 2026 DT FLOW. All rights reserved.</span>
+      <span>© 2026 WinnersFlow. All rights reserved.</span>
 
       <span>Market data shown in this prototype is demo data.</span>
 
@@ -3184,8 +4665,8 @@ footer{
 <div id="dtflow-page" class="dtflow-page" aria-hidden="true">
   <div class="container">
     <div class="dtflow-page-top">
-      <a href="#home" class="dtflow-back">← Back to DT FLOW</a>
-      <span class="demo">DT FLOW</span>
+      <a href="#home" class="dtflow-back">← Back to WinnersFlow</a>
+      <span class="demo">WinnersFlow</span>
     </div>
     <div id="dtflow-page-content"></div>
   </div>
@@ -3218,19 +4699,19 @@ footer{
 
 <script>
 /* =========================
-   DT FLOW FOOTER PAGES
+   WinnersFlow FOOTER PAGES
    Text/content pages only — landing-page design remains locked.
 ========================= */
 const DT_FLOW_PAGES = {
-  "chart-signals": {k:"PRODUCT",t:"Chart Signals",lead:"5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. DT FLOW helps you follow the market activity, structure and price action that matter.",cards:[
+  "chart-signals": {k:"PRODUCT",t:"Chart Signals",lead:"5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. WinnersFlow helps you follow the market activity, structure and price action that matter.",cards:[
     ["THE 5%","5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING."],
-    ["FOLLOW THE SIGNAL","DT FLOW brings Flow, key levels and price confirmation together so you don't have to interpret every signal alone."],
-    ["THE LEVEL","Every serious setup starts somewhere. DT FLOW maps support and resistance so you know where the market is being tested before you start interpreting the move."],
+    ["FOLLOW THE SIGNAL","WinnersFlow brings Flow, key levels and price confirmation together so you don't have to interpret every signal alone."],
+    ["THE LEVEL","Every serious setup starts somewhere. WinnersFlow maps support and resistance so you know where the market is being tested before you start interpreting the move."],
     ["THE FLOW","Large prints, buying and selling pressure, absorption and options activity can reveal what is happening around the level. But flow alone is not the answer — it needs context."],
     ["THE CONFIRMATION","This is where most mistakes happen. Setup Coach watches the relationship between the level, the flow and the candle — helping you distinguish a real reaction from a false move."],
     ["THE SETUP COACH","Setup Coach connects the pieces: LEVEL → FLOW → PRICE CONFIRMATION → SETUP."]
   ]},
-  "all-features": {k:"PRODUCT",t:"All Features",lead:"Most traders see fragments. DT FLOW was built to connect them — market activity, key levels, price confirmation and a repeatable setup process in one place.",cards:[
+  "all-features": {k:"PRODUCT",t:"All Features",lead:"Most traders see fragments. WinnersFlow was built to connect them — market activity, key levels, price confirmation and a repeatable setup process in one place.",cards:[
     ["FLOW","See the activity that can matter around important price levels — from stock prints and blocks to notable options flow."],
     ["SETUP COACH","Setup Coach organizes level, flow and price action into one clear setup."],
     ["SCANNER","Find symbols approaching the conditions that matter — support, resistance, breakout pressure, momentum and volume."],
@@ -3240,35 +4721,35 @@ const DT_FLOW_PAGES = {
     ["WATCHLIST","Keep the symbols and developing setups that matter to you in one focused workspace."],
     ["MARKET TERMINAL","One workflow for FLOW → STRUCTURE → COACH → BACKTEST → ALERT. The goal is not more information. It is better context."]
   ]},
-  "pricing": {k:"PRICING",t:"DT FLOW PRO",lead:"See what changes when the market starts making more sense. Start with a 3-day free trial, then continue with DT FLOW Pro at $29/month.",cards:[
-    ["3 DAY TRIAL","Step inside DT FLOW and experience the workflow before deciding whether it belongs in your trading process."],
-    ["$29 / MONTH","DT FLOW Pro is planned at $29/month after the 3-day trial."],
+  "pricing": {k:"PRICING",t:"WinnersFlow PRO",lead:"See what changes when the market starts making more sense. Start with a 3-day free trial, then continue with WinnersFlow Pro at $29/month.",cards:[
+    ["3 DAY TRIAL","Step inside WinnersFlow and experience the workflow before deciding whether it belongs in your trading process."],
+    ["$29 / MONTH","WinnersFlow Pro is planned at $29/month after the 3-day trial."],
     ["PRO INCLUDES","Real-time flow, Setup Coach, scanners, systematic strategy tools, backtesting and alerts as the connected product is developed."],
-    ["NO PERFORMANCE PROMISES","DT FLOW is designed to improve the decision process, not promise a profitable outcome. Historical results are descriptive and do not guarantee future performance."]
+    ["NO PERFORMANCE PROMISES","WinnersFlow is designed to improve the decision process, not promise a profitable outcome. Historical results are descriptive and do not guarantee future performance."]
   ]},
-  "faq": {k:"PRODUCT",t:"Frequently Asked Questions",lead:"The short version: DT FLOW is designed to help you follow the market activity, understand the setup and avoid making decisions from one signal in isolation.",cards:[
-    ["Is DT FLOW a broker?","No. DT FLOW is a trading-intelligence and research product, not a brokerage."],
-    ["Does DT FLOW tell me exactly when to trade?","DT FLOW is designed to organize the evidence around a setup and show when the defined conditions align. It is decision support — not a guarantee that a trade will be profitable."],
+  "faq": {k:"PRODUCT",t:"Frequently Asked Questions",lead:"The short version: WinnersFlow is designed to help you follow the market activity, understand the setup and avoid making decisions from one signal in isolation.",cards:[
+    ["Is WinnersFlow a broker?","No. WinnersFlow is a trading-intelligence and research product, not a brokerage."],
+    ["Does WinnersFlow tell me exactly when to trade?","WinnersFlow is designed to organize the evidence around a setup and show when the defined conditions align. It is decision support — not a guarantee that a trade will be profitable."],
     ["What is the Support + Resistance + Flow strategy?","Price reaches a meaningful support or resistance zone. Flow provides confirmation around that level. Then price must confirm the reaction — for example, by closing back above support or below resistance."],
-    ["What does 60%+ mean?","Our current marketing claim refers to a 60%+ historical win rate from DT FLOW testing. The exact result depends on the test rules, period, universe, costs, slippage and execution assumptions. It is a historical result, not a promise of future profits."],
-    ["Is the market data live?","The landing-page demo uses illustrative data. Live market data requires the DT FLOW backend and an appropriate market-data provider."],
-    ["Can I use DT FLOW on mobile?","Yes. The product is being built mobile-first while remaining usable on desktop."]
+    ["What does the historical testing measure?","WinnersFlow can evaluate defined setups against historical market data. Results depend on the rules, period, universe, costs, slippage and execution assumptions. Historical results are not a guarantee of future performance."],
+    ["Is the market data live?","The landing-page demo uses illustrative data. Live market data requires the WinnersFlow backend and an appropriate market-data provider."],
+    ["Can I use WinnersFlow on mobile?","Yes. The product is being built mobile-first while remaining usable on desktop."]
   ]},
-  "stocks": {k:"STOCKS",t:"Stocks A–Z",lead:"Explore individual symbols through the same DT FLOW framework: level, flow, price action and setup context.",stock:true},
-  "stock-spcx": {k:"STOCK ANALYSIS",t:"SPCX Stock Analysis",lead:"SPCX can be evaluated through DT FLOW's market-structure framework. This page is an analysis workspace, not a prediction or recommendation.",symbol:"SPCX"},
-  "stock-tsla": {k:"STOCK ANALYSIS",t:"TSLA Stock Analysis",lead:"Use support, resistance, flow and price confirmation to structure TSLA research inside DT FLOW.",symbol:"TSLA"},
-  "stock-nvda": {k:"STOCK ANALYSIS",t:"NVDA Stock Analysis",lead:"Use DT FLOW to examine NVDA around key levels, flow activity and breakout or rejection conditions.",symbol:"NVDA"},
-  "stock-aapl": {k:"STOCK ANALYSIS",t:"AAPL Stock Analysis",lead:"Use DT FLOW to examine AAPL around key levels, flow activity and price confirmation.",symbol:"AAPL"},
-  "about": {k:"COMPANY",t:"About DT FLOW",lead:"5% know what they are doing. 10% follow the 5%. DT FLOW was built to help you understand what matters and follow it systematically.",cards:[["THE IDEA","5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. See the flow. Know the setup. Trade with a system."],["THE PRODUCT","DT FLOW combines market flow, support and resistance, price confirmation, setup context, systematic strategies, backtesting and alerts."],["THE APPROACH","Follow the market activity, put it into context and use a defined process instead of reacting to every move."],["IMPORTANT","DT FLOW provides analytical tools and information. It does not guarantee results or remove the risks of trading."]]},
-  "methodology": {k:"COMPANY",t:"Methodology",lead:"The DT FLOW framework is simple: LEVEL → FLOW → PRICE CONFIRMATION. Build the setup in sequence instead of reacting to one signal.",cards:[["1. LEVEL","Identify support or resistance as a zone where price may react."],["2. FLOW","Look for buying or selling activity, absorption, delta or notable prints that provide context around the level."],["3. PRICE CONFIRMATION","Wait for price behavior to confirm the reaction, such as a close back above support or below resistance."],["RISK FRAMEWORK","A typical framework can place invalidation beyond the relevant level with a volatility buffer, with targets based on risk multiples and/or the next significant support or resistance zone."],["BACKTESTING","Historical tests should include the defined rules, time period, universe, costs, slippage and execution assumptions. Past results are not guarantees of future performance."]]},
-  "affiliates": {k:"COMPANY",t:"Affiliates",lead:"DT FLOW may work with selected partners and services that are relevant to trading, market data or technology.",cards:[["DISCLOSURE","If DT FLOW earns a commission from a qualifying partner relationship, that relationship will be disclosed where required."],["EDITORIAL INDEPENDENCE","Affiliate relationships should not change how product features, risks or limitations are described."],["PARTNERS","Partner availability and terms can change over time. This page will be updated as the DT FLOW partner program develops."]]},
-  "contact": {k:"COMPANY",t:"Contact DT FLOW",lead:"Questions, feedback and partnership enquiries can be directed to the DT FLOW team.",cards:[["GENERAL","For product feedback, bug reports or general questions, use the contact channel provided with your DT FLOW account."],["PARTNERSHIPS","For data providers, integrations and commercial partnerships, include your company name, website and the reason for contacting DT FLOW."],["SUPPORT","When reporting a technical issue, include the device, browser and a short description of what happened."]]},
-  "terms": {k:"LEGAL",t:"Terms",lead:"DT FLOW is a software and market-research product. These terms describe the general use of the service.",cards:[["USE OF THE SERVICE","Use DT FLOW lawfully and do not attempt to disrupt, reverse engineer or abuse the service."],["NO INVESTMENT GUARANTEE","DT FLOW does not guarantee profits, returns, accuracy of predictions or future market outcomes."],["MARKET DATA","Availability, timing and accuracy of market data can depend on the data provider and connection. Demo data should not be treated as live market data."],["CHANGES","Product features, pricing and service availability may change as DT FLOW develops."]]},
-  "privacy": {k:"LEGAL",t:"Privacy",lead:"DT FLOW is designed to collect only information needed to operate and improve the service.",cards:[["ACCOUNT DATA","If accounts are introduced, basic account information may be required to provide access to the service."],["PRODUCT DATA","Settings such as watchlists, alerts and preferences may be stored to provide the requested functionality."],["ANALYTICS","Technical and usage information may be used to understand performance and improve the product, subject to applicable law."],["YOUR RIGHTS","Privacy requests and questions should be directed through the DT FLOW contact channel."]] }
+  "stocks": {k:"STOCKS",t:"Stocks A–Z",lead:"Explore individual symbols through the same WinnersFlow framework: level, flow, price action and setup context.",stock:true},
+  "stock-spcx": {k:"STOCK ANALYSIS",t:"SPCX Stock Analysis",lead:"SPCX can be evaluated through WinnersFlow's market-structure framework. This page is an analysis workspace, not a prediction or recommendation.",symbol:"SPCX"},
+  "stock-tsla": {k:"STOCK ANALYSIS",t:"TSLA Stock Analysis",lead:"Use support, resistance, flow and price confirmation to structure TSLA research inside WinnersFlow.",symbol:"TSLA"},
+  "stock-nvda": {k:"STOCK ANALYSIS",t:"NVDA Stock Analysis",lead:"Use WinnersFlow to examine NVDA around key levels, flow activity and breakout or rejection conditions.",symbol:"NVDA"},
+  "stock-aapl": {k:"STOCK ANALYSIS",t:"AAPL Stock Analysis",lead:"Use WinnersFlow to examine AAPL around key levels, flow activity and price confirmation.",symbol:"AAPL"},
+  "about": {k:"COMPANY",t:"About WinnersFlow",lead:"5% know what they are doing. 10% follow the 5%. WinnersFlow was built to help you understand what matters and follow it systematically.",cards:[["THE IDEA","5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. See the flow. Know the setup. Trade with a system."],["THE PRODUCT","WinnersFlow combines market flow, support and resistance, price confirmation, setup context, systematic strategies, backtesting and alerts."],["THE APPROACH","Follow the market activity, put it into context and use a defined process instead of reacting to every move."],["IMPORTANT","WinnersFlow provides analytical tools and information. It does not guarantee results or remove the risks of trading."]]},
+  "methodology": {k:"COMPANY",t:"Methodology",lead:"The WinnersFlow framework is simple: LEVEL → FLOW → PRICE CONFIRMATION. Build the setup in sequence instead of reacting to one signal.",cards:[["1. LEVEL","Identify support or resistance as a zone where price may react."],["2. FLOW","Look for buying or selling activity, absorption, delta or notable prints that provide context around the level."],["3. PRICE CONFIRMATION","Wait for price behavior to confirm the reaction, such as a close back above support or below resistance."],["RISK FRAMEWORK","A typical framework can place invalidation beyond the relevant level with a volatility buffer, with targets based on risk multiples and/or the next significant support or resistance zone."],["BACKTESTING","Historical tests should include the defined rules, time period, universe, costs, slippage and execution assumptions. Past results are not guarantees of future performance."]]},
+  "affiliates": {k:"COMPANY",t:"Affiliates",lead:"WinnersFlow may work with selected partners and services that are relevant to trading, market data or technology.",cards:[["DISCLOSURE","If WinnersFlow earns a commission from a qualifying partner relationship, that relationship will be disclosed where required."],["EDITORIAL INDEPENDENCE","Affiliate relationships should not change how product features, risks or limitations are described."],["PARTNERS","Partner availability and terms can change over time. This page will be updated as the WinnersFlow partner program develops."]]},
+  "contact": {k:"COMPANY",t:"Contact WinnersFlow",lead:"Questions, feedback and partnership enquiries can be directed to the WinnersFlow team.",cards:[["GENERAL","For product feedback, bug reports or general questions, use the contact channel provided with your WinnersFlow account."],["PARTNERSHIPS","For data providers, integrations and commercial partnerships, include your company name, website and the reason for contacting WinnersFlow."],["SUPPORT","When reporting a technical issue, include the device, browser and a short description of what happened."]]},
+  "terms": {k:"LEGAL",t:"Terms",lead:"WinnersFlow is a software and market-research product. These terms describe the general use of the service.",cards:[["USE OF THE SERVICE","Use WinnersFlow lawfully and do not attempt to disrupt, reverse engineer or abuse the service."],["NO INVESTMENT GUARANTEE","WinnersFlow does not guarantee profits, returns, accuracy of predictions or future market outcomes."],["MARKET DATA","Availability, timing and accuracy of market data can depend on the data provider and connection. Demo data should not be treated as live market data."],["CHANGES","Product features, pricing and service availability may change as WinnersFlow develops."]]},
+  "privacy": {k:"LEGAL",t:"Privacy",lead:"WinnersFlow is designed to collect only information needed to operate and improve the service.",cards:[["ACCOUNT DATA","If accounts are introduced, basic account information may be required to provide access to the service."],["PRODUCT DATA","Settings such as watchlists, alerts and preferences may be stored to provide the requested functionality."],["ANALYTICS","Technical and usage information may be used to understand performance and improve the product, subject to applicable law."],["YOUR RIGHTS","Privacy requests and questions should be directed through the WinnersFlow contact channel."]] }
 };
 
 function dtflowStockPage(symbol){
-  return {k:"STOCK ANALYSIS",t:symbol+" Stock Analysis",lead:"A DT FLOW research view for "+symbol+" built around market structure, flow and price confirmation.",symbol};
+  return {k:"STOCK ANALYSIS",t:symbol+" Stock Analysis",lead:"A WinnersFlow research view for "+symbol+" built around market structure, flow and price confirmation.",symbol};
 }
 
 function renderDTFlowPage(key){
@@ -3515,18 +4996,30 @@ a.hero-trial-btn.btn:hover,
 }
 </style>
 
-
-<script>
-/* DT FLOW auth tunnel configuration.
-   Leave empty when frontend and API share the same origin.
-   For CodePen/testing, set window.DT_FLOW_API_BASE before this script. */
-window.DT_FLOW_API_BASE = window.DT_FLOW_API_BASE || '';
-</script>
+<style id="winnersflow-gold-aurora-trial-final">
+.hero-trial-btn,
+a.hero-trial-btn,
+a.hero-trial-btn.btn,
+.hero-buttons a.hero-trial-btn{
+  background:linear-gradient(112deg,#fff3bd 0%,#e6c76b 12%,#8b641d 25%,#f7dc87 39%,#9a7024 52%,#efd071 65%,#6b4913 78%,#ffe6a0 90%,#b98225 100%) !important;
+  background-size:220% 100% !important;
+  background-position:0% 50% !important;
+  color:#08070a !important;
+  border:1px solid rgba(255,225,145,.98) !important;
+  box-shadow:inset 0 1px 0 rgba(255,249,216,.72),inset 0 -1px 0 rgba(92,61,11,.30),0 0 22px rgba(226,184,76,.18),0 8px 22px rgba(0,0,0,.28) !important;
+}
+.hero-trial-btn:hover,
+a.hero-trial-btn:hover,
+a.hero-trial-btn.btn:hover{
+  background-position:100% 50% !important;
+  box-shadow:inset 0 1px 0 rgba(255,249,216,.82),inset 0 -1px 0 rgba(92,61,11,.30),0 0 30px rgba(226,184,76,.25),0 10px 26px rgba(0,0,0,.32) !important;
+}
+</style>
 </body>
 </html>
 
 <style>
-/* DT FLOW CTA refinement — same dimensions and typography as Explore Flow */
+/* WinnersFlow CTA refinement — same dimensions and typography as Explore Flow */
 .hero-trial-btn{
   background:#fff;
   color:#050308;
@@ -3546,5 +5039,248 @@ window.DT_FLOW_API_BASE = window.DT_FLOW_API_BASE || '';
   transform:translateY(-1px);
   filter:brightness(1.02);
   box-shadow:0 8px 26px rgba(255,255,255,.12);
+}
+</style>
+
+
+<style id="winnersflow-final-logo-intelligence-refinement">
+/* ONLY: WinnersFlow logo + LIVE MARKET INTELLIGENCE badge */
+.winners-logo{
+  gap:12px;
+  height:60px;
+}
+.winners-logo .wf-mark{
+  width:62px;
+  height:62px;
+  flex:0 0 62px;
+  filter:
+    drop-shadow(0 0 7px rgba(139,92,246,.30))
+    drop-shadow(0 0 14px rgba(99,230,255,.13));
+  transition:transform .22s ease, filter .22s ease;
+}
+.winners-logo .wf-wordmark{
+  gap:2px;
+  align-items:baseline;
+  letter-spacing:0;
+}
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  font-family:"Space Grotesk","Manrope",sans-serif;
+  font-size:21px;
+  font-weight:700;
+  letter-spacing:-1.35px;
+  line-height:.95;
+}
+.winners-logo .wf-wordmark b{
+  color:#fff;
+  text-shadow:0 0 16px rgba(255,255,255,.08);
+}
+.winners-logo .wf-wordmark i{
+  background:linear-gradient(90deg,#fff 0%,#d8baff 52%,#63e6ff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  font-weight:800;
+  letter-spacing:-1.1px;
+}
+.winners-logo:hover .wf-mark{
+  transform:translateY(-1px) scale(1.035);
+  filter:
+    drop-shadow(0 0 9px rgba(139,92,246,.40))
+    drop-shadow(0 0 17px rgba(99,230,255,.18));
+}
+
+/* Refined LIVE MARKET INTELLIGENCE badge — same purple family/color direction */
+.hero .eyebrow{
+  position:relative;
+  gap:9px;
+  padding:8px 13px;
+  border:1px solid rgba(139,92,246,.34);
+  border-radius:999px;
+  background:#000000;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 0 0 1px rgba(139,92,246,.035),
+    0 8px 26px rgba(139,92,246,.08);
+  color:#c7b7ff;
+  letter-spacing:1.65px;
+  font-size:10px;
+  font-weight:800;
+  backdrop-filter:blur(10px);
+}
+.hero .eyebrow:after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.035);
+}
+.hero .eyebrow-dot{
+  position:relative;
+  z-index:1;
+  width:6px;
+  height:6px;
+  flex:0 0 6px;
+  background:var(--green);
+  box-shadow:none;
+}
+.hero .eyebrow{
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.hero .eyebrow:hover{
+  transform:translateY(-1px);
+  border-color:rgba(139,92,246,.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 0 0 1px rgba(139,92,246,.045),
+    0 10px 30px rgba(139,92,246,.12);
+}
+
+@media(max-width:760px){
+  .winners-logo{gap:9px;height:48px}
+  .winners-logo .wf-mark{width:48px;height:48px;flex-basis:48px}
+  .winners-logo .wf-wordmark b,
+  .winners-logo .wf-wordmark i{
+    font-size:16px;
+    letter-spacing:-.95px;
+  }
+}
+</style>
+
+<style id="winnersflow-royal-wordmark-refinement">
+/* ONLY: royal refinement for WinnersFlow wordmark */
+.winners-logo .wf-wordmark b,
+.winners-logo .wf-wordmark i{
+  font-family:"Cinzel","Trajan Pro","Times New Roman",serif;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:1.05px;
+  line-height:.92;
+  text-transform:uppercase;
+}
+.winners-logo .wf-wordmark b{
+  color:#fff;
+  text-shadow:0 0 14px rgba(255,255,255,.08);
+}
+.winners-logo .wf-wordmark i{
+  font-weight:800;
+  letter-spacing:.75px;
+  background:linear-gradient(90deg,#fff 0%,#d8baff 52%,#63e6ff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+@media(max-width:760px){
+  .winners-logo .wf-wordmark b,
+  .winners-logo .wf-wordmark i{
+    font-size:15px;
+    letter-spacing:.55px;
+  }
+}
+</style>
+
+<style id="winnersflow-live-intelligence-badge-v2">
+/* ONLY: distinctive LIVE MARKET INTELLIGENCE badge */
+.hero .eyebrow{
+  gap:10px;
+  padding:9px 15px 9px 12px;
+  border:1px solid rgba(183,151,224,.28);
+  border-radius:7px;
+  background:
+    linear-gradient(105deg,rgba(255,255,255,.045),rgba(91,45,125,.055) 48%,rgba(0,0,0,.72)),
+    #030204;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.8),
+    0 7px 22px rgba(0,0,0,.28);
+  color:#d9cde6;
+  letter-spacing:1.8px;
+  font-size:9px;
+  font-weight:800;
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+}
+.hero .eyebrow:before{
+  content:"";
+  width:18px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#9b6fc0,transparent);
+  opacity:.7;
+  order:2;
+  margin-left:2px;
+}
+.hero .eyebrow:after{
+  inset:0;
+  border:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,rgba(255,255,255,.05),transparent 25%,transparent 75%,rgba(173,130,215,.10));
+  opacity:1;
+}
+.hero .eyebrow-dot{
+  width:7px;
+  height:7px;
+  flex:0 0 7px;
+  border-radius:1px;
+  transform:rotate(45deg);
+  background:#b993d2;
+  box-shadow:0 0 7px rgba(185,147,210,.55),0 0 14px rgba(117,75,151,.22);
+}
+.hero .eyebrow:hover{
+  transform:translateY(-1px);
+  border-color:rgba(183,151,224,.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 9px 26px rgba(0,0,0,.34);
+}
+
+/* LIVE MARKET INTELLIGENCE — vivid green status panel */
+.eyebrow{
+  background:linear-gradient(180deg,#35ff86 0%,#08e968 100%);
+  color:#39ff88 !important;
+  border-color:#39ff88 !important;
+  text-shadow:none;
+  box-shadow:0 0 0 1px rgba(57,255,136,.55),0 8px 28px rgba(20,255,120,.24),inset 0 1px 0 rgba(255,255,255,.48);
+}
+.eyebrow-dot{
+  background:#00ff66 !important;
+  box-shadow:none !important;
+}
+
+/* SETUP HEADING — clean white premium treatment */
+.coach-info h2.wf-setup-heading{
+  margin:8px 0 9px;
+  font-size:30px;
+  letter-spacing:-1.5px;
+  line-height:.98;
+}
+.coach-info h2.wf-setup-heading .wf-white-heading{
+  display:inline-block;
+  color:transparent;
+  background:linear-gradient(90deg,#fff 0%,#fff 66%,#f0eaf5 78%,#c7b2d7 89%,#76509a 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 18px rgba(118,80,154,.07);
+}
+</style>
+
+<style id="winnersflow-about-gold-final">
+/* ABOUT WinnersFlow — force Wall Street gold edges over global live-badge styling */
+.dtflow-about-home .wf-about-button{
+  border-color:rgba(224,186,91,.82) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,239,184,.10),
+    inset 0 0 0 1px rgba(112,79,24,.16),
+    0 10px 26px rgba(0,0,0,.34),
+    0 0 18px rgba(207,163,61,.08) !important;
+}
+.dtflow-about-home .wf-about-button:hover{
+  border-color:rgba(247,211,117,.96) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,239,184,.14),
+    inset 0 0 0 1px rgba(154,111,34,.22),
+    0 13px 32px rgba(0,0,0,.42),
+    0 0 24px rgba(211,166,59,.16) !important;
 }
 </style>

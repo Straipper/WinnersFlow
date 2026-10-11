@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>DT FLOW PORTAL — Setup Scanner</title>
+<title>WinnersFlow PORTAL — Setup Scanner</title>
 <meta name="theme-color" content="#070707">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opac
 button,input,select{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}
 .app{display:grid;grid-template-columns:246px 1fr;min-height:100vh}
 .sidebar{position:fixed;inset:0 auto 0 0;width:246px;border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(4,7,13,.97),rgba(2,4,8,.94));backdrop-filter:blur(28px);padding:26px 16px;z-index:30}
-.brand{display:flex;align-items:center;padding:2px 12px 31px;gap:8px}.dt{font-family:"Cormorant Garamond",serif;font-size:38px;line-height:.8;font-weight:700;color:#fff;letter-spacing:-3px}.flow{font-family:"Space Grotesk",sans-serif;font-size:17px;letter-spacing:2px;font-weight:700;color:#fff}.live{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 18px rgba(236,114,255,.7)}
+.brand{display:flex;align-items:center;padding:2px 12px 31px;gap:8px}.brand-word{font-family:"Manrope",sans-serif;font-size:20px;line-height:1;font-weight:800;letter-spacing:-.6px;color:#fff}.dt{font-family:"Cormorant Garamond",serif;font-size:38px;line-height:.8;font-weight:700;color:#fff;letter-spacing:-3px}.flow{font-family:"Space Grotesk",sans-serif;font-size:17px;letter-spacing:2px;font-weight:700;color:#fff}.live{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 18px rgba(236,114,255,.7)}
 .nav-title{font-size:8px;letter-spacing:2.3px;color:#4f5a6e;font-weight:900;padding:15px 12px 9px}.nav button{width:100%;border:1px solid transparent;background:transparent;color:#788398;border-radius:13px;padding:12px 12px;text-align:left;display:flex;align-items:center;gap:12px;font-size:10px;margin:3px 0;transition:.2s}.nav button:hover{background:rgba(255,255,255,.025);color:#dce4f0}.nav button.active{background:linear-gradient(90deg,rgba(139,92,246,.10),rgba(111,231,255,.025));border-color:rgba(139,92,246,.13);color:#f4f8ff;box-shadow:inset 2px 0 var(--cyan),0 10px 30px rgba(0,0,0,.15)}.ico{width:19px;text-align:center;font-size:14px;color:#637087}.active .ico{color:var(--cyan)}
 .sidebar-foot{position:absolute;bottom:22px;left:16px;right:16px;border:1px solid var(--line);border-radius:15px;padding:13px;background:linear-gradient(145deg,#0b111b,#070a11);box-shadow:var(--shadow)}.sidebar-foot small{font-size:7px;color:#596579;letter-spacing:1.6px}.sidebar-foot b{font-size:10px;display:block;margin-top:4px}.gold{color:var(--gold2)!important}
 .main{grid-column:2;min-width:0}.topbar{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 32px;gap:18px;background:rgba(2,4,8,.76);backdrop-filter:blur(25px);position:sticky;top:0;z-index:20}
@@ -56,7 +56,7 @@ button,input,select{font:inherit}button{cursor:pointer}a{text-decoration:none;co
 @media(max-width:1100px){.strategy-grid{grid-template-columns:1fr 1fr}.alert-grid,.journal{grid-template-columns:1fr}.backtest-controls{grid-template-columns:1fr 1fr}.setup{grid-template-columns:62px 1fr 105px}.setup .setup-action{display:none}}
 @media(max-width:980px){.app{grid-template-columns:76px 1fr}.sidebar{width:76px;padding:18px 8px}.brand .flow,.nav-title,.nav button span,.sidebar-foot{display:none}.brand{padding:4px 7px 26px}.brand .dt{font-size:27px}.nav button{justify-content:center;padding:13px 4px}.main{grid-column:2}.two,.detail-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:720px){
- body{padding-bottom:70px}.app{display:block}.sidebar{display:none}.main{display:block}.topbar{height:60px;padding:0 13px}.mobile-brand{display:flex;align-items:center;gap:5px}.mobile-brand .dt{font-family:"Cormorant Garamond",serif;font-size:34px;line-height:.8;font-weight:700;letter-spacing:-3px;color:#fff}.mobile-brand .flow{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;color:#fff}.search{max-width:none}.search input{height:35px}.status,.top-btn{display:none}.content{padding:19px 12px 30px}.header{display:block;margin-bottom:17px}.header p{margin-top:10px}.header h1{font-size:31px}.filters{overflow:auto;flex-wrap:nowrap;padding:11px 12px}.filter{white-space:nowrap}.setup{grid-template-columns:51px 1fr 72px;gap:10px;padding:16px 12px}.setup-metric{grid-column:3;grid-row:1/3}.setup-main{grid-column:2}.setup-main p{max-width:100%}.setup .tag{display:none}.setup .symbol{font-size:11px}.setup-metric b{font-size:12px}.setup-metric small{font-size:6px}.legend{display:block;padding:11px 12px}.legend span{display:block;margin-top:4px}.two,.flowgrid,.strategy-grid,.heat{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.levelbox{grid-template-columns:1fr}.detail-card{padding:16px}.detail-title h2{font-size:20px}.chart{height:285px}.backtest-controls{grid-template-columns:1fr}.bottom{display:grid;position:fixed;left:0;right:0;bottom:0;height:70px;background:rgba(4,7,12,.96);backdrop-filter:blur(22px);border-top:1px solid var(--line);grid-template-columns:repeat(5,1fr);z-index:40;padding-bottom:env(safe-area-inset-bottom)}.bottom button{border:0;background:transparent;color:#697589;font-size:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.bottom button.active{color:var(--cyan)}.bottom .bi{font-size:17px}.hide-mobile{display:none!important}
+ body{padding-bottom:70px}.app{display:block}.sidebar{display:none}.main{display:block}.topbar{height:60px;padding:0 13px}.mobile-brand{display:flex;align-items:center;gap:5px}.mobile-brand .brand-word{font-family:"Manrope",sans-serif;font-size:20px;line-height:1;font-weight:800;letter-spacing:-.6px;color:#fff}.mobile-brand .dt{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;color:#fff}.search{max-width:none}.search input{height:35px}.status,.top-btn{display:none}.content{padding:19px 12px 30px}.header{display:block;margin-bottom:17px}.header p{margin-top:10px}.header h1{font-size:31px}.filters{overflow:auto;flex-wrap:nowrap;padding:11px 12px}.filter{white-space:nowrap}.setup{grid-template-columns:51px 1fr 72px;gap:10px;padding:16px 12px}.setup-metric{grid-column:3;grid-row:1/3}.setup-main{grid-column:2}.setup-main p{max-width:100%}.setup .tag{display:none}.setup .symbol{font-size:11px}.setup-metric b{font-size:12px}.setup-metric small{font-size:6px}.legend{display:block;padding:11px 12px}.legend span{display:block;margin-top:4px}.two,.flowgrid,.strategy-grid,.heat{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.levelbox{grid-template-columns:1fr}.detail-card{padding:16px}.detail-title h2{font-size:20px}.chart{height:285px}.backtest-controls{grid-template-columns:1fr}.bottom{display:grid;position:fixed;left:0;right:0;bottom:0;height:70px;background:rgba(4,7,12,.96);backdrop-filter:blur(22px);border-top:1px solid var(--line);grid-template-columns:repeat(5,1fr);z-index:40;padding-bottom:env(safe-area-inset-bottom)}.bottom button{border:0;background:transparent;color:#697589;font-size:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.bottom button.active{color:var(--cyan)}.bottom .bi{font-size:17px}.hide-mobile{display:none!important}
 }
 
 /* V5 COMMAND CENTER */
@@ -146,7 +146,7 @@ body:after{opacity:.16;background-size:92px 92px;mask-image:linear-gradient(to b
 .command-hero{border:1px solid rgba(244,241,232,.12)!important;border-radius:18px!important;background:
  linear-gradient(110deg,rgba(15,15,15,.98) 0%,rgba(12,12,12,.97) 58%,rgba(28,24,44,.92) 100%)!important;box-shadow:0 35px 100px rgba(0,0,0,.5)!important;position:relative;overflow:hidden}
 .command-hero:before{content:"";position:absolute;right:-90px;top:-120px;width:430px;height:430px;border-radius:50%;border:1px solid rgba(180,140,255,.18);box-shadow:0 0 0 55px rgba(180,140,255,.025),0 0 0 110px rgba(180,140,255,.018)}
-.command-hero:after{content:"DT / FLOW";position:absolute;right:34px;bottom:26px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:rgba(244,241,232,.25)}
+.command-hero:after{content:"WINNERSFLOW";position:absolute;right:34px;bottom:26px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:rgba(244,241,232,.25)}
 .command-top{position:relative;z-index:1}.command-hero h2{font-family:'Manrope',sans-serif;font-size:clamp(34px,4.4vw,66px)!important;line-height:.93!important;letter-spacing:-5px!important}.command-hero h2 .gold{font-family:'Instrument Serif',Georgia,serif;font-style:italic;color:var(--text)!important}.command-hero p{max-width:650px!important;font-size:10px!important;color:#a7a39b!important;line-height:1.85!important}.regime{font-family:'DM Mono',monospace!important;color:var(--acid)!important;letter-spacing:2px!important}
 .command-actions button,.open{border-radius:7px!important;font-family:'DM Mono',monospace!important;letter-spacing:1px!important;text-transform:uppercase}.command-actions button:first-child,.open{background:var(--text)!important;color:#080808!important;border-color:var(--text)!important;box-shadow:0 10px 30px rgba(244,241,232,.08)!important}.command-actions .alt{background:transparent!important;color:var(--text)!important;border-color:rgba(244,241,232,.18)!important}.command-score{background:rgba(255,255,255,.035)!important;border-color:rgba(244,241,232,.12)!important;border-radius:12px!important;backdrop-filter:blur(16px)}.command-score b{font-family:'Instrument Serif',Georgia,serif;font-size:58px!important;font-weight:400!important;font-style:italic;color:var(--lilac)!important}.scorebar i{background:linear-gradient(90deg,var(--lilac),var(--cobalt))!important}
 .pulse-grid{gap:1px!important;background:rgba(244,241,232,.10);border:1px solid rgba(244,241,232,.10);border-radius:14px;overflow:hidden}.pulse{border:0!important;border-radius:0!important;background:#101010!important;padding:20px!important}.pulse:nth-child(2){background:#141414!important}.pulse:nth-child(3){background:#111!important}.pulse:nth-child(4){background:#17151b!important}.pulse small{font-family:'DM Mono',monospace!important;letter-spacing:1.8px;color:#66635d!important}.pulse b{font-size:22px!important;letter-spacing:-1px}.pulse .call{color:var(--acid)!important}
@@ -557,7 +557,7 @@ html.dt-indicators-mode #dtBackbar,
 body.dt-indicators-mode #dtBackbar{display:none!important;}
 </style>
 <style id="dtflow-global-market-ticker">
-/* Global scrolling market tape — same visual language as the DT FLOW landing page. */
+/* Global scrolling market tape — same visual language as the WinnersFlow landing page. */
 .dt-global-ticker{
   height:34px;
   border-bottom:1px solid rgba(255,255,255,.06);
@@ -605,7 +605,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 <body>
 <div class="app">
 <aside class="sidebar">
- <div class="brand"><span class="dt">DT</span><span class="flow">FLOW</span><span class="portal-word">PORTAL</span><i class="live"></i></div>
+ <div class="brand"><span class="brand-word">WinnersFlow</span><span class="portal-word">PORTAL</span><i class="live"></i></div>
  <div class="nav-title">CORE</div>
  <nav class="nav">
   <button class="active" data-page="scanner"><span class="ico">⌁</span><span>Scanner</span></button>
@@ -620,12 +620,12 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   <button data-page="journal"><span class="ico">▤</span><span>Journal</span></button>
   <button data-page="alerts"><span class="ico">⚡</span><span>Signals</span></button>
  </nav>
- <div class="sidebar-foot"><small>WORKSPACE</small><b>DT FLOW <span class="gold">PRO</span></b></div>
+ <div class="sidebar-foot"><small>WORKSPACE</small><b>WinnersFlow <span class="gold">PRO</span></b></div>
 </aside>
 
 <main class="main">
 <header class="topbar">
- <div class="mobile-brand"><span class="dt">DT</span><span class="flow">FLOW</span><span class="portal-word">PORTAL</span></div>
+ <div class="mobile-brand"><span class="brand-word">WinnersFlow</span><span class="portal-word">PORTAL</span></div>
  <div class="search"><span>⌕</span><input id="search" placeholder="Search any NASDAQ ticker…"></div>
  <div class="status"><i></i>MARKET OPEN · DEMO DATA</div>
  <button class="top-btn" onclick="toast('Notifications opened')">⚡</button>
@@ -669,7 +669,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 
 <div id="home" class="page active terminal-home">
   <div class="terminal-topline">
-    <div class="terminal-title"><span class="brand-mark">◆</span><b>DT FLOW</b><span>FLOW STRATEGY OS</span></div>
+    <div class="terminal-title"><span class="brand-mark">◆</span><b>WinnersFlow</b><span>FLOW STRATEGY OS</span></div>
     <div class="market-strip"><span>NASDAQ <b class="up">+0.91%</b></span><span>S&P 500 <b class="up">+0.64%</b></span><span>VIX <b class="down">15.8</b></span><span class="live-dot">● LIVE DEMO</span></div>
   </div>
   <div class="terminal-layout">
@@ -702,7 +702,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 
     <aside class="terminal-panel intelligence-panel">
       <div class="panel-head"><b>MARKET INTELLIGENCE</b><span>NVDA</span></div>
-      <div class="intel-score"><small>DT FLOW CONTEXT</small><strong>82</strong><span>/100</span><div><i style="width:82%"></i></div></div>
+      <div class="intel-score"><small>WinnersFlow CONTEXT</small><strong>82</strong><span>/100</span><div><i style="width:82%"></i></div></div>
       <div class="intel-block"><small>FLOW</small><b class="up">BULLISH</b><p>$1.24M calls · +$3.8M stock flow</p></div>
       <div class="intel-block"><small>KEY LEVEL</small><b>$184.10</b><p>Price approaching resistance</p></div>
       <div class="intel-block"><small>PRICE ACTION</small><b>TESTING</b><p>Confirmation not yet present</p></div>
@@ -716,9 +716,9 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 <div id="scanner" class="page">
   <div class="radar-head">
     <div>
-      <div class="eyebrow">DT FLOW / RADAR</div>
+      <div class="eyebrow">WinnersFlow / RADAR</div>
       <h1>Find the setup.<br><span class="gold">Then wait for confirmation.</span></h1>
-      <p>Scan the NASDAQ for Flow, key levels and price action that match the DT FLOW strategy.</p>
+      <p>Scan the NASDAQ for Flow, key levels and price action that match the WinnersFlow strategy.</p>
     </div>
     <div class="radar-head-meta">
       <span class="demo-badge">DEMO MARKET DATA</span>
@@ -729,7 +729,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   <div class="scanner-strategy-launch">
     <button class="explain-strategy-btn" onclick="openStrategyGuide()">
       <span>✦</span>
-      <div><b>EXPLAIN THE DT STRATEGY</b><small>SCAN → FIND SETUPS → WAIT FOR 5M CONFIRMATION</small></div>
+      <div><b>EXPLAIN THE WINNERSFLOW STRATEGY</b><small>SCAN → FIND SETUPS → WAIT FOR 5M CONFIRMATION</small></div>
       <strong>→</strong>
     </button>
   </div>
@@ -745,7 +745,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
         <div class="radar-signal-label flow-label">FLOW</div>
         <div class="radar-signal-label support-label">SUPPORT</div>
         <div class="radar-signal-label resistance-label">RESISTANCE</div>
-        <div class="radar-core"><span>DT</span><small>FLOW</small></div>
+        <div class="radar-core"><span>WF</span><small>WINNERSFLOW</small></div>
       </div>
       <div class="radar-status" id="radarStatus">
         <b id="radarStatusTitle">READY TO SCAN</b>
@@ -795,7 +795,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   </div>
 </div>
 <div id="setups" class="page">
-  <div class="header"><div><div class="eyebrow">DT FLOW / SETUPS</div><h1>Setup Library.</h1></div><p>Review the strategy setups detected by the scanner and open any setup for its chart and SOFIA context.</p></div>
+  <div class="header"><div><div class="eyebrow">WinnersFlow / SETUPS</div><h1>Setup Library.</h1></div><p>Review the strategy setups detected by the scanner and open any setup for its chart and SOFIA context.</p></div>
   <div class="setup-library-grid">
     <div class="setup-library-card" onclick="openSetup('NVDA')"><div class="setup-lib-top"><span class="lib-symbol">NVDA</span><span class="state-confirmed">● CONFIRMED</span></div><h3>Breakout + Flow Confirmation</h3><p>Flow aligned with resistance. Price confirmation detected above the key level.</p><div class="setup-steps"><span class="on">FLOW ✓</span><span class="on">LEVEL ✓</span><span class="on">PRICE ✓</span><span class="on">SETUP ✓</span></div><div class="setup-score-row"><b>92 / 100</b><button>OPEN SETUP →</button></div></div>
     <div class="setup-library-card" onclick="openSetup('AMD')"><div class="setup-lib-top"><span class="lib-symbol">AMD</span><span class="state-waiting">● WAITING</span></div><h3>Breakout Watch</h3><p>Flow and level are aligned. Waiting for clean price acceptance.</p><div class="setup-steps"><span class="on">FLOW ✓</span><span class="on">LEVEL ✓</span><span class="wait">PRICE ◐</span><span>SETUP ○</span></div><div class="setup-score-row"><b>81 / 100</b><button>OPEN SETUP →</button></div></div>
@@ -805,7 +805,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 </div>
 
 <div id="chart" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / CHART</div><h1 id="terminalPageTitle">MARKET</h1></div><p>Choose a market, index or stock. The chart opens first; tap it for indicators.</p></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / CHART</div><h1 id="terminalPageTitle">MARKET</h1></div><p>Choose a market, index or stock. The chart opens first; tap it for indicators.</p></div>
  <div id="dtChartMarketHub" class="dt-chart-market-hub">
    <div class="dt-market-section">
     <div class="dt-market-head"><div><span class="eyebrow">MARKET</span><h2>Today's Market</h2></div><span class="dt-demo-pill">DEMO MARKET DATA</span></div>
@@ -875,21 +875,21 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
     <div class="chart-flow-pager"><button id="chartFlowBack" onclick="chartFlowBack()">← OLDER</button><span id="chartFlowPagerText">PAGE 1 / 3</span><button id="chartFlowForward" onclick="chartFlowForward()">NEWER →</button></div>
   </div>
   <div class="strategy-traffic dt-chart-context-panel" id="strategyTraffic">
-    <div class="strategy-traffic-head"><div><b>DT FLOW 5M CONFIRM</b><small>RULE-BASED MONITOR</small></div><span class="albert-badge"><i></i>ALBERT AUTO-MONITOR</span></div>
+    <div class="strategy-traffic-head"><div><b>WinnersFlow 5M CONFIRM</b><small>RULE-BASED MONITOR</small></div><span class="albert-badge"><i></i>ALBERT AUTO-MONITOR</span></div>
     <div class="traffic-lights">
       <div class="traffic-light flow"><i></i><b>FLOW</b><small>CONTEXT</small></div>
       <div class="traffic-light level"><i></i><b>LEVEL</b><small>ZONE</small></div>
       <div class="traffic-light price waiting" id="priceTraffic"><i></i><b id="priceTrafficText">WAITING</b><small>5M CLOSE</small></div>
     </div>
     <div class="strategy-alert" id="strategyAlert"><i class="spinner"></i><div><b id="strategyAlertTitle">WAITING FOR CONFIRMATION</b><span id="strategyAlertText">ALBERT is waiting for the completed 5-minute candle to close above resistance.</span></div></div>
-    <button class="strategy-buy" id="strategyBuy" onclick="toast('DT FLOW: confirmation event acknowledged')">✓ BUY NOW · 5M CONFIRMED</button>
+    <button class="strategy-buy" id="strategyBuy" onclick="toast('WinnersFlow: confirmation event acknowledged')">✓ BUY NOW · 5M CONFIRMED</button>
     <div class="strategy-demo"><button onclick="demoConfirm5m()">DEMO · RESISTANCE 5M CLOSE</button><button onclick="demoSupportConfirm5m()">DEMO · SUPPORT RECLAIM</button><button onclick="demoReject5m()">DEMO · REJECTION</button></div>
     <div class="strategy-rule"><b>Core rule:</b> an intrabar wick is not confirmation. For a breakout, the completed 5-minute candle must close above resistance. For a support reclaim, price must test support and the completed 5-minute candle must close back above support.</div>
    </div>
   <div class="chart-strategy-launch">
    <button class="explain-strategy-btn" onclick="openStrategyGuide()">
     <span>✦</span>
-    <div><b>EXPLAIN THE DT STRATEGY</b><small>See the complete FLOW → LEVEL → 5M CONFIRM process</small></div>
+    <div><b>EXPLAIN THE WINNERSFLOW STRATEGY</b><small>See the complete FLOW → LEVEL → 5M CONFIRM process</small></div>
     <strong>→</strong>
    </button>
   </div>
@@ -916,11 +916,11 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   <button class="strategy-back" onclick="go('chart')"><span>←</span><b>BACK TO CHART</b></button>
  </div>
  <div class="header strategy-guide-header">
-  <div><div class="eyebrow">DT FLOW / STRATEGY GUIDE</div><h1>EXPLAIN THE DT STRATEGY</h1></div>
+  <div><div class="eyebrow">WinnersFlow / STRATEGY GUIDE</div><h1>EXPLAIN THE WINNERSFLOW STRATEGY</h1></div>
   <p>One setup. One confirmation rule. Learn the sequence without leaving the chart workspace.</p>
  </div>
  <section class="strategy-guide-card">
-  <div class="guide-kicker">DT FLOW · STRATEGY OPERATING SYSTEM</div>
+  <div class="guide-kicker">WinnersFlow · STRATEGY OPERATING SYSTEM</div>
   <h2>One setup. One confirmation rule.</h2>
   <p class="guide-lead">The complete workflow: discover the setup, identify the level, wait for a completed 5-minute candle, then monitor confirmation.</p>
   <div class="guide-steps">
@@ -948,7 +948,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 
  <section class="guide-grid">
   <div class="guide-card">
-   <div class="guide-kicker">RULE CHECK</div><h3>DT FLOW 5M CONFIRM</h3><div class="guide-ready">READY</div>
+   <div class="guide-kicker">RULE CHECK</div><h3>WinnersFlow 5M CONFIRM</h3><div class="guide-ready">READY</div>
    <p>Wick above resistance ≠ confirmation. Completed 5M close above resistance = confirmation.</p>
    <button class="guide-action-main" onclick="v33Backtest()">TEST THE RULES</button>
    <div id="guideBtResult" class="guide-note">Backtest engine · demo interface</div>
@@ -998,7 +998,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 </div>
 
 <div id="flow" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / FLOW HUB</div><h1>Flow Hub</h1></div><p>Options Flow, Stock Flow and Dark Pool context — connected to the levels that matter.</p></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / FLOW HUB</div><h1>Flow Hub</h1></div><p>Options Flow, Stock Flow and Dark Pool context — connected to the levels that matter.</p></div>
  <div class="flow-hub">
   <div class="card flow-main">
    <div class="flow-tabs"><button class="flow-tab active" onclick="flowTabV28('options',this)">OPTIONS FLOW</button><button class="flow-tab" onclick="flowTabV28('stocks',this)">STOCK FLOW</button><button class="flow-tab" onclick="flowTabV28('dark',this)">DARK POOLS</button></div>
@@ -1074,13 +1074,13 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   <div class="flow-right">
    <div class="flow-insight"><h3>FLOW CONFLUENCE</h3><div class="confluence-orb"><b>82</b><span>CONTEXT</span></div><p>NVDA is the clearest demo example: options activity, stock flow and dark-pool positioning overlap near a key resistance zone.</p></div>
    <div class="flow-insight"><h3>WHAT THE PRINT IS TELLING YOU</h3><div class="flow-breakdown"><div class="fb"><span>Premium</span><b>$1.24M</b></div><div class="fb"><span>Volume / OI</span><b>4.8×</b></div><div class="fb"><span>Aggressor</span><b>Above ask</b></div><div class="fb"><span>Structure</span><b>Resistance</b></div><div class="fb"><span>Price</span><b>Confirmation wait</b></div></div></div>
-   <div class="flow-insight flow-explain"><div class="state">SOFIA INTERPRETATION</div><h4>Interesting ≠ confirmed.</h4><p>The flow becomes more useful when it appears at a meaningful level and price responds. DT FLOW keeps those layers together instead of treating a single print as a signal by itself.</p></div>
+   <div class="flow-insight flow-explain"><div class="state">SOFIA INTERPRETATION</div><h4>Interesting ≠ confirmed.</h4><p>The flow becomes more useful when it appears at a meaningful level and price responds. WinnersFlow keeps those layers together instead of treating a single print as a signal by itself.</p></div>
   </div>
  </div>
 </div>
 
 <div id="sofia" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / SOFIA</div><h1>Ask what the setup means.</h1></div><p>SOFIA connects Flow, levels, price confirmation, dark-pool context, invalidation and the next thing to watch.</p></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / SOFIA</div><h1>Ask what the setup means.</h1></div><p>SOFIA connects Flow, levels, price confirmation, dark-pool context, invalidation and the next thing to watch.</p></div>
  <div class="grid detail-grid">
   <div class="card detail-card sofia"><div class="detail-title"><div><div class="eyebrow">CURRENT CONTEXT · NVDA</div><h2>Breakout + Flow confirmation</h2><div class="sub">DEMO CONTEXT · NOT FINANCIAL ADVICE</div></div><div style="text-align:right"><div class="score">82</div><div class="sub">CONTEXT</div></div></div>
    <div class="levelbox"><div class="level"><small>RESISTANCE</small><b>$184.10</b></div><div class="level"><small>PRICE</small><b>$183.42</b></div><div class="level"><small>SUPPORT</small><b>$179.80</b></div></div>
@@ -1106,28 +1106,28 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 </div>
 
 <div id="backtest" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / BACKTEST</div><h1>Test the rules.</h1></div><p>Choose a strategy, market and period. Demo statistics below are illustrative until connected to a real historical data engine.</p></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / BACKTEST</div><h1>Test the rules.</h1></div><p>Choose a strategy, market and period. Demo statistics below are illustrative until connected to a real historical data engine.</p></div>
  <div class="card section-pad backtest-controls"><select class="select"><option>Breakout + Flow Confirmation</option><option>Breakout + Retest</option><option>5-Bar Acceptance</option><option>Absorption Setup</option><option>Delta Divergence</option><option>Stacked Imbalance</option></select><select class="select"><option>NASDAQ / Large Cap</option><option>S&P 500</option><option>All US Stocks</option></select><select class="select"><option>12 months</option><option>3 years</option><option>5 years</option></select><button class="open" onclick="toast('Demo backtest started')">Run test</button></div>
  <div class="stat-grid"><div class="card stat"><small>WIN RATE</small><b>64.8%</b><p>1,842 samples · demo</p></div><div class="card stat"><small>PROFIT FACTOR</small><b>1.62</b><p>demo result</p></div><div class="card stat"><small>AVG HOLD</small><b>2.8D</b><p>demo result</p></div><div class="card stat"><small>MAX DD</small><b class="put">−8.4%</b><p>demo result</p></div></div>
  <div class="card" style="padding:15px"><div class="scanner-head"><strong>EQUITY CURVE</strong><span>DEMO RESULTS · NOT A PERFORMANCE PROMISE</span></div><div style="height:280px"><svg viewBox="0 0 900 260" preserveAspectRatio="none" width="100%" height="100%"><g stroke="#fff" stroke-opacity=".05"><path d="M0 50H900M0 110H900M0 170H900M0 230H900"/></g><path d="M0 225L75 210L150 220L225 185L300 197L375 158L450 175L525 132L600 145L675 102L750 118L825 74L900 45" fill="none" stroke="#e6c477" stroke-width="3"/></svg></div><div class="grid two" style="margin-top:10px"><div class="card section-pad"><div class="section-title"><b>WHY IT WORKS</b><span>DEMO EXPLANATION</span></div><p class="muted">The demo setup requires a defined level, supportive flow and subsequent price confirmation. The intended edge is the combination of conditions rather than a single indicator.</p></div><div class="card section-pad"><div class="section-title"><b>WHERE IT FAILS</b><span>DEMO EXPLANATION</span></div><p class="muted">False breaks, thin liquidity, abrupt news and weak follow-through can produce failed setups. Real backtesting should model costs, slippage and data quality.</p></div></div></div>
 </div>
 
 <div id="journal" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / JOURNAL</div><h1>Review the decisions.</h1></div><p>Save the setup context so the product becomes a feedback loop, not just a scanner.</p></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / JOURNAL</div><h1>Review the decisions.</h1></div><p>Save the setup context so the product becomes a feedback loop, not just a scanner.</p></div>
  <div class="journal"><div class="card section-pad"><div class="section-title"><b>MY TRADES</b><span>0 SAVED</span></div><div class="empty">No trades yet.<br><button class="open" style="margin-top:12px" onclick="toast('Trade journal entry created')">＋ Log setup</button></div></div><div class="card section-pad"><div class="section-title"><b>SETUP SNAPSHOT</b><span>CAPTURE CONTEXT</span></div><div class="mini-row"><b>Symbol</b><span>NVDA</span></div><div class="mini-row"><b>Strategy</b><span>Breakout + Flow</span></div><div class="mini-row"><b>Flow</b><span>+$3.8M stock / $1.24M calls</span></div><div class="mini-row"><b>Dark pool</b><span>$38.4M near level</span></div><div class="mini-row"><b>Level</b><span>$184.10 resistance</span></div></div></div>
 </div>
 
 <div id="alerts" class="page">
- <div class="header"><div><div class="eyebrow">DT FLOW / SIGNALS ⚡</div><h1>Alert on the conditions.</h1></div><p>Create alerts around price, Flow, dark pools, delta, breakout confirmation or a complete setup confluence.</p></div>
- <div class="alert-grid"><div class="card section-pad active-alerts-pro"><div class="alerts-hero"><div><div class="section-title alert-title"><b>ACTIVE ALERTS</b><span>4 LIVE</span></div><h2>Watching your setups.</h2><p>DT FLOW is monitoring the conditions you chose.</p></div><div class="alert-orbit"><i></i><b>4</b><small>LIVE</small></div></div><div class="alert-health"><span><i></i> MONITORING</span><em>Last check · 12 sec ago</em></div><div class="condition alert-row"><div class="alert-icon flow">↗</div><div class="alert-copy"><b>NVDA <span>·</span> Resistance + Flow</b><small>Flow aligned · waiting for price confirmation</small><div class="alert-meter"><i style="width:78%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon pool">◉</div><div class="alert-copy"><b>TSLA <span>·</span> Dark Pool Level</b><small>Trigger zone · $371.80–372.40</small><div class="alert-meter"><i style="width:61%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon options">◇</div><div class="alert-copy"><b>AMD <span>·</span> Options Flow</b><small>Premium threshold · &gt; $1M</small><div class="alert-meter"><i style="width:44%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon breakout">⌁</div><div class="alert-copy"><b>AAPL <span>·</span> Breakout</b><small>Level confirmation required</small><div class="alert-meter"><i style="width:32%"></i></div></div><span class="toggle">ON</span></div><div class="alerts-footer"><button class="open" onclick="toast('New signal created')">＋ Create signal</button><button class="alert-manage" onclick="toast('Alert manager opened')">Manage alerts <span>→</span></button><span class="alert-capacity">4 / 10</span></div></div>
- <div class="card confluence"><div class="eyebrow">SETUP ALERT</div><h2>Flow + Level + Price</h2><p class="muted">The signature DT FLOW alert fires when the conditions you selected align. Keep the trigger transparent: users should see exactly which conditions caused it.</p><div class="chips"><span class="chip">OPTIONS</span><span class="chip">STOCK FLOW</span><span class="chip">DARK POOL</span><span class="chip">LEVEL</span><span class="chip">PRICE</span></div><button class="open" onclick="toast('Setup alert builder opened')">Build setup alert →</button></div></div>
+ <div class="header"><div><div class="eyebrow">WinnersFlow / SIGNALS ⚡</div><h1>Alert on the conditions.</h1></div><p>Create alerts around price, Flow, dark pools, delta, breakout confirmation or a complete setup confluence.</p></div>
+ <div class="alert-grid"><div class="card section-pad active-alerts-pro"><div class="alerts-hero"><div><div class="section-title alert-title"><b>ACTIVE ALERTS</b><span>4 LIVE</span></div><h2>Watching your setups.</h2><p>WinnersFlow is monitoring the conditions you chose.</p></div><div class="alert-orbit"><i></i><b>4</b><small>LIVE</small></div></div><div class="alert-health"><span><i></i> MONITORING</span><em>Last check · 12 sec ago</em></div><div class="condition alert-row"><div class="alert-icon flow">↗</div><div class="alert-copy"><b>NVDA <span>·</span> Resistance + Flow</b><small>Flow aligned · waiting for price confirmation</small><div class="alert-meter"><i style="width:78%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon pool">◉</div><div class="alert-copy"><b>TSLA <span>·</span> Dark Pool Level</b><small>Trigger zone · $371.80–372.40</small><div class="alert-meter"><i style="width:61%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon options">◇</div><div class="alert-copy"><b>AMD <span>·</span> Options Flow</b><small>Premium threshold · &gt; $1M</small><div class="alert-meter"><i style="width:44%"></i></div></div><span class="toggle">ON</span></div><div class="condition alert-row"><div class="alert-icon breakout">⌁</div><div class="alert-copy"><b>AAPL <span>·</span> Breakout</b><small>Level confirmation required</small><div class="alert-meter"><i style="width:32%"></i></div></div><span class="toggle">ON</span></div><div class="alerts-footer"><button class="open" onclick="toast('New signal created')">＋ Create signal</button><button class="alert-manage" onclick="toast('Alert manager opened')">Manage alerts <span>→</span></button><span class="alert-capacity">4 / 10</span></div></div>
+ <div class="card confluence"><div class="eyebrow">SETUP ALERT</div><h2>Flow + Level + Price</h2><p class="muted">The signature WinnersFlow alert fires when the conditions you selected align. Keep the trigger transparent: users should see exactly which conditions caused it.</p><div class="chips"><span class="chip">OPTIONS</span><span class="chip">STOCK FLOW</span><span class="chip">DARK POOL</span><span class="chip">LEVEL</span><span class="chip">PRICE</span></div><button class="open" onclick="toast('Setup alert builder opened')">Build setup alert →</button></div></div>
 </div>
 
 </section>
 </main>
 </div>
 
-<nav class="bottom" aria-label="DT FLOW navigation">
+<nav class="bottom" aria-label="WinnersFlow navigation">
  <button class="active" data-page="scanner"><span class="bi icon-scanner">⌁</span><b>Scanner</b><small>RADAR</small></button>
  <button data-page="flow"><span class="bi icon-flow">◉</span><b>Flow</b><small>ACTIVITY</small></button>
  <button data-page="setups"><span class="bi icon-setup">◇</span><b>Setups</b><small>PLAYBOOK</small></button>
@@ -1158,7 +1158,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 </style>
 <div class="toast" id="toast"></div>
 
-<!-- DT FLOW internal navigation history -->
+<!-- WinnersFlow internal navigation history -->
 <div class="dt-backbar" id="dtBackbar" aria-live="polite">
   <button type="button" id="dtBackBtn" onclick="dtGoBack()" aria-label="Back to previous view">
     <span>←</span><b>BACK</b>
@@ -1167,13 +1167,13 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 <script>
 const pages=[...document.querySelectorAll('.page')],buttons=[...document.querySelectorAll('[data-page]')];
 
-// DT FLOW keeps its own internal view history so every drill-down can be reversed.
+// WinnersFlow keeps its own internal view history so every drill-down can be reversed.
 const dtViewHistory=[];
 let dtCurrentView=null;
 let dtSuppressHistory=false;
 const dtViewNames={
  scanner:'SCANNER / RADAR', chart:'CHART', flow:'FLOW HUB', sofia:'SOFIA', alerts:'ALERTS',
- strategyGuide:'DT FLOW STRATEGY', backtest:'BACKTEST', journal:'JOURNAL', settings:'SETTINGS',
+ strategyGuide:'WinnersFlow STRATEGY', backtest:'BACKTEST', journal:'JOURNAL', settings:'SETTINGS',
  setups:'SETUPS', signals:'SIGNALS', more:'MORE'
 };
 function dtViewName(id){
@@ -1210,7 +1210,7 @@ function dtGoBack(){
  dtUpdateBackButton();
 }
 buttons.forEach(b=>b.addEventListener('click',()=>go(b.dataset.page,{push:false})));
-// DT FLOW PORTAL opens directly into the strategy scanner.
+// WinnersFlow PORTAL opens directly into the strategy scanner.
 go('scanner',{push:false});
 
 function openStrategyGuide(){
@@ -1376,7 +1376,7 @@ document.querySelectorAll('.filter').forEach(f=>f.onclick=()=>{document.querySel
 
 <style id="dtflow-v15-black-luxe">
 /* =========================================================
-   DT FLOW V15 — BLACK TERMINAL LUXE
+   WinnersFlow V15 — BLACK TERMINAL LUXE
    Same structure + same black/graphite/green/red/gold palette.
    Visual refinement only.
 ========================================================= */
@@ -2018,7 +2018,7 @@ body:before,body:after{background:none !important;opacity:0 !important;}
 
 <style id="dtflow-v17-radar">
 /* =========================================================
-   DT FLOW V17 — SETUP RADAR
+   WinnersFlow V17 — SETUP RADAR
    Setup-centric UX. No portfolio / order-entry semantics.
 ========================================================= */
 :root{--v17-black:#000;--v17-panel:#080a0b;--v17-panel2:#0d1113;--v17-line:#1b2226;--v17-muted:#68737b;--v17-green:#39d98a;--v17-red:#ff5b68;--v17-yellow:#d7b66d;--v17-cyan:#55dfff}
@@ -2160,7 +2160,7 @@ body:after{opacity:.045!important;background-image:linear-gradient(rgba(255,255,
 .setup-radar-mini .holding strong{font:700 9px "DM Mono",monospace;text-align:right}.setup-radar-mini .holding strong small{font-size:5px;letter-spacing:.6px}.setup-radar-mini .holding .gold{color:#d7b66d!important}
 
 /* ═══════════════════════════════════════════════════════════════
-   DT FLOW PORTAL / MOBILE COMMAND NAV
+   WinnersFlow PORTAL / MOBILE COMMAND NAV
    ═══════════════════════════════════════════════════════════════ */
 .brand .portal-word,.mobile-brand .portal-word{display:block;color:#707a80;font:600 6px "DM Mono",monospace;letter-spacing:2.4px;margin-top:3px}
 .brand{position:relative;line-height:.85}
@@ -2201,7 +2201,7 @@ body:after{opacity:.045!important;background-image:linear-gradient(rgba(255,255,
 .page#scanner{padding-bottom:90px}
 </style>
 <script>
-// DT FLOW V28 — single-symbol flow controls + print-size filters
+// WinnersFlow V28 — single-symbol flow controls + print-size filters
 const flowV28={tab:'options',ticker:'ALL',size:'ALL'};
 function flowTabV28(id,el){
  flowV28.tab=id;document.querySelectorAll('#flow .flow-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');
@@ -2227,7 +2227,7 @@ function filterFlowV28(){
 
 
 <style id="dtflow-v31-strategy-system">
-/* V31 — DT FLOW 5M CONFIRM / SOFIA + ALBERT */
+/* V31 — WinnersFlow 5M CONFIRM / SOFIA + ALBERT */
 .strategy-traffic{position:relative;overflow:hidden;background:linear-gradient(145deg,#0b0f10,#060809)!important;border-color:#273033!important}
 .strategy-traffic:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(85,230,164,.07),transparent 34%);pointer-events:none}
 .strategy-traffic-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -2272,7 +2272,7 @@ function filterFlowV28(){
 </script>
 
 
-<!-- DT FLOW V33 COMPLETE MODULES -->
+<!-- WinnersFlow V33 COMPLETE MODULES -->
 <style id="dtflow-v33-complete">
 .v33-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.v33-card{background:#070909;border:1px solid #202729;border-radius:8px;padding:16px}.v33-card h3{margin:0 0 7px;font-size:12px}.v33-card p{margin:0;color:#78848a;font-size:9px;line-height:1.65}.v33-kicker{font:700 7px 'DM Mono',monospace;letter-spacing:1.5px;color:#55e6a4}.v33-steps{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:12px}.v33-step{padding:11px 8px;border:1px solid #202729;background:#080b0c;border-radius:6px}.v33-step b{display:block;font:700 8px 'DM Mono',monospace}.v33-step span{display:block;margin-top:5px;color:#69757a;font-size:8px}.v33-confirm{border-color:rgba(85,230,164,.35);box-shadow:0 0 28px rgba(85,230,164,.06)}.v33-danger{border-color:rgba(255,102,133,.3)}.v33-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.v33-btn{border:1px solid #30383b;background:#0b0f10;color:#cbd1d3;padding:9px 11px;border-radius:5px;font:700 7px 'DM Mono',monospace;letter-spacing:.7px;cursor:pointer}.v33-btn:hover{border-color:#55e6a4;color:#55e6a4}.v33-meter{height:5px;background:#151a1b;border-radius:9px;overflow:hidden;margin-top:10px}.v33-meter i{display:block;height:100%;width:82%;background:#55e6a4}.v33-table{width:100%;border-collapse:collapse;margin-top:10px}.v33-table td,.v33-table th{padding:8px;border-bottom:1px solid #171d1f;text-align:left;font-size:8px}.v33-table th{font:700 7px 'DM Mono',monospace;color:#69757a;letter-spacing:1px}.v33-state{font:700 7px 'DM Mono',monospace}.v33-green{color:#55e6a4}.v33-yellow{color:#d7b56d}.v33-red{color:#ff6685}.v33-note{margin-top:10px;color:#5f6b70;font-size:8px;line-height:1.6}.v33-replay{min-height:150px;display:flex;align-items:center;justify-content:center;flex-direction:column}.v33-candle{height:42px;width:8px;background:#55e6a4;position:relative;margin:12px}.v33-candle:before,.v33-candle:after{content:"";position:absolute;left:3px;width:2px;background:#55e6a4}.v33-candle:before{height:15px;top:-15px}.v33-candle:after{height:15px;bottom:-15px}.v33-alert-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #171d1f}.v33-alert-row b{font-size:9px}.v33-alert-row span{font:700 7px 'DM Mono',monospace;color:#55e6a4}.v33-score{font:700 22px 'DM Mono',monospace}.v33-small{color:#68747a;font-size:8px}@media(max-width:720px){.v33-grid{grid-template-columns:1fr}.v33-steps{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -2406,7 +2406,7 @@ function filterFlowV28(){
   function answerSofia(raw){
     const sym=currentSym(), d=tickerData[sym]||tickerData.NVDA, x=raw.toLowerCase();
     if(/confirm|buy|entry|milloin|milloin ost|5m|5 min/.test(x))
-      return `${sym}: DT FLOW 5M CONFIRM waits for the completed 5-minute candle. For a breakout, the candle must close above ${d.resistance}. A wick above the level while the candle is still open is not confirmation.`;
+      return `${sym}: WinnersFlow 5M CONFIRM waits for the completed 5-minute candle. For a breakout, the candle must close above ${d.resistance}. A wick above the level while the candle is still open is not confirmation.`;
     if(/invalid|fail|break|mität|cancel/.test(x))
       return `${sym}: the setup is invalidated if the monitored level is rejected or the configured confirmation condition fails. For a breakout, a 5M close back below the breakout level removes the confirmation context.`;
     if(/flow|options|dark|print/.test(x))
@@ -2510,7 +2510,7 @@ function filterFlowV28(){
   if(logBtn){
     logBtn.onclick=function(){
       const sym=currentSym();dtV34.journal.push({sym,time:new Date().toLocaleTimeString()});
-      const empty=logBtn.closest('.empty'); if(empty)empty.innerHTML='<div class="dt-journal-success">✓ SETUP LOGGED</div><div style="margin-top:7px;color:#78848a;font-size:8px">'+sym+' · DT FLOW 5M CONFIRM · '+dtV34.journal.at(-1).time+'</div><button class="open" style="margin-top:12px" onclick="document.querySelector(\'#journal .empty\').scrollIntoView({behavior:\'smooth\'})">VIEW LOG</button>';
+      const empty=logBtn.closest('.empty'); if(empty)empty.innerHTML='<div class="dt-journal-success">✓ SETUP LOGGED</div><div style="margin-top:7px;color:#78848a;font-size:8px">'+sym+' · WinnersFlow 5M CONFIRM · '+dtV34.journal.at(-1).time+'</div><button class="open" style="margin-top:12px" onclick="document.querySelector(\'#journal .empty\').scrollIntoView({behavior:\'smooth\'})">VIEW LOG</button>';
       toast(sym+' setup added to journal');
     }
   }
@@ -2931,9 +2931,9 @@ const tools={
  'PREMARKET':{id:'pm',group:'STRUCTURE',kind:'overlay',calc:'LEVELS2',desc:'Premarket High and Low show the extremes formed before the regular session. They can frame where price is trading relative to the early range.',formula:'PMH/PML = high/low of the premarket window'},
  'SESSION HIGH / LOW':{id:'session',group:'STRUCTURE',kind:'overlay',calc:'LEVELS3',desc:'Session High and Low track the current selected session extremes and update as new candles are added.',formula:'HOD/LOD = highest/lowest price in the session'},
  'HTF LEVELS':{id:'htf',group:'STRUCTURE',kind:'overlay',calc:'LEVELS4',desc:'Higher-timeframe levels put broader structure onto a smaller chart so you can see where the current move sits in context.',formula:'HTF level = selected higher-timeframe swing/reference level'},
- 'FLOW LEVELS':{id:'flowlevels',group:'DT FLOW',kind:'overlay',calc:'FLOW',desc:'DT FLOW levels connect Flow activity with price structure. They are contextual markers, not predictions.',formula:'Flow + price level = setup context'},
- 'DARK POOL LEVELS':{id:'dark',group:'DT FLOW',kind:'overlay',calc:'DARK',desc:'Dark Pool Levels mark demo reference zones associated with reported large prints. They should be treated as context until connected to verified data.',formula:'Reference zone derived from dark-pool print price'},
- 'OPTIONS FLOW LEVELS':{id:'opt',group:'DT FLOW',kind:'overlay',calc:'OPTIONS',desc:'Options Flow Levels mark demo zones where options activity is concentrated. The level itself does not predict direction.',formula:'Reference zone derived from options-flow activity'}
+ 'FLOW LEVELS':{id:'flowlevels',group:'WinnersFlow',kind:'overlay',calc:'FLOW',desc:'WinnersFlow levels connect Flow activity with price structure. They are contextual markers, not predictions.',formula:'Flow + price level = setup context'},
+ 'DARK POOL LEVELS':{id:'dark',group:'WinnersFlow',kind:'overlay',calc:'DARK',desc:'Dark Pool Levels mark demo reference zones associated with reported large prints. They should be treated as context until connected to verified data.',formula:'Reference zone derived from dark-pool print price'},
+ 'OPTIONS FLOW LEVELS':{id:'opt',group:'WinnersFlow',kind:'overlay',calc:'OPTIONS',desc:'Options Flow Levels mark demo zones where options activity is concentrated. The level itself does not predict direction.',formula:'Reference zone derived from options-flow activity'}
 };
 const colors=['#d8baff','#63e6ff','#55e6a4','#ec72ff','#ffd76a','#ff8fb2','#9b5cff'];
 let state={tf:'5m',active:new Set(),explain:false};
@@ -2975,7 +2975,7 @@ function draw(){const svg=q('.candle-svg');if(!svg)return;renderDynamicPriceChar
 function renderPanes(d){const pane=q('#v67Panes');if(!pane)return;pane.innerHTML='';const cl=d.map(x=>x.close);state.active.forEach(id=>{const t=Object.values(tools).find(x=>x.id===id);if(!t||t.kind!=='pane')return;const box=document.createElement('div');box.className='v67-pane show';box.innerHTML=`<div class="v67-pane-head"><span>${Object.keys(tools).find(k=>tools[k]===t)}</span><span>${state.tf.toUpperCase()} · DEMO CALCULATION</span></div>`;if(t.calc==='VOLUME'||t.calc==='RVOL'){const bars=document.createElement('div');bars.className='v67-volume-bars';const av=sma(d.map(x=>x.volume),20);d.slice(-60).forEach((x,i)=>{const b=document.createElement('i');let v=t.calc==='VOLUME'?x.volume:(av[d.length-60+i]?x.volume/av[d.length-60+i]:1);b.style.height=Math.min(100,Math.max(5,v/(t.calc==='VOLUME'?2500000:3)*70))+'%';bars.appendChild(b)});box.appendChild(bars)}else{const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');sv.setAttribute('viewBox','0 0 1000 160');let vals;if(t.calc==='RSI')vals=rsi(cl,14);else if(t.calc==='ATR')vals=atr(d,14);else if(t.calc==='STOCH')vals=d.map((x,i)=>{let sl=d.slice(Math.max(0,i-13),i+1),hi=Math.max(...sl.map(z=>z.high)),lo=Math.min(...sl.map(z=>z.low));return 100*(x.close-lo)/(hi-lo||1)});else if(t.calc==='MACD'){let a=ema(cl,12),b=ema(cl,26);vals=a.map((x,i)=>x-b[i])}else vals=cl.map((_,i)=>i<14?null:20+Math.abs(Math.sin(i*.18))*45);let min=Math.min(...vals.filter(v=>v!=null)),max=Math.max(...vals.filter(v=>v!=null));let pts=vals.map((v,i)=>v==null?null:`${i/(vals.length-1)*1000},${(1-(v-min)/(max-min||1))*140+10}`).filter(Boolean);const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M'+pts.join(' L'));path.setAttribute('fill','none');path.setAttribute('stroke','#d8baff');path.setAttribute('stroke-width','2');sv.appendChild(path);if(t.calc==='RSI'){[30,70].forEach(v=>{let y=(1-(v-min)/(max-min||1))*140+10;let l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1','0');l.setAttribute('x2','1000');l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('stroke','#4d4559');l.setAttribute('stroke-dasharray','4 6');sv.appendChild(l)})}box.appendChild(sv)}pane.appendChild(box)});pane.classList.toggle('show',pane.children.length>0)}
 function toggle(id){state.active.has(id)?state.active.delete(id):state.active.add(id);qa('[data-v67tool]').forEach(b=>{b.classList.toggle('active',state.active.has(b.dataset.v67tool))});draw();}
 function setTF(tf){state.tf=tf;qa('[data-v67tf]').forEach(b=>b.classList.toggle('active',b.dataset.v67tf===tf));const label=q('#chartTfLabel');if(label)label.textContent=tf.toUpperCase();const old=window.dtChartTF;/* keep the prototype's existing context messaging */if(typeof old==='function'&&['5m','15m','1h'].includes(tf))old(tf, q('[data-chart-tf="'+tf+'"]'));draw();toast('Chart timeframe · '+tf.toUpperCase());}
-function showExplain(id){const t=Object.values(tools).find(x=>x.id===id);if(!t)return;let pop=q('#v67ExplainPop');if(!pop){pop=document.createElement('div');pop.id='v67ExplainPop';pop.className='v67-explain-pop';pop.innerHTML='<div class="v67-explain-card"><div class="k">DT FLOW · SIMPLE EXPLANATION</div><h3 id="v67ExTitle"></h3><p id="v67ExText"></p><div class="formula" id="v67ExFormula"></div><button class="v67-close">CLOSE</button></div>';root.body.appendChild(pop);pop.addEventListener('click',e=>{if(e.target===pop||e.target.closest('.v67-close'))pop.classList.remove('show')})}q('#v67ExTitle').textContent=Object.keys(tools).find(k=>tools[k]===t)||id;q('#v67ExText').textContent=t.desc;q('#v67ExFormula').textContent=t.formula;pop.classList.add('show')}
+function showExplain(id){const t=Object.values(tools).find(x=>x.id===id);if(!t)return;let pop=q('#v67ExplainPop');if(!pop){pop=document.createElement('div');pop.id='v67ExplainPop';pop.className='v67-explain-pop';pop.innerHTML='<div class="v67-explain-card"><div class="k">WinnersFlow · SIMPLE EXPLANATION</div><h3 id="v67ExTitle"></h3><p id="v67ExText"></p><div class="formula" id="v67ExFormula"></div><button class="v67-close">CLOSE</button></div>';root.body.appendChild(pop);pop.addEventListener('click',e=>{if(e.target===pop||e.target.closest('.v67-close'))pop.classList.remove('show')})}q('#v67ExTitle').textContent=Object.keys(tools).find(k=>tools[k]===t)||id;q('#v67ExText').textContent=t.desc;q('#v67ExFormula').textContent=t.formula;pop.classList.add('show')}
 window.addEventListener('load',()=>{makeUI();const pane=document.createElement('div');pane.id='v67Panes';pane.className='v67-panes';const chart=q('.candle-wrap');if(chart)chart.parentNode.insertBefore(pane,chart.nextSibling);draw()});
 // Re-draw when a different ticker is opened.
 const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTicker=function(sym){const r=oldOpen.apply(this,arguments);setTimeout(draw,80);return r}}
@@ -3630,7 +3630,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
 </script>
 </html>
 <style id="dtflow-v57-home-brand-theme">
-/* V57 — Portal visual language aligned with the DT FLOW landing page. */
+/* V57 — Portal visual language aligned with the WinnersFlow landing page. */
 .brand .dt,.mobile-brand .dt{font-family:"Cormorant Garamond",serif!important;color:#fff!important;font-weight:700!important;letter-spacing:-3px!important}
 .brand .flow,.mobile-brand .flow{font-family:"Space Grotesk",sans-serif!important;color:#fff!important;font-weight:700!important;letter-spacing:2px!important}
 .sidebar{background:linear-gradient(180deg,rgba(4,2,8,.97),rgba(2,0,6,.96))!important}
@@ -3644,7 +3644,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
 
 <style id="dtflow-v59-radar-flow-luxe">
 /* =========================================================
-   DT FLOW V59 — RADAR / FLOW LUXE
+   WinnersFlow V59 — RADAR / FLOW LUXE
    Landing-page visual DNA applied to Radar + Flow.
    No functional data logic changed.
 ========================================================= */
@@ -3779,7 +3779,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
 }
 #radarShell .flow-label{color:#ec72ff!important}.radar-shell .support-label{color:#bfa8ff!important}.radar-shell .resistance-label{color:#63e6ff!important}
 
-/* --- Quiet DT FLOW core --- */
+/* --- Quiet WinnersFlow core --- */
 #radarShell .radar-core{
   width:76px!important;height:76px!important;
   background:radial-gradient(circle,#0a0810 0%,#06050a 68%,#030206 100%)!important;
@@ -4434,7 +4434,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
       renderRows(kind,json);
     }catch(e){
       const list=document.getElementById('chartFlowRows');
-      if(list)list.innerHTML='<div class="chart-flow-row"><span class="time">—</span><div class="main"><b>CONNECTING</b><small>Live Flow requires an authenticated DT FLOW session and the configured provider.</small></div><span class="value">—</span></div>';
+      if(list)list.innerHTML='<div class="chart-flow-row"><span class="time">—</span><div class="main"><b>CONNECTING</b><small>Live Flow requires an authenticated WinnersFlow session and the configured provider.</small></div><span class="value">—</span></div>';
     }
   }
   function setView(kind){
