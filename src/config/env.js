@@ -1,4 +1,9 @@
 import "dotenv/config";
+
+// Backward compatibility for the deployed OptionWhales environment variable.
+if (!process.env.OPTIONFLOW_API_KEY && process.env.OPTIONWHALES_API_KEY) {
+  process.env.OPTIONFLOW_API_KEY = process.env.OPTIONWHALES_API_KEY;
+}
 import { z } from "zod";
 
 const schema = z.object({

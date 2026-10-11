@@ -38,36 +38,178 @@ export async function getOptionWhalesStatus(){
   } catch(error) { return {configured:true, error:error.message}; }
 }
 
-export function normalizeOptionsRows(payload){
-  const rows = payload?.data?.rows || payload?.data?.ticks || payload?.rows || payload?.ticks || payload?.data || [];
-  return Array.isArray(rows) ? rows.map((r,i)=>({
-    id:r.event_id || r.id || `${r.timestamp || r.ts || i}-${r.option_ticker || r.contract || ''}`,
-    timestamp:r.timestamp || r.ts || r.time || null,
-    contract:r.option_ticker || r.contract || r.symbol || null,
-    optionType:r.option_type || r.type || null,
-    strike:r.strike ?? null,
-    expiration:r.expiration || null,
-    contracts:r.total_contracts ?? r.contracts ?? r.size ?? null,
-    premium:r.premium ?? r.total_premium ?? r.notional ?? null,
-    direction:r.direction || r.side || null,
-    orderType:r.order_type || r.trade_type || null,
-    spot:r.spot_price ?? r.underlying_price ?? null,
-    source:'optionwhales',
-  })) : [];
+export function firstValue(...values) {
+  return values.find(v => v !== undefined && v !== null && v !== '');
 }
 
-export function normalizeDarkRows(payload){
-  const rows = payload?.data?.prints || payload?.data?.rows || payload?.prints || payload?.rows || payload?.data || [];
-  return Array.isArray(rows) ? rows.map((r,i)=>({
-    id:r.event_id || r.id || `${r.timestamp || r.ts || i}-${r.price || ''}-${r.size || ''}`,
-    timestamp:r.timestamp || r.ts || r.time || null,
-    price:r.price ?? r.trade_price ?? null,
-    shares:r.shares ?? r.size ?? r.volume ?? null,
-    notional:r.notional ?? r.trade_value ?? null,
-    venue:r.venue || r.exchange || null,
-    nbboLocation:r.nbbo_location || r.location || null,
-    source:'optionwhales',
-  })) : [];
+function findRows(payload, keys) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+
+  for (const key of keys) {
+    if (Array.isArray(payload[key])) return payload[key];
+  }
+
+  for (const key of ['data', 'result', 'results', 'response']) {
+    const found = findRows(payload[key], keys);
+    if (found.length) return found;
+  }
+
+  return [];
+}
+
+function parseOccContract(value) {
+  if (typeof value !== 'string') return {};
+
+  // OCC: symbol padded to 6 chars + YYMMDD + C/P + 8-digit strike
+  const match = value.trim().match(/^([A-Z]{1,6})\s*(\d{6})([CP])(\d{8})$/i);
+  if (!match) return {};
+
+  const [, underlying, date, cp, strikeDigits] = match;
+  const yy = Number(date.slice(0, 2));
+  const year = yy >= 70 ? 1900 + yy : 2000 + yy;
+  const month = date.slice(2, 4);
+  const day = date.slice(4, 6);
+
+  return {
+    underlying: underlying.trim(),
+    optionType: cp.toUpperCase() === 'C' ? 'CALL' : 'PUT',
+    expiration: `${year}-${month}-${day}`,
+    strike: Number(strikeDigits) / 1000,
+  };
+}
+
+export function normalizeOptionsRows(payload) {
+  const rows = findRows(payload, [
+    'rows', 'ticks', 'orders', 'options_flow', 'flow',
+  ]);
+
+  return rows.map((r, i) => {
+    const order = r?.order && typeof r.order === 'object'
+      ? r.order
+      : {};
+    const contract = firstValue(
+      r?.option_ticker, r?.contract, r?.contract_symbol,
+      r?.option_symbol, r?.symbol,
+      order.option_ticker, order.contract, order.contract_symbol,
+      order.option_symbol, order.symbol
+    );
+    const occ = parseOccContract(contract);
+
+    const timestamp = firstValue(
+      r?.timestamp, r?.ts, r?.time, r?.datetime,
+      r?.created_at, r?.trade_time, r?.executed_at,
+      order.timestamp, order.ts, order.time, order.datetime,
+      order.created_at, order.trade_time, order.executed_at
+    );
+
+    return {
+      id: String(firstValue(
+        r?.event_id, r?.id, order.event_id, order.id,
+        `${timestamp || 'unknown'}-${contract || i}`
+      )),
+      timestamp: timestamp ?? null,
+      contract: contract ?? null,
+      optionType: firstValue(
+        r?.option_type, r?.put_call, r?.call_put,
+        order.option_type, order.put_call, order.call_put,
+        occ.optionType
+      ) ?? null,
+      strike: firstValue(
+        r?.strike, order.strike, occ.strike
+      ) ?? null,
+      expiration: firstValue(
+        r?.expiration, r?.expiry, r?.expiration_date,
+        order.expiration, order.expiry, order.expiration_date,
+        occ.expiration
+      ) ?? null,
+      contracts: firstValue(
+        r?.total_contracts, r?.contracts, r?.contract_count,
+        r?.quantity, r?.size,
+        order.total_contracts, order.contracts,
+        order.contract_count, order.quantity, order.size
+      ) ?? null,
+      premium: firstValue(
+        r?.premium, r?.total_premium, r?.total_notional,
+        r?.notional, r?.total_value,
+        order.premium, order.total_premium, order.total_notional,
+        order.notional, order.total_value
+      ) ?? null,
+      direction: firstValue(
+        r?.direction, r?.side, r?.sentiment,
+        order.direction, order.side, order.sentiment
+      ) ?? null,
+      orderType: firstValue(
+        r?.order_type, r?.trade_type, r?.execution_type,
+        order.order_type, order.trade_type, order.execution_type
+      ) ?? null,
+      spot: firstValue(
+        r?.spot_price, r?.underlying_price, r?.underlying_last,
+        r?.stock_price,
+        order.spot_price, order.underlying_price,
+        order.underlying_last, order.stock_price
+      ) ?? null,
+      source: 'optionwhales',
+    };
+  });
+}
+
+export function normalizeDarkRows(payload) {
+  const rows = findRows(payload, [
+    'prints', 'rows', 'trades', 'ticks', 'dark_pool', 'darkpool',
+  ]);
+
+  return rows.map((r, i) => {
+    const trade = r?.trade && typeof r.trade === 'object'
+      ? r.trade
+      : {};
+    const timestamp = firstValue(
+      r?.timestamp, r?.ts, r?.time, r?.datetime,
+      r?.created_at, r?.executed_at, r?.trade_time,
+      r?.execution_time, r?.reported_at,
+      trade.timestamp, trade.ts, trade.time, trade.datetime,
+      trade.created_at, trade.executed_at, trade.trade_time,
+      trade.execution_time, trade.reported_at
+    );
+
+    const price = firstValue(
+      r?.price, r?.trade_price, r?.execution_price,
+      r?.last_price, trade.price, trade.trade_price,
+      trade.execution_price, trade.last_price
+    );
+    const shares = firstValue(
+      r?.shares, r?.size, r?.volume, r?.quantity,
+      r?.share_size, r?.trade_size,
+      trade.shares, trade.size, trade.volume,
+      trade.quantity, trade.share_size, trade.trade_size
+    );
+    const notional = firstValue(
+      r?.notional, r?.trade_value, r?.dollar_value,
+      r?.total_value, r?.amount,
+      trade.notional, trade.trade_value, trade.dollar_value,
+      trade.total_value, trade.amount
+    );
+
+    return {
+      id: String(firstValue(
+        r?.event_id, r?.id, trade.event_id, trade.id,
+        `${timestamp || 'unknown'}-${price ?? ''}-${shares ?? i}`
+      )),
+      timestamp: timestamp ?? null,
+      price: price ?? null,
+      shares: shares ?? null,
+      notional: notional ?? null,
+      venue: firstValue(
+        r?.venue, r?.exchange, r?.market_center,
+        trade.venue, trade.exchange, trade.market_center
+      ) ?? null,
+      nbboLocation: firstValue(
+        r?.nbbo_location, r?.location, r?.price_location,
+        trade.nbbo_location, trade.location, trade.price_location
+      ) ?? null,
+      source: 'optionwhales',
+    };
+  });
 }
 
 export function createOptionFlowSocket({onEvent,onStatus}={}){

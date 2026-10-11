@@ -1,11 +1,22 @@
 import express from 'express';
 import { query } from '../db/pool.js';
+import { diagnoseOptionWhales } from '../services/optionWhalesDiagnostics.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/access.js';
 import { getAnalyticsOverview } from '../services/analytics.js';
 
 const router = express.Router();
 router.use(requireAuth, requireAdmin);
+router.get('/optionwhales-diagnostics', async (req, res, next) => {
+  try {
+    res.json({
+      ok: true,
+      diagnostics: await diagnoseOptionWhales(),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get('/analytics/overview', async (req, res, next) => {
   try {
