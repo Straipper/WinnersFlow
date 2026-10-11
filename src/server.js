@@ -1,4 +1,6 @@
 import http from 'http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -30,6 +32,7 @@ import { requireProductAccess } from './middleware/access.js';
 import { attachLiveMarket } from './services/liveMarket.js';
 import { addRequestId, rateLimit, securityHeaders } from './middleware/security.js';
 
+const PUBLIC_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../public");
 const app=express();
 app.disable('x-powered-by');
 app.set('trust proxy', env.NODE_ENV === 'production' ? 1 : false);
@@ -58,7 +61,9 @@ app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), asyn
 });
 app.use(express.json({limit:'50kb', strict:true}));
 app.use(morgan('tiny'));
-app.get('/',(req,res)=>res.json({name:'DT FLOW API',status:'online',stage:'STEP 28 - ANALYTICS / CONVERSION FUNNEL'}));
+app.use(express.static(PUBLIC_DIR));
+app.get('/',(req,res)=>res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
+app.get('/portal',(req,res)=>res.sendFile(path.join(PUBLIC_DIR, 'portal.html')));
 app.use('/api/health',health);
 app.use('/api/auth',auth);
 app.use('/api/billing',billing);

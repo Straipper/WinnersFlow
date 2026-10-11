@@ -1,0 +1,3550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DT FLOW — Trading Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --black:#000000;
+  --bg:#020106;
+  --bg2:#05030a;
+  --panel:#08070d;
+  --panel2:#0d0915;
+  --panel3:#120c1c;
+
+  --white:#ffffff;
+  --soft:#f5f3fa;
+
+  --muted:#8d8799;
+  --muted2:#b5afbf;
+
+  --purple:#8b5cf6;
+  --violet:#a855f7;
+  --pink:#ec72ff;
+  --cyan:#63e6ff;
+
+  --green:#55e6a4;
+  --red:#ff6685;
+  --yellow:#ffd76a;
+
+  --border:rgba(255,255,255,.085);
+  --border2:rgba(255,255,255,.13);
+
+  --shadow:0 25px 80px rgba(0,0,0,.55);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:#000;
+  color:var(--white);
+  font-family:"DM Sans",sans-serif;
+  overflow-x:hidden;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button{
+  font:inherit;
+}
+
+.container{
+  width:min(1180px,calc(100% - 32px));
+  margin:auto;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-3;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(139,92,246,.12),transparent 35%),
+    radial-gradient(circle at 90% 35%,rgba(236,114,255,.055),transparent 28%),
+    radial-gradient(circle at 5% 65%,rgba(99,230,255,.035),transparent 25%);
+}
+
+.grid-bg{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-2;
+  opacity:.18;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+
+  background-size:60px 60px;
+
+  mask-image:linear-gradient(to bottom,black,transparent 80%);
+}
+
+/* =========================
+   NAV
+========================= */
+
+nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(18px);
+
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.nav-inner{
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.logo-dt{
+  font-family:"Cormorant Garamond",serif;
+  font-size:38px;
+  line-height:.8;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:-3px;
+}
+
+.logo-flow{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:#fff;
+}
+
+.nav-links{
+  display:flex;
+  gap:28px;
+  align-items:center;
+  color:#aaa4b2;
+  font-size:13px;
+}
+
+.nav-links a:hover{
+  color:#fff;
+}
+
+.nav-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.nav-login{
+  color:#b6b0bd;
+  font-size:13px;
+  padding:10px 14px;
+}
+
+.nav-cta{
+  background:#fff;
+  color:#050308;
+  padding:11px 17px;
+  border-radius:9px;
+  font-weight:700;
+  font-size:13px;
+}
+
+/* =========================
+   TICKER
+========================= */
+
+.ticker{
+  height:34px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:#030207;
+  overflow:hidden;
+}
+
+.ticker-track{
+  height:100%;
+  display:flex;
+  align-items:center;
+  width:max-content;
+  animation:ticker 38s linear infinite;
+}
+
+.tick{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-right:32px;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.tick b{
+  color:#fff;
+}
+
+.up{
+  color:var(--green);
+}
+
+.down{
+  color:var(--red);
+}
+
+@keyframes ticker{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  padding:52px 0 28px;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.02fr .98fr;
+  gap:42px;
+  align-items:center;
+}
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid rgba(139,92,246,.25);
+  background:rgba(139,92,246,.07);
+  padding:7px 11px;
+  border-radius:999px;
+  color:#c7b7ff;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+}
+
+.eyebrow-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+.hero h1{
+  margin:18px 0 14px;
+  font-family:"Manrope",sans-serif;
+  font-size:clamp(44px,6vw,72px);
+  line-height:.98;
+  letter-spacing:-4px;
+  max-width:700px;
+}
+
+.hero h1 span{
+  background:linear-gradient(90deg,#fff 15%,#cdb8ff 55%,#f09cff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted2);
+  max-width:590px;
+  font-size:16px;
+  line-height:1.7;
+}
+
+.hero-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:25px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  border:0;
+  cursor:pointer;
+  padding:13px 18px;
+  border-radius:10px;
+  font-weight:700;
+  font-size:13px;
+}
+
+.btn-primary{
+  background:#fff;
+  color:#050308;
+  box-shadow:0 0 30px rgba(255,255,255,.08);
+}
+
+/* DT FLOW hero proof + trial CTA refinement */
+.hero-proof{
+  color:#d7b56d;
+}
+
+.hero-buttons .btn{
+  box-sizing:border-box;
+  width:116px;
+  height:42px;
+  padding:13px 18px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hero-trial-btn{
+  background:linear-gradient(135deg,#e5c36b 0%,#c9a34e 50%,#e2c16a 100%);
+  color:#08070a;
+  border:1px solid rgba(255,220,130,.9);
+  box-shadow:0 0 28px rgba(215,181,109,.18);
+  gap:6px;
+  font-family:"Manrope","DM Sans",sans-serif;
+  font-size:13px;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.02em;
+  text-transform:none;
+  white-space:nowrap;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.hero-trial-btn .trial-label{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+.hero-trial-btn .trial-arrow{
+  display:inline;
+  width:auto;
+  height:auto;
+  border:0;
+  border-radius:0;
+  font-size:13px;
+  line-height:1;
+  letter-spacing:0;
+  transform:none;
+}
+
+.hero-trial-btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.02);
+  box-shadow:0 8px 26px rgba(215,181,109,.25);
+}
+
+.btn-secondary{
+  background:#0b0810;
+  border:1px solid var(--border2);
+  color:#fff;
+}
+
+.trust{
+  margin-top:22px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.avatars{
+  display:flex;
+}
+
+.avatar{
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  border:2px solid #030207;
+  margin-left:-7px;
+  object-fit:cover;
+}
+
+.avatar:first-child{
+  margin-left:0;
+}
+
+.stars{
+  color:#ffd76a;
+  letter-spacing:1px;
+  font-size:13px;
+}
+
+.trust-text{
+  color:#aaa4b2;
+  font-size:12px;
+}
+
+/* =========================
+   RADAR
+========================= */
+
+.radar-wrap{
+  position:relative;
+  min-height:430px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.radar-glow{
+  position:absolute;
+  width:370px;
+  height:370px;
+  border-radius:50%;
+  background:rgba(139,92,246,.10);
+  filter:blur(55px);
+}
+
+.radar{
+  width:min(420px,88vw);
+  aspect-ratio:1;
+  border-radius:50%;
+  position:relative;
+
+  background:
+    radial-gradient(circle at center,
+      rgba(99,230,255,.08) 0 2%,
+      transparent 2.5% 24%,
+      rgba(99,230,255,.035) 24.5% 25%,
+      transparent 25.5% 49%,
+      rgba(99,230,255,.04) 49.5% 50%,
+      transparent 50.5% 74%,
+      rgba(99,230,255,.045) 74.5% 75%,
+      transparent 75.5%),
+    rgba(4,8,13,.75);
+
+  border:1px solid rgba(99,230,255,.20);
+
+  box-shadow:
+    inset 0 0 70px rgba(99,230,255,.05),
+    0 0 80px rgba(139,92,246,.08);
+}
+
+.radar:before,
+.radar:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+}
+
+.radar:before{
+  background:
+    linear-gradient(90deg,transparent 49.8%,rgba(99,230,255,.12) 50%,transparent 50.2%),
+    linear-gradient(0deg,transparent 49.8%,rgba(99,230,255,.12) 50%,transparent 50.2%);
+}
+
+.radar:after{
+  inset:18%;
+  border:1px solid rgba(99,230,255,.08);
+}
+
+.radar-sweep{
+  position:absolute;
+  width:50%;
+  height:50%;
+  left:50%;
+  top:50%;
+  transform-origin:0% 0%;
+  background:linear-gradient(
+    90deg,
+    rgba(99,230,255,.30),
+    rgba(99,230,255,0)
+  );
+  clip-path:polygon(0 0,100% 0,100% 4%,0 100%);
+  animation:sweep 3.6s linear infinite;
+  filter:blur(.2px);
+}
+
+@keyframes sweep{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+.radar-center{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:9px;
+  height:9px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:#fff;
+  box-shadow:
+    0 0 10px #fff,
+    0 0 25px var(--cyan);
+}
+
+.radar-line{
+  position:absolute;
+  background:rgba(99,230,255,.11);
+}
+
+.radar-line.h{
+  left:7%;
+  right:7%;
+  top:50%;
+  height:1px;
+}
+
+.radar-line.v{
+  top:7%;
+  bottom:7%;
+  left:50%;
+  width:1px;
+}
+
+.radar-blip{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--pink);
+  box-shadow:0 0 18px var(--pink);
+  animation:blip 1.8s infinite;
+}
+
+.radar-blip.green{
+  background:var(--green);
+  box-shadow:0 0 18px var(--green);
+}
+
+.radar-blip.cyan{
+  background:var(--cyan);
+  box-shadow:0 0 18px var(--cyan);
+}
+
+@keyframes blip{
+  0%,100%{opacity:.45;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.4)}
+}
+
+.radar-label{
+  position:absolute;
+  font-family:"Space Grotesk";
+  font-size:9px;
+  letter-spacing:1px;
+  color:#777281;
+}
+
+.radar-card{
+  position:absolute;
+  left:0;
+  bottom:28px;
+  width:185px;
+  background:rgba(7,5,12,.94);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  padding:13px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(15px);
+}
+
+.radar-card-title{
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  color:#aaa3b2;
+}
+
+.radar-status{
+  color:var(--green);
+  font-size:9px;
+}
+
+.radar-card h3{
+  margin:8px 0 3px;
+  font-size:15px;
+}
+
+.radar-card p{
+  font-size:10px;
+  line-height:1.5;
+  color:#8d8799;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+section{
+  padding:46px 0;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:25px;
+  margin-bottom:20px;
+}
+
+.section-kicker{
+  color:var(--pink);
+  text-transform:uppercase;
+  letter-spacing:1.8px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.section-head h2{
+  font-family:"Manrope";
+  font-size:34px;
+  letter-spacing:-1.8px;
+  margin:6px 0 0;
+}
+
+.section-head p{
+  color:var(--muted);
+  max-width:480px;
+  font-size:13px;
+  line-height:1.6;
+  margin:0;
+}
+
+/* =========================
+   FLOW
+========================= */
+
+.flow-section{
+  padding-top:24px;
+}
+
+.flow-intro{
+  border:1px solid rgba(139,92,246,.18);
+  background:
+    radial-gradient(circle at 90% 0%,rgba(139,92,246,.11),transparent 35%),
+    #050408;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:14px;
+}
+
+.flow-intro-grid{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:20px;
+}
+
+.flow-intro h3{
+  margin:0 0 5px;
+  font-size:18px;
+}
+
+.flow-intro p{
+  margin:0;
+  color:#9f98a8;
+  font-size:12px;
+  line-height:1.6;
+  max-width:650px;
+}
+
+.demo{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:6px;
+  border:1px solid rgba(255,215,106,.18);
+  color:#d7bc67;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.7px;
+  white-space:nowrap;
+}
+
+.flow-columns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.flow-panel{
+  background:linear-gradient(180deg,#09070e,#050408);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.flow-panel-head{
+  padding:16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.flow-panel-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.flow-icon{
+  width:31px;
+  height:31px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  background:rgba(139,92,246,.11);
+  border:1px solid rgba(139,92,246,.2);
+  color:#c5b1ff;
+  font-size:14px;
+}
+
+.flow-panel h3{
+  margin:0;
+  font-size:14px;
+}
+
+.flow-panel-sub{
+  color:#787280;
+  font-size:9px;
+  margin-top:2px;
+}
+
+.flow-row{
+  display:grid;
+  grid-template-columns:62px 1fr 80px;
+  gap:10px;
+  align-items:center;
+  padding:13px 16px;
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.flow-row:last-child{
+  border-bottom:0;
+}
+
+.ticker-symbol{
+  font-family:"Space Grotesk";
+  font-weight:700;
+  font-size:12px;
+}
+
+.flow-type{
+  font-size:8px;
+  color:#797382;
+  margin-top:3px;
+}
+
+.flow-main{
+  min-width:0;
+}
+
+.flow-bar{
+  height:4px;
+  border-radius:5px;
+  background:#17131e;
+  overflow:hidden;
+  margin-top:6px;
+}
+
+.flow-bar i{
+  display:block;
+  height:100%;
+  border-radius:5px;
+}
+
+.flow-bar .buy{
+  background:linear-gradient(90deg,var(--green),var(--cyan));
+}
+
+.flow-bar .sell{
+  background:linear-gradient(90deg,var(--red),var(--pink));
+}
+
+.flow-price{
+  text-align:right;
+}
+
+.flow-price strong{
+  display:block;
+  font-family:"Space Grotesk";
+  font-size:12px;
+}
+
+.flow-price small{
+  color:#706a77;
+  font-size:8px;
+}
+
+.explain-row{
+  padding:11px 16px;
+  background:#07050b;
+  border-top:1px solid rgba(255,255,255,.045);
+  color:#77717f;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.explain-row b{
+  color:#bfb7c8;
+}
+
+/* =========================
+   FLOW RADAR / INSIGHT
+========================= */
+
+.insight-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:14px;
+}
+
+.insight-card{
+  background:#07050b;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:19px;
+}
+
+.insight-card h3{
+  margin:0 0 7px;
+  font-size:16px;
+}
+
+.insight-card p{
+  margin:0;
+  color:#8f8897;
+  font-size:12px;
+  line-height:1.7;
+}
+
+.pipeline{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+
+.pipeline-item{
+  padding:8px 10px;
+  border-radius:7px;
+  background:#0d0914;
+  border:1px solid var(--border);
+  font-size:9px;
+  color:#bcb4c5;
+}
+
+.pipeline-arrow{
+  color:#625b69;
+}
+
+/* =========================
+   SETUP COACH
+========================= */
+
+.coach-shell{
+  border:1px solid rgba(139,92,246,.22);
+  border-radius:19px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(168,85,247,.12),transparent 32%),
+    #050408;
+  padding:20px;
+  box-shadow:0 30px 90px rgba(0,0,0,.55);
+}
+
+.coach-grid{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:15px;
+}
+
+.coach-info{
+  padding:8px 5px;
+}
+
+.coach-info h2{
+  margin:8px 0 9px;
+  font-size:30px;
+  letter-spacing:-1.5px;
+}
+
+.coach-info p{
+  color:#928b9a;
+  font-size:12px;
+  line-height:1.7;
+  max-width:480px;
+}
+
+.coach-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:16px;
+}
+
+.coach-tag{
+  border:1px solid var(--border);
+  background:#0a0710;
+  color:#aaa3b2;
+  padding:7px 9px;
+  border-radius:7px;
+  font-size:9px;
+}
+
+.terminal{
+  background:#050409;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:13px;
+  overflow:hidden;
+}
+
+.terminal-top{
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  border-bottom:1px solid var(--border);
+}
+
+.window-dots{
+  display:flex;
+  gap:5px;
+}
+
+.window-dots i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#4b4650;
+}
+
+.terminal-title{
+  font-family:"Space Grotesk";
+  font-size:9px;
+  color:#7c7583;
+}
+
+.chart-area{
+  height:275px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:42px 42px;
+}
+
+.chart-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.chart-line{
+  fill:none;
+  stroke:#ff6685;
+  stroke-width:2;
+  filter:drop-shadow(0 0 4px rgba(255,102,133,.25));
+}
+
+.chart-fill{
+  fill:url(#chartGradient);
+  opacity:.13;
+}
+
+.breakout-line{
+  stroke:#63e6ff;
+  stroke-width:1;
+  stroke-dasharray:5 5;
+}
+
+.breakout-label{
+  position:absolute;
+  right:15%;
+  top:35%;
+  padding:6px 8px;
+  border:1px solid rgba(99,230,255,.22);
+  background:rgba(3,8,12,.8);
+  border-radius:6px;
+  color:#63e6ff;
+  font-size:8px;
+  font-weight:700;
+}
+
+.price-label{
+  position:absolute;
+  right:10px;
+  top:31%;
+  color:#63e6ff;
+  font-family:"Space Grotesk";
+  font-size:9px;
+}
+
+.coach-bottom{
+  padding:12px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  border-top:1px solid var(--border);
+}
+
+.metric{
+  background:#09070d;
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:7px;
+  padding:9px;
+}
+
+.metric small{
+  color:#6e6876;
+  display:block;
+  font-size:8px;
+}
+
+.metric strong{
+  font-family:"Space Grotesk";
+  font-size:11px;
+  display:block;
+  margin-top:4px;
+}
+
+/* =========================
+   STRATEGIES
+========================= */
+
+.strategy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.strategy{
+  padding:17px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#06050a;
+}
+
+.strategy-number{
+  color:#7259aa;
+  font-family:"Space Grotesk";
+  font-size:10px;
+}
+
+.strategy h3{
+  font-size:14px;
+  margin:10px 0 6px;
+}
+
+.strategy p{
+  color:#827b8b;
+  font-size:11px;
+  line-height:1.65;
+  margin:0;
+}
+
+.strategy-line{
+  margin-top:15px;
+  height:2px;
+  background:linear-gradient(90deg,var(--purple),transparent);
+}
+
+/* =========================
+   PRODUCT DASHBOARD
+========================= */
+
+.dashboard{
+  border:1px solid var(--border2);
+  border-radius:18px;
+  overflow:hidden;
+  background:#050409;
+  box-shadow:var(--shadow);
+}
+
+.dashboard-head{
+  padding:15px 17px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+}
+
+.dash-tabs{
+  display:flex;
+  gap:7px;
+}
+
+.dash-tab{
+  padding:6px 9px;
+  border-radius:6px;
+  font-size:8px;
+  color:#77717e;
+  border:1px solid transparent;
+}
+
+.dash-tab.active{
+  color:#fff;
+  background:#0e0a16;
+  border-color:var(--border);
+}
+
+.dashboard-body{
+  display:grid;
+  grid-template-columns:180px 1fr 190px;
+  min-height:340px;
+}
+
+.watchlist{
+  border-right:1px solid var(--border);
+}
+
+.watch-title{
+  padding:12px;
+  color:#77717f;
+  font-size:8px;
+  letter-spacing:1px;
+}
+
+.watch-row{
+  padding:11px 12px;
+  border-top:1px solid rgba(255,255,255,.035);
+  display:flex;
+  justify-content:space-between;
+  font-family:"Space Grotesk";
+  font-size:9px;
+}
+
+.watch-row.active{
+  background:rgba(139,92,246,.08);
+  border-left:2px solid var(--purple);
+}
+
+.big-chart{
+  position:relative;
+  padding:15px;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.big-chart h3{
+  margin:0;
+  font-family:"Space Grotesk";
+  font-size:12px;
+}
+
+.big-chart-price{
+  margin-top:5px;
+  font-family:"Space Grotesk";
+  font-size:20px;
+}
+
+.big-svg{
+  width:100%;
+  height:240px;
+  margin-top:10px;
+}
+
+.side-panel{
+  border-left:1px solid var(--border);
+  padding:14px;
+}
+
+.side-title{
+  color:#77717f;
+  font-size:8px;
+  letter-spacing:1px;
+  margin-bottom:12px;
+}
+
+.signal{
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:10px;
+  margin-bottom:8px;
+}
+
+.signal-top{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Space Grotesk";
+  font-size:9px;
+}
+
+.signal p{
+  color:#7e7786;
+  font-size:8px;
+  line-height:1.5;
+  margin:6px 0 0;
+}
+
+/* =========================
+   SOCIAL PROOF
+========================= */
+
+.social-head{
+  text-align:center;
+  margin-bottom:22px;
+}
+
+.social-head .stars{
+  font-size:15px;
+}
+
+.social-head h2{
+  margin:9px 0 4px;
+  font-size:30px;
+  letter-spacing:-1.4px;
+}
+
+.social-head p{
+  color:#817a89;
+  font-size:12px;
+}
+
+.reviews{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.review{
+  padding:18px;
+  background:#06050a;
+  border:1px solid var(--border);
+  border-radius:14px;
+}
+
+.review-stars{
+  color:#ffd76a;
+  font-size:11px;
+}
+
+.review p{
+  color:#b0a9b8;
+  font-size:12px;
+  line-height:1.7;
+  min-height:80px;
+}
+
+.reviewer{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:13px;
+}
+
+.reviewer img{
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.reviewer strong{
+  font-size:10px;
+}
+
+.reviewer span{
+  display:block;
+  color:#6f6877;
+  font-size:8px;
+  margin-top:2px;
+}
+
+/* =========================
+   PRICING
+========================= */
+
+.pricing-wrap{
+  max-width:720px;
+  margin:auto;
+}
+
+.price-card{
+  border:1px solid rgba(168,85,247,.35);
+  border-radius:19px;
+  padding:25px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(139,92,246,.13),transparent 45%),
+    #07050c;
+  box-shadow:0 30px 100px rgba(0,0,0,.6);
+  text-align:center;
+}
+
+.price-badge{
+  display:inline-block;
+  color:#cdb8ff;
+  background:rgba(139,92,246,.08);
+  border:1px solid rgba(139,92,246,.2);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.price-card h2{
+  margin:14px 0 5px;
+  font-size:30px;
+}
+
+.price{
+  font-family:"Manrope";
+  font-size:54px;
+  font-weight:800;
+  letter-spacing:-3px;
+}
+
+.price span{
+  font-size:13px;
+  color:#77717e;
+  letter-spacing:0;
+}
+
+.price-card > p{
+  color:#837c8b;
+  font-size:11px;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  text-align:left;
+  margin:18px 0;
+}
+
+.feature{
+  padding:9px;
+  border-radius:7px;
+  background:#0b0810;
+  color:#aaa3b1;
+  font-size:9px;
+}
+
+.feature:before{
+  content:"✓";
+  color:var(--green);
+  margin-right:6px;
+}
+
+/* =========================
+   FAQ
+========================= */
+
+.faq{
+  max-width:760px;
+  margin:auto;
+}
+
+.faq-item{
+  border-bottom:1px solid var(--border);
+}
+
+.faq-q{
+  cursor:pointer;
+  padding:17px 3px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:600;
+}
+
+.faq-q span{
+  color:#756f7d;
+  transition:.2s;
+}
+
+.faq-a{
+  max-height:0;
+  overflow:hidden;
+  transition:.3s ease;
+  color:#817a89;
+  font-size:11px;
+  line-height:1.7;
+}
+
+.faq-item.open .faq-a{
+  max-height:180px;
+  padding:0 3px 17px;
+}
+
+.faq-item.open .faq-q span{
+  transform:rotate(45deg);
+}
+
+/* =========================
+   FINAL CTA
+========================= */
+
+.final-cta{
+  padding:55px 0 65px;
+}
+
+.cta-box{
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+  border:1px solid rgba(139,92,246,.23);
+  border-radius:20px;
+  padding:50px 25px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(139,92,246,.18),transparent 48%),
+    #050408;
+}
+
+.cta-box h2{
+  font-size:42px;
+  letter-spacing:-2px;
+  margin:0 0 9px;
+}
+
+.cta-box p{
+  color:#8b8492;
+  font-size:12px;
+  margin:0 auto 20px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  border-top:1px solid rgba(255,255,255,.07);
+  padding:42px 0 28px;
+  background:#000;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:1.5fr repeat(3,1fr);
+  gap:35px;
+}
+
+.footer-brand p{
+  color:#6f6977;
+  max-width:270px;
+  font-size:10px;
+  line-height:1.7;
+}
+
+.footer-title{
+  font-size:9px;
+  color:#fff;
+  font-weight:700;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.footer-links{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.footer-links a{
+  color:#6f6977;
+  font-size:10px;
+}
+
+.footer-links a:hover{
+  color:#fff;
+}
+
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.05);
+  margin-top:30px;
+  padding-top:17px;
+  display:flex;
+  justify-content:space-between;
+  color:#55505b;
+  font-size:9px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:850px){
+
+  .nav-links{
+    display:none;
+  }
+
+  .hero{
+    padding-top:38px;
+  }
+
+  .hero-grid{
+    grid-template-columns:1fr;
+    gap:25px;
+  }
+
+  .hero h1{
+    font-size:48px;
+    letter-spacing:-3px;
+  }
+
+  .radar-wrap{
+    min-height:350px;
+  }
+
+  .radar{
+    width:340px;
+  }
+
+  .radar-card{
+    left:8px;
+    bottom:0;
+  }
+
+  .flow-columns,
+  .insight-grid,
+  .coach-grid{
+    grid-template-columns:1fr;
+  }
+
+  .strategy-grid{
+    grid-template-columns:1fr;
+  }
+
+  .reviews{
+    grid-template-columns:1fr;
+  }
+
+  .dashboard-body{
+    grid-template-columns:1fr;
+  }
+
+  .watchlist{
+    display:none;
+  }
+
+  .side-panel{
+    border-left:0;
+    border-top:1px solid var(--border);
+  }
+
+  .flow-intro-grid{
+    grid-template-columns:1fr;
+  }
+
+  .footer-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:520px){
+
+  .container{
+    width:min(100% - 22px,1180px);
+  }
+
+  .nav-inner{
+    height:62px;
+  }
+
+  .logo-dt{
+    font-size:34px;
+  }
+
+  .logo-flow{
+    font-size:15px;
+  }
+
+  .nav-login{
+    display:inline-flex;
+    align-items:center;
+  }
+
+  .hero h1{
+    font-size:43px;
+  }
+
+  .hero p{
+    font-size:14px;
+  }
+
+  .radar{
+    width:310px;
+  }
+
+  .radar-card{
+    width:165px;
+  }
+
+  .section-head{
+    display:block;
+  }
+
+  .section-head p{
+    margin-top:10px;
+  }
+
+  .section-head h2{
+    font-size:28px;
+  }
+
+  .flow-row{
+    grid-template-columns:55px 1fr 67px;
+    padding:12px;
+  }
+
+  .coach-bottom{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .features{
+    grid-template-columns:1fr;
+  }
+
+  .footer-grid{
+    grid-template-columns:1fr 1fr;
+    gap:25px 15px;
+  }
+
+  .footer-brand{
+    grid-column:1/-1;
+  }
+
+  .footer-bottom{
+    display:block;
+    line-height:1.7;
+  }
+
+  .cta-box h2{
+    font-size:32px;
+  }
+}
+
+
+.hero-proof-gold{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
+.hero-proof-gold *{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
+.hero-proof-gold strong,.hero-proof-gold b{color:#D7B56D !important;font-weight:400 !important;text-shadow:none !important;}
+</style>
+
+<style id="dtflow-about-home-css">
+.dtflow-about-home{
+  padding:72px 0 76px;
+  background:#000;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.dtflow-about-home-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:46px;
+  align-items:center;
+}
+.dtflow-about-home h2{
+  font-size:clamp(32px,4vw,48px);
+  line-height:1.02;
+  letter-spacing:-2.4px;
+  margin:10px 0 16px;
+}
+.dtflow-about-home h2 span{
+  color:#d8baff;
+}
+.dtflow-about-home p{
+  color:#8b8492;
+  font-size:13px;
+  line-height:1.75;
+  max-width:570px;
+}
+.dtflow-five-block{
+  border:1px solid rgba(216,186,255,.18);
+  background:#07050b;
+  border-radius:18px;
+  padding:26px;
+  box-shadow:0 0 40px rgba(113,55,255,.08);
+}
+.dtflow-five-line{
+  color:#d7b56d;
+  font-weight:850;
+  font-size:clamp(18px,2.2vw,25px);
+  line-height:1.22;
+  letter-spacing:-.5px;
+  margin-bottom:7px;
+}
+.dtflow-five-block p{
+  margin:17px 0 0;
+  max-width:none;
+}
+.dtflow-five-percent{
+  color:#d7b56d !important;
+  font-weight:800;
+}
+@media(max-width:850px){
+  .dtflow-about-home{padding:54px 0 58px}
+  .dtflow-about-home-grid{grid-template-columns:1fr;gap:26px}
+  .dtflow-five-block{padding:22px}
+}
+</style>
+
+<style id="dtflow-review-avatar-refinement-v29">
+.review .reviewer img{
+  width:31px !important;
+  height:31px !important;
+  min-width:31px !important;
+  min-height:31px !important;
+  object-fit:cover !important;
+  object-position:center 38% !important;
+  border-radius:50% !important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+
+    <a href="#" class="logo">
+      <span class="logo-dt">DT</span>
+      <span class="logo-flow">FLOW</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#flow">Flow</a>
+      <a href="#coach">Setup Coach</a>
+      <a href="#strategies">Strategies</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="login.html" class="nav-login">Login</a>
+      <a href="register.html?plan=trial" class="nav-cta">Start Free</a>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- MARKET TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+
+    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
+    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
+    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
+    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
+    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
+    <div class="tick"><b>MSFT</b><span class="down">▼ 0.21%</span></div>
+    <div class="tick"><b>BTC</b><span class="up">▲ 2.18%</span></div>
+    <div class="tick"><b>ETH</b><span class="up">▲ 1.04%</span></div>
+
+    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
+    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
+    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
+    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
+    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
+
+  </div>
+</div>
+
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container hero-grid">
+
+    <div>
+
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        LIVE MARKET INTELLIGENCE
+      </div>
+
+      <h1>
+        SEE THE <span>FLOW</span><br>
+        KNOW THE SETUP<br>
+        TRADE WITH A SYSTEM
+      </h1>
+
+      <p class="hero-proof">
+        70%+ historical win rate across 12,000+ backtested setups.<br>
+        DT FLOW combines market flow, key levels and price confirmation
+        to identify structured trading setups you can understand and evaluate.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="register.html?plan=trial" class="btn btn-secondary hero-trial-btn">
+          3 DAY TRIAL →
+        </a>
+
+        <a href="#flow" class="btn btn-secondary">
+          Explore Flow →
+        </a>
+      </div>
+
+      <div class="trust">
+
+        <div class="avatars">
+          <img class="avatar" src="https://i.pravatar.cc/100?img=12">
+          <img class="avatar" src="https://i.pravatar.cc/100?img=32">
+          <img class="avatar" src="https://i.pravatar.cc/100?img=47">
+          <img class="avatar" src="https://i.pravatar.cc/100?img=52">
+        </div>
+
+        <div>
+          <div class="stars">★★★★★</div>
+          <div class="trust-text">Used by 1,000+ professional traders</div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- RADAR -->
+    <div class="radar-wrap">
+
+      <div class="radar-glow"></div>
+
+      <div class="radar">
+
+        <div class="radar-line h"></div>
+        <div class="radar-line v"></div>
+
+        <div class="radar-sweep"></div>
+
+        <div class="radar-center"></div>
+
+        <div class="radar-blip" style="left:70%;top:27%;"></div>
+        <div class="radar-blip green" style="left:28%;top:34%;animation-delay:.6s"></div>
+        <div class="radar-blip cyan" style="left:66%;top:70%;animation-delay:1.1s"></div>
+        <div class="radar-blip" style="left:39%;top:72%;animation-delay:1.5s"></div>
+
+        <span class="radar-label" style="top:9%;left:46%;">RESISTANCE</span>
+        <span class="radar-label" style="bottom:9%;left:47%;">SUPPORT</span>
+        <span class="radar-label" style="left:5%;top:49%;">FLOW</span>
+
+      </div>
+
+      <div class="radar-card">
+
+        <div class="radar-card-title">
+          <span>FLOW RADAR</span>
+          <span class="radar-status">SCANNING</span>
+        </div>
+
+        <h3>NVDA detected</h3>
+
+        <p>
+          Buy-side activity detected near a key resistance zone.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+</header>
+
+
+<!-- FLOW -->
+<section id="flow" class="flow-section">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+        <div class="section-kicker">01 — FLOW</div>
+        <h2>See where money is moving. Understand the pressure.</h2>
+      </div>
+
+      <p>
+        Stock prints and options flow give you different pieces of market activity.
+        DT FLOW puts them together so you can investigate what is happening before you decide what to do.
+      </p>
+
+    </div>
+
+
+    <div class="flow-intro">
+
+      <div class="flow-intro-grid">
+
+        <div>
+          <h3>Market flow, without the noise.</h3>
+          <p>
+            Normal Stock Prints show actual activity in the underlying stock.
+            Options Flow shows notable call and put activity.
+            DT FLOW separates them so you can read each signal in context.
+          </p>
+        </div>
+
+        <div class="demo">
+          ● DEMO FEED
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="flow-columns">
+
+      <!-- NORMAL STOCK PRINTS -->
+
+      <div class="flow-panel">
+
+        <div class="flow-panel-head">
+
+          <div class="flow-panel-title">
+
+            <div class="flow-icon">↗</div>
+
+            <div>
+              <h3>Normal Stock Prints</h3>
+              <div class="flow-panel-sub">
+                Actual stock transactions / blocks
+              </div>
+            </div>
+
+          </div>
+
+          <span class="demo">DEMO</span>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">NVDA</div>
+            <div class="flow-type">BUY</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">+$214K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:82%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BUY</strong>
+            <small>2m ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">AAPL</div>
+            <div class="flow-type">SELL</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="down">-$186K</strong>
+            <div class="flow-bar">
+              <i class="sell" style="width:65%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="down">SELL</strong>
+            <small>4m ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">TSLA</div>
+            <div class="flow-type">BLOCK</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">+$303K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:94%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BUY</strong>
+            <small>7m ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">META</div>
+            <div class="flow-type">BLOCK</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">+$91K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:43%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BUY</strong>
+            <small>9m ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">AMD</div>
+            <div class="flow-type">BUY</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">+$157K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:61%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BUY</strong>
+            <small>11m ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="explain-row">
+          <b>What you're seeing:</b>
+          actual stock activity represented as large prints,
+          blocks and directional transactions.
+        </div>
+
+      </div>
+
+
+      <!-- OPTIONS FLOW -->
+
+      <div class="flow-panel">
+
+        <div class="flow-panel-head">
+
+          <div class="flow-panel-title">
+
+            <div class="flow-icon">◈</div>
+
+            <div>
+              <h3>Options Flow</h3>
+              <div class="flow-panel-sub">
+                Notable call & put activity
+              </div>
+            </div>
+
+          </div>
+
+          <span class="demo">DEMO</span>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">NVDA</div>
+            <div class="flow-type">190C</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">$1.8M</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:91%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BULLISH</strong>
+            <small>CALL</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">TSLA</div>
+            <div class="flow-type">420P</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="down">$920K</strong>
+            <div class="flow-bar">
+              <i class="sell" style="width:57%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="down">BEARISH</strong>
+            <small>PUT</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">AMD</div>
+            <div class="flow-type">225C</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">$1.1M</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:73%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BULLISH</strong>
+            <small>CALL</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">AAPL</div>
+            <div class="flow-type">265C</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">$760K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:49%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BULLISH</strong>
+            <small>CALL</small>
+          </div>
+
+        </div>
+
+
+        <div class="flow-row">
+
+          <div>
+            <div class="ticker-symbol">MSFT</div>
+            <div class="flow-type">510C</div>
+          </div>
+
+          <div class="flow-main">
+            <strong class="up">$640K</strong>
+            <div class="flow-bar">
+              <i class="buy" style="width:42%"></i>
+            </div>
+          </div>
+
+          <div class="flow-price">
+            <strong class="up">BULLISH</strong>
+            <small>CALL</small>
+          </div>
+
+        </div>
+
+
+        <div class="explain-row">
+          <b>What you're seeing:</b>
+          notable options activity organized by ticker,
+          contract, size and directional context.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- WHY FLOW -->
+<section>
+
+  <div class="container">
+
+    <div class="insight-grid">
+
+      <div class="insight-card">
+
+        <div class="section-kicker">WHY FLOW MATTERS</div>
+
+        <h3>Flow is not the answer. It's context.</h3>
+
+        <p>
+          A large transaction doesn't automatically mean price will rise.
+          The useful part is combining flow with price structure,
+          volume, support and resistance.
+        </p>
+
+        <div class="pipeline">
+
+          <div class="pipeline-item">FLOW</div>
+          <span class="pipeline-arrow">→</span>
+
+          <div class="pipeline-item">STRUCTURE</div>
+          <span class="pipeline-arrow">→</span>
+
+          <div class="pipeline-item">CONTEXT</div>
+          <span class="pipeline-arrow">→</span>
+
+          <div class="pipeline-item">ALERT</div>
+
+        </div>
+
+      </div>
+
+
+      <div class="insight-card">
+
+        <div class="section-kicker">DESIGNED FOR CLARITY</div>
+
+        <h3>One screen. Less guessing.</h3>
+
+        <p>
+          Instead of jumping between charts, flow scanners and
+          separate research tools, DT FLOW puts the important context
+          into one workflow.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SETUP COACH -->
+<section id="coach">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+        <div class="section-kicker">02 — SETUP COACH</div>
+        <h2>Turn flow into a setup you can evaluate.</h2>
+      </div>
+
+      <p>
+        Once Flow catches your attention, Setup Coach connects it with
+        support, resistance and price confirmation to create structured market context.
+      </p>
+
+    </div>
+
+
+    <div class="coach-shell">
+
+      <div class="coach-grid">
+
+        <div class="coach-info">
+
+          <div class="eyebrow">
+            AI-ASSISTED MARKET CONTEXT
+          </div>
+
+          <h2>Stop chasing signals.<br>Start reading the setup.</h2>
+
+          <p>
+            Setup Coach watches the relationship between price, support, resistance
+            and flow activity. It helps explain whether price is confirming or rejecting
+            an important level in plain English.
+          </p>
+
+          <div class="coach-tags">
+            <span class="coach-tag">Resistance</span>
+            <span class="coach-tag">Support</span>
+            <span class="coach-tag">Resistance</span>
+            <span class="coach-tag">Flow</span>
+            <span class="coach-tag">Confirmation</span>
+          </div>
+
+        </div>
+
+
+        <div class="terminal">
+
+          <div class="terminal-top">
+
+            <div class="window-dots">
+              <i></i><i></i><i></i>
+            </div>
+
+            <div class="terminal-title">
+              DT FLOW / SETUP COACH
+            </div>
+
+            <div style="font-size:8px;color:#55e6a4">
+              ● ACTIVE
+            </div>
+
+          </div>
+
+
+          <div class="chart-area">
+
+            <svg class="chart-svg" viewBox="0 0 700 300" preserveAspectRatio="none">
+
+              <defs>
+
+                <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#ff6685"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+
+              </defs>
+
+              <path
+                class="chart-fill"
+                d="M0 230
+                   L50 220
+                   L90 226
+                   L130 195
+                   L170 205
+                   L210 170
+                   L250 182
+                   L290 150
+                   L330 158
+                   L370 125
+                   L410 137
+                   L450 105
+                   L490 120
+                   L530 92
+                   L570 105
+                   L610 72
+                   L650 84
+                   L700 45
+                   L700 300
+                   L0 300 Z"/>
+
+              <path
+                class="chart-line"
+                d="M0 230
+                   L50 220
+                   L90 226
+                   L130 195
+                   L170 205
+                   L210 170
+                   L250 182
+                   L290 150
+                   L330 158
+                   L370 125
+                   L410 137
+                   L450 105
+                   L490 120
+                   L530 92
+                   L570 105
+                   L610 72
+                   L650 84
+                   L700 45"/>
+
+              <line
+                class="breakout-line"
+                x1="0"
+                y1="120"
+                x2="700"
+                y2="120"/>
+
+            </svg>
+
+            <div class="breakout-label">
+              BREAKOUT WATCH
+            </div>
+
+            <div class="price-label">
+              $188.20
+            </div>
+
+          </div>
+
+
+          <div class="coach-bottom">
+
+            <div class="metric">
+              <small>RESISTANCE</small>
+              <strong>$188.20</strong>
+            </div>
+
+            <div class="metric">
+              <small>CURRENT</small>
+              <strong>$183.42</strong>
+            </div>
+
+            <div class="metric">
+              <small>VWAP</small>
+              <strong>$182.70</strong>
+            </div>
+
+            <div class="metric">
+              <small>CONTEXT</small>
+              <strong class="up">82 / 100</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- STRATEGIES -->
+<section id="strategies">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+        <div class="section-kicker">03 — STRATEGIES</div>
+        <h2>Support. Resistance. Flow. Confirmation.</h2>
+      </div>
+
+      <p>
+        DT FLOW combines key levels, market flow and price confirmation
+        into repeatable frameworks designed for historical testing and evaluation.
+      </p>
+
+    </div>
+
+
+    <div class="strategy-grid">
+
+      <div class="strategy">
+
+        <div class="strategy-number">01</div>
+
+        <h3>Breakout + Flow Confirmation</h3>
+
+        <p>
+          Price reaches resistance while buy-side activity increases.
+          DT FLOW waits for price confirmation before treating the move as a setup.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+
+      <div class="strategy">
+
+        <div class="strategy-number">02</div>
+
+        <h3>Breakout + Retest</h3>
+
+        <p>
+          Instead of chasing the first move, watch whether price
+          returns to the broken level and confirms the retest.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+
+      <div class="strategy">
+
+        <div class="strategy-number">03</div>
+
+        <h3>5-Bar Acceptance</h3>
+
+        <p>
+          A custom DT FLOW framework that watches repeated closes
+          above a defined resistance zone before treating acceptance as confirmed.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+
+      <div class="strategy">
+
+        <div class="strategy-number">04</div>
+
+        <h3>Absorption Setup</h3>
+
+        <p>
+          Watch for aggressive buying or selling being absorbed around
+          support or resistance before price confirms the setup.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+
+      <div class="strategy">
+
+        <div class="strategy-number">05</div>
+
+        <h3>Delta Divergence</h3>
+
+        <p>
+          Compare directional flow with price movement to identify
+          potential confirmation or divergence around key levels.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+
+      <div class="strategy">
+
+        <div class="strategy-number">06</div>
+
+        <h3>Stacked Imbalance</h3>
+
+        <p>
+          Stacked directional pressure can highlight areas where
+          flow may be confirming a move through an important level.
+        </p>
+
+        <div class="strategy-line"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+<section>
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div>
+        <div class="section-kicker">04 — TERMINAL</div>
+        <h2>Your market cockpit.</h2>
+      </div>
+
+      <p>
+        Flow, support and resistance, price action, watchlists and signals
+        designed to work together in one trading workflow.
+      </p>
+
+    </div>
+
+
+    <div class="dashboard">
+
+      <div class="dashboard-head">
+
+        <div class="dash-tabs">
+          <div class="dash-tab active">OVERVIEW</div>
+          <div class="dash-tab">FLOW</div>
+          <div class="dash-tab">SCANNER</div>
+          <div class="dash-tab">BACKTEST</div>
+        </div>
+
+        <div style="font-size:8px;color:#55e6a4">
+          ● MARKET OPEN
+        </div>
+
+      </div>
+
+
+      <div class="dashboard-body">
+
+        <div class="watchlist">
+
+          <div class="watch-title">WATCHLIST</div>
+
+          <div class="watch-row active">
+            <span>NVDA</span>
+            <span class="up">+2.41%</span>
+          </div>
+
+          <div class="watch-row">
+            <span>TSLA</span>
+            <span class="up">+1.84%</span>
+          </div>
+
+          <div class="watch-row">
+            <span>AAPL</span>
+            <span class="down">-0.72%</span>
+          </div>
+
+          <div class="watch-row">
+            <span>AMD</span>
+            <span class="up">+1.32%</span>
+          </div>
+
+          <div class="watch-row">
+            <span>META</span>
+            <span class="up">+0.91%</span>
+          </div>
+
+        </div>
+
+
+        <div class="big-chart">
+
+          <h3>NVDA · PRICE ACTION</h3>
+
+          <div class="big-chart-price">
+            $183.42
+            <span class="up" style="font-size:10px"> +2.41%</span>
+          </div>
+
+
+          <svg class="big-svg" viewBox="0 0 700 240" preserveAspectRatio="none">
+
+            <defs>
+
+              <linearGradient id="bigGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ff6685"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </linearGradient>
+
+            </defs>
+
+            <path
+              d="M0 190
+                 L35 183
+                 L70 188
+                 L105 169
+                 L140 176
+                 L175 151
+                 L210 157
+                 L245 133
+                 L280 141
+                 L315 119
+                 L350 127
+                 L385 103
+                 L420 114
+                 L455 89
+                 L490 97
+                 L525 72
+                 L560 81
+                 L595 57
+                 L630 67
+                 L665 43
+                 L700 30
+                 L700 240
+                 L0 240 Z"
+              fill="url(#bigGrad)"
+              opacity=".12"/>
+
+            <path
+              d="M0 190
+                 L35 183
+                 L70 188
+                 L105 169
+                 L140 176
+                 L175 151
+                 L210 157
+                 L245 133
+                 L280 141
+                 L315 119
+                 L350 127
+                 L385 103
+                 L420 114
+                 L455 89
+                 L490 97
+                 L525 72
+                 L560 81
+                 L595 57
+                 L630 67
+                 L665 43
+                 L700 30"
+              fill="none"
+              stroke="#ff6685"
+              stroke-width="2"/>
+
+            <line
+              x1="0"
+              y1="95"
+              x2="700"
+              y2="95"
+              stroke="#63e6ff"
+              stroke-width="1"
+              stroke-dasharray="5 5"/>
+
+          </svg>
+
+        </div>
+
+
+        <div class="side-panel">
+
+          <div class="side-title">LATEST SIGNALS</div>
+
+          <div class="signal">
+
+            <div class="signal-top">
+              <span>NVDA</span>
+              <span class="up">FLOW</span>
+            </div>
+
+            <p>
+              Buy-side activity approaching resistance.
+            </p>
+
+          </div>
+
+
+          <div class="signal">
+
+            <div class="signal-top">
+              <span>TSLA</span>
+              <span class="up">BREAKOUT</span>
+            </div>
+
+            <p>
+              Price structure changed above key level.
+            </p>
+
+          </div>
+
+
+          <div class="signal">
+
+            <div class="signal-top">
+              <span>AMD</span>
+              <span style="color:#ffd76a">WATCH</span>
+            </div>
+
+            <p>
+              Options activity increased around 225C.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SOCIAL PROOF -->
+<section>
+
+  <div class="container">
+
+    <div class="social-head">
+
+      <div class="stars">★★★★★</div>
+
+      <h2>Used by 1,000+ professional traders</h2>
+
+      <p>
+        Stop reacting. Start reading the market.
+      </p>
+
+    </div>
+
+
+    <div class="reviews">
+
+      <div class="review">
+
+        <div class="review-stars">★★★★★</div>
+
+        <p>
+          “The flow + levels combination makes a lot of sense. Much easier to filter out the noise.”
+        </p>
+
+        <div class="reviewer">
+          <img src="https://images.pexels.com/photos/30767586/pexels-photo-30767586.jpeg?auto=compress&cs=tinysrgb&w=600">
+
+          <div>
+            <strong>Daniel M.</strong>
+            <span>Proprietary Trader</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="review">
+
+        <div class="review-stars">★★★★★</div>
+
+        <p>
+          “Clean, fast and easy to use. I can find the setups I’m looking for without digging through endless data.”
+        </p>
+
+        <div class="reviewer">
+          <img src="https://images.pexels.com/photos/31207769/pexels-photo-31207769.jpeg?auto=compress&cs=tinysrgb&w=600">
+
+          <div>
+            <strong>Michael B.</strong>
+            <span>Day Trader</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="review">
+
+        <div class="review-stars">★★★★★</div>
+
+        <p>
+          “I’ve traded for years and still like how simple this is. Enough depth for experienced traders, but easy to pick up for beginners too.”
+        </p>
+
+        <div class="reviewer">
+          <img src="https://images.pexels.com/photos/37409504/pexels-photo-37409504.jpeg?auto=compress&cs=tinysrgb&w=600">
+
+          <div>
+            <strong>Thomas C.</strong>
+            <span>Futures Trader</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- PRICING -->
+<section id="pricing">
+
+  <div class="container">
+
+    <div class="social-head">
+
+      <div class="section-kicker">SIMPLE PRICING</div>
+
+      <h2>One terminal. One subscription.</h2>
+
+      <p>
+        Start with the tools you actually need.
+      </p>
+
+    </div>
+
+
+    <div class="pricing-wrap">
+
+      <div class="price-card">
+
+        <div class="price-badge">
+          DT FLOW PRO
+        </div>
+
+        <h2>Trading Intelligence</h2>
+
+        <div class="price">
+          $29<span>/month</span>
+        </div>
+
+        <p>
+          Real-time flow included in Pro. Cancel anytime.
+        </p>
+
+        <p>
+          <strong>60%+ historical win rate</strong><br>
+          Based on DT FLOW's historical testing of structured setups.
+          Historical results are not a guarantee of future performance.
+        </p>
+
+        <div class="features">
+
+          <div class="feature">Stock Prints</div>
+          <div class="feature">Real-Time Options Flow</div>
+          <div class="feature">Flow Radar</div>
+          <div class="feature">Setup Coach</div>
+          <div class="feature">Breakout Scanner</div>
+          <div class="feature">Support & Resistance</div>
+          <div class="feature">Strategy Backtesting</div>
+          <div class="feature">Flow & Breakout Alerts</div>
+
+        </div>
+
+        <a href="register.html?plan=trial" class="btn btn-primary" style="display:block">
+          Start DT FLOW
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- FAQ -->
+<section id="faq">
+
+  <div class="container">
+
+    <div class="social-head">
+
+      <div class="section-kicker">FAQ</div>
+
+      <h2>Questions, answered.</h2>
+
+    </div>
+
+
+    <div class="faq">
+
+      <div class="faq-item">
+
+        <div class="faq-q">
+          What is DT FLOW?
+          <span>+</span>
+        </div>
+
+        <div class="faq-a">
+          DT FLOW is a trading intelligence terminal combining stock prints,
+          options flow, support and resistance, price action and structured setup context.
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <div class="faq-q">
+          Does a large print mean the stock will go up?
+          <span>+</span>
+        </div>
+
+        <div class="faq-a">
+          No. Flow is confirmation and context, not a guaranteed prediction.
+          DT FLOW combines flow with support or resistance and price confirmation
+          so users can evaluate a setup rather than blindly follow a transaction.
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <div class="faq-q">
+          Is the data in this demo live?
+          <span>+</span>
+        </div>
+
+        <div class="faq-a">
+          The landing-page examples are demo data used to demonstrate the interface.
+          The production terminal will connect to market-data providers through a backend
+          so real-time flow and market data can be delivered securely.
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <div class="faq-q">
+          Can I use DT FLOW on mobile?
+          <span>+</span>
+        </div>
+
+        <div class="faq-a">
+          Yes. The interface is designed mobile-first while retaining
+          the denser terminal experience on larger screens.
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <div class="faq-q">
+          Does DT FLOW provide financial advice?
+          <span>+</span>
+        </div>
+
+        <div class="faq-a">
+          No. The product is intended as a research and market-context
+          tool. Users remain responsible for their own trading decisions.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+
+  <div class="container">
+
+    <div class="cta-box">
+
+      <div class="section-kicker">
+        MARKET INTELLIGENCE, SIMPLIFIED
+      </div>
+
+      <h2>SEE THE FLOW. KNOW THE SETUP. TRADE WITH A SYSTEM.</h2>
+
+      <p>
+        Combine market flow, support and resistance and price confirmation
+        into a structured workflow built for research, testing and execution.
+      </p>
+
+      <a href="register.html?plan=trial" class="btn btn-primary">
+        Start with DT FLOW →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<section class="dtflow-about-home">
+  <div class="container">
+    <div class="dtflow-about-home-grid">
+      <div>
+        <div class="eyebrow">ABOUT DT FLOW</div>
+        <h2>Follow the market.<br><span>Understand the setup.</span></h2>
+        <p>
+          DT FLOW combines market Flow, key levels and price confirmation
+          into one systematic trading workflow.
+        </p>
+      </div>
+      <div class="dtflow-five-block">
+        <div class="dtflow-five-line">5% KNOW WHAT THEY'RE DOING.</div>
+        <div class="dtflow-five-line">10% FOLLOW THE 5%.</div>
+        <div class="dtflow-five-line">85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING.</div>
+        <p>
+          DT FLOW is built to help you follow the information that matters —
+          then use Setup Coach to put it into context instead of reacting to Flow alone.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+
+        <a href="#" class="logo">
+          <span class="logo-dt">DT</span>
+          <span class="logo-flow">FLOW</span>
+        </a>
+
+        <p>
+          Trading intelligence for people who want to understand
+          market activity without drowning in noise.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <div class="footer-title">Product</div>
+
+        <div class="footer-links">
+          <a href="#page/chart-signals">Chart signals</a>
+          <a href="#page/all-features">All features</a>
+          <a href="#page/pricing">Pricing</a>
+          <a href="#page/faq">FAQ</a>
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <div class="footer-title">Stocks</div>
+
+        <div class="footer-links">
+          <a href="#page/stocks">All stocks, A to Z</a>
+          <a href="#page/stock-spcx">SPCX Stock Analysis</a>
+          <a href="#page/stock-tsla">TSLA Stock Analysis</a>
+          <a href="#page/stock-nvda">NVDA Stock Analysis</a>
+          <a href="#page/stock-aapl">AAPL Stock Analysis</a>
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <div class="footer-title">Company</div>
+
+        <div class="footer-links">
+          <a href="#page/about">About</a>
+          <a href="#page/methodology">Methodology</a>
+          <a href="#page/affiliates">Affiliates</a>
+          <a href="#page/contact">Contact</a>
+          <a href="#page/terms">Terms</a>
+          <a href="#page/privacy">Privacy</a>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>© 2026 DT FLOW. All rights reserved.</span>
+
+      <span>Market data shown in this prototype is demo data.</span>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<div id="dtflow-page" class="dtflow-page" aria-hidden="true">
+  <div class="container">
+    <div class="dtflow-page-top">
+      <a href="#home" class="dtflow-back">← Back to DT FLOW</a>
+      <span class="demo">DT FLOW</span>
+    </div>
+    <div id="dtflow-page-content"></div>
+  </div>
+</div>
+
+<style>
+.dtflow-page{display:none;min-height:calc(100vh - 104px);padding:52px 0 80px;background:#000;}
+.dtflow-page.active{display:block;}
+.dtflow-page-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;}
+.dtflow-back{color:#aaa4b2;font-size:12px;}
+.dtflow-back:hover{color:#fff;}
+.dtflow-page-hero{padding:30px 0 26px;}
+.dtflow-page-kicker{color:var(--pink);text-transform:uppercase;letter-spacing:1.8px;font-size:10px;font-weight:800;}
+.dtflow-page h1{font-family:"Manrope",sans-serif;font-size:clamp(36px,5vw,58px);line-height:1;letter-spacing:-3px;margin:9px 0 14px;}
+.dtflow-page-lead{max-width:720px;color:var(--muted2);font-size:15px;line-height:1.75;margin:0;}
+.dtflow-page-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px;}
+.dtflow-page-card{background:#07050b;border:1px solid var(--border);border-radius:16px;padding:20px;}
+.dtflow-page-card h2{font-size:17px;margin:0 0 8px;}
+.dtflow-page-card h3{font-size:13px;margin:0 0 7px;}
+.dtflow-page-card p,.dtflow-page-card li{color:#918a99;font-size:12px;line-height:1.7;}
+.dtflow-page-card ul{padding-left:18px;margin:8px 0 0;}
+.dtflow-page-wide{margin-top:14px;}
+.dtflow-stock-row{display:grid;grid-template-columns:90px 1fr auto;gap:15px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.dtflow-stock-row:last-child{border-bottom:0;}
+.dtflow-stock-row b{font-family:"Space Grotesk";}
+.dtflow-stock-row span{color:#918a99;font-size:11px;}
+.dtflow-stock-link{color:#cdb8ff;font-size:11px;}
+@media(max-width:760px){.dtflow-page-grid{grid-template-columns:1fr}.dtflow-stock-row{grid-template-columns:65px 1fr}.dtflow-stock-link{grid-column:2}.dtflow-page{padding-top:35px}}
+</style>
+
+<script>
+/* =========================
+   DT FLOW FOOTER PAGES
+   Text/content pages only — landing-page design remains locked.
+========================= */
+const DT_FLOW_PAGES = {
+  "chart-signals": {k:"PRODUCT",t:"Chart Signals",lead:"5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. DT FLOW helps you follow the market activity, structure and price action that matter.",cards:[
+    ["THE 5%","5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING."],
+    ["FOLLOW THE SIGNAL","DT FLOW brings Flow, key levels and price confirmation together so you don't have to interpret every signal alone."],
+    ["THE LEVEL","Every serious setup starts somewhere. DT FLOW maps support and resistance so you know where the market is being tested before you start interpreting the move."],
+    ["THE FLOW","Large prints, buying and selling pressure, absorption and options activity can reveal what is happening around the level. But flow alone is not the answer — it needs context."],
+    ["THE CONFIRMATION","This is where most mistakes happen. Setup Coach watches the relationship between the level, the flow and the candle — helping you distinguish a real reaction from a false move."],
+    ["THE SETUP COACH","Setup Coach connects the pieces: LEVEL → FLOW → PRICE CONFIRMATION → SETUP."]
+  ]},
+  "all-features": {k:"PRODUCT",t:"All Features",lead:"Most traders see fragments. DT FLOW was built to connect them — market activity, key levels, price confirmation and a repeatable setup process in one place.",cards:[
+    ["FLOW","See the activity that can matter around important price levels — from stock prints and blocks to notable options flow."],
+    ["SETUP COACH","Setup Coach organizes level, flow and price action into one clear setup."],
+    ["SCANNER","Find symbols approaching the conditions that matter — support, resistance, breakout pressure, momentum and volume."],
+    ["STRATEGIES","Turn market behavior into repeatable rules instead of relying on instinct: Breakout + Flow Confirmation, Breakout + Retest, 5-Bar Acceptance, Absorption and Delta Divergence."],
+    ["BACKTEST","See how a defined setup behaved historically before treating it as a process. Review win rate, return, drawdown and other statistics rather than relying on a handful of examples."],
+    ["ALERTS","Let the system watch the market for the conditions you care about, so you do not have to stare at every chart all day."],
+    ["WATCHLIST","Keep the symbols and developing setups that matter to you in one focused workspace."],
+    ["MARKET TERMINAL","One workflow for FLOW → STRUCTURE → COACH → BACKTEST → ALERT. The goal is not more information. It is better context."]
+  ]},
+  "pricing": {k:"PRICING",t:"DT FLOW PRO",lead:"See what changes when the market starts making more sense. Start with a 3-day free trial, then continue with DT FLOW Pro at $29/month.",cards:[
+    ["3 DAY TRIAL","Step inside DT FLOW and experience the workflow before deciding whether it belongs in your trading process."],
+    ["$29 / MONTH","DT FLOW Pro is planned at $29/month after the 3-day trial."],
+    ["PRO INCLUDES","Real-time flow, Setup Coach, scanners, systematic strategy tools, backtesting and alerts as the connected product is developed."],
+    ["NO PERFORMANCE PROMISES","DT FLOW is designed to improve the decision process, not promise a profitable outcome. Historical results are descriptive and do not guarantee future performance."]
+  ]},
+  "faq": {k:"PRODUCT",t:"Frequently Asked Questions",lead:"The short version: DT FLOW is designed to help you follow the market activity, understand the setup and avoid making decisions from one signal in isolation.",cards:[
+    ["Is DT FLOW a broker?","No. DT FLOW is a trading-intelligence and research product, not a brokerage."],
+    ["Does DT FLOW tell me exactly when to trade?","DT FLOW is designed to organize the evidence around a setup and show when the defined conditions align. It is decision support — not a guarantee that a trade will be profitable."],
+    ["What is the Support + Resistance + Flow strategy?","Price reaches a meaningful support or resistance zone. Flow provides confirmation around that level. Then price must confirm the reaction — for example, by closing back above support or below resistance."],
+    ["What does 60%+ mean?","Our current marketing claim refers to a 60%+ historical win rate from DT FLOW testing. The exact result depends on the test rules, period, universe, costs, slippage and execution assumptions. It is a historical result, not a promise of future profits."],
+    ["Is the market data live?","The landing-page demo uses illustrative data. Live market data requires the DT FLOW backend and an appropriate market-data provider."],
+    ["Can I use DT FLOW on mobile?","Yes. The product is being built mobile-first while remaining usable on desktop."]
+  ]},
+  "stocks": {k:"STOCKS",t:"Stocks A–Z",lead:"Explore individual symbols through the same DT FLOW framework: level, flow, price action and setup context.",stock:true},
+  "stock-spcx": {k:"STOCK ANALYSIS",t:"SPCX Stock Analysis",lead:"SPCX can be evaluated through DT FLOW's market-structure framework. This page is an analysis workspace, not a prediction or recommendation.",symbol:"SPCX"},
+  "stock-tsla": {k:"STOCK ANALYSIS",t:"TSLA Stock Analysis",lead:"Use support, resistance, flow and price confirmation to structure TSLA research inside DT FLOW.",symbol:"TSLA"},
+  "stock-nvda": {k:"STOCK ANALYSIS",t:"NVDA Stock Analysis",lead:"Use DT FLOW to examine NVDA around key levels, flow activity and breakout or rejection conditions.",symbol:"NVDA"},
+  "stock-aapl": {k:"STOCK ANALYSIS",t:"AAPL Stock Analysis",lead:"Use DT FLOW to examine AAPL around key levels, flow activity and price confirmation.",symbol:"AAPL"},
+  "about": {k:"COMPANY",t:"About DT FLOW",lead:"5% know what they are doing. 10% follow the 5%. DT FLOW was built to help you understand what matters and follow it systematically.",cards:[["THE IDEA","5% KNOW WHAT THEY'RE DOING. 10% FOLLOW THE 5%. 85% DON'T HAVE ANY IDEA WHAT THEY'RE DOING. See the flow. Know the setup. Trade with a system."],["THE PRODUCT","DT FLOW combines market flow, support and resistance, price confirmation, setup context, systematic strategies, backtesting and alerts."],["THE APPROACH","Follow the market activity, put it into context and use a defined process instead of reacting to every move."],["IMPORTANT","DT FLOW provides analytical tools and information. It does not guarantee results or remove the risks of trading."]]},
+  "methodology": {k:"COMPANY",t:"Methodology",lead:"The DT FLOW framework is simple: LEVEL → FLOW → PRICE CONFIRMATION. Build the setup in sequence instead of reacting to one signal.",cards:[["1. LEVEL","Identify support or resistance as a zone where price may react."],["2. FLOW","Look for buying or selling activity, absorption, delta or notable prints that provide context around the level."],["3. PRICE CONFIRMATION","Wait for price behavior to confirm the reaction, such as a close back above support or below resistance."],["RISK FRAMEWORK","A typical framework can place invalidation beyond the relevant level with a volatility buffer, with targets based on risk multiples and/or the next significant support or resistance zone."],["BACKTESTING","Historical tests should include the defined rules, time period, universe, costs, slippage and execution assumptions. Past results are not guarantees of future performance."]]},
+  "affiliates": {k:"COMPANY",t:"Affiliates",lead:"DT FLOW may work with selected partners and services that are relevant to trading, market data or technology.",cards:[["DISCLOSURE","If DT FLOW earns a commission from a qualifying partner relationship, that relationship will be disclosed where required."],["EDITORIAL INDEPENDENCE","Affiliate relationships should not change how product features, risks or limitations are described."],["PARTNERS","Partner availability and terms can change over time. This page will be updated as the DT FLOW partner program develops."]]},
+  "contact": {k:"COMPANY",t:"Contact DT FLOW",lead:"Questions, feedback and partnership enquiries can be directed to the DT FLOW team.",cards:[["GENERAL","For product feedback, bug reports or general questions, use the contact channel provided with your DT FLOW account."],["PARTNERSHIPS","For data providers, integrations and commercial partnerships, include your company name, website and the reason for contacting DT FLOW."],["SUPPORT","When reporting a technical issue, include the device, browser and a short description of what happened."]]},
+  "terms": {k:"LEGAL",t:"Terms",lead:"DT FLOW is a software and market-research product. These terms describe the general use of the service.",cards:[["USE OF THE SERVICE","Use DT FLOW lawfully and do not attempt to disrupt, reverse engineer or abuse the service."],["NO INVESTMENT GUARANTEE","DT FLOW does not guarantee profits, returns, accuracy of predictions or future market outcomes."],["MARKET DATA","Availability, timing and accuracy of market data can depend on the data provider and connection. Demo data should not be treated as live market data."],["CHANGES","Product features, pricing and service availability may change as DT FLOW develops."]]},
+  "privacy": {k:"LEGAL",t:"Privacy",lead:"DT FLOW is designed to collect only information needed to operate and improve the service.",cards:[["ACCOUNT DATA","If accounts are introduced, basic account information may be required to provide access to the service."],["PRODUCT DATA","Settings such as watchlists, alerts and preferences may be stored to provide the requested functionality."],["ANALYTICS","Technical and usage information may be used to understand performance and improve the product, subject to applicable law."],["YOUR RIGHTS","Privacy requests and questions should be directed through the DT FLOW contact channel."]] }
+};
+
+function dtflowStockPage(symbol){
+  return {k:"STOCK ANALYSIS",t:symbol+" Stock Analysis",lead:"A DT FLOW research view for "+symbol+" built around market structure, flow and price confirmation.",symbol};
+}
+
+function renderDTFlowPage(key){
+  const page=DT_FLOW_PAGES[key];
+  const root=document.getElementById("dtflow-page");
+  const content=document.getElementById("dtflow-page-content");
+  if(!page){return;}
+  let html='<div class="dtflow-page-hero"><div class="dtflow-page-kicker">'+page.k+'</div><h1>'+page.t+'</h1><p class="dtflow-page-lead">'+page.lead+'</p></div>';
+  if(page.stock){
+    const symbols=[['AAPL','Apple'],['AMD','Advanced Micro Devices'],['AVGO','Broadcom'],['META','Meta Platforms'],['NVDA','NVIDIA'],['PLTR','Palantir Technologies'],['SPCX','SPCX'],['TSLA','Tesla']];
+    html+='<div class="dtflow-page-card dtflow-page-wide"><h2>Explore stocks</h2>';
+    symbols.forEach(x=>html+='<div class="dtflow-stock-row"><b>'+x[0]+'</b><span>'+x[1]+'</span><a class="dtflow-stock-link" href="#page/stock-'+x[0].toLowerCase()+'">View analysis →</a></div>');
+    html+='</div>';
+  } else if(page.symbol){
+    html+='<div class="dtflow-page-grid">';
+    [['LEVEL','Identify relevant support and resistance zones around '+page.symbol+'.'],['FLOW','Review normal stock prints and notable options activity for confirmation around important levels.'],['PRICE ACTION','Look for rejection, acceptance, breakout and retest behavior at the selected zone.'],['SETUP','A setup becomes more structured when level, flow and price confirmation align.']].forEach(x=>html+='<div class="dtflow-page-card"><h2>'+x[0]+'</h2><p>'+x[1]+'</p></div>');
+    html+='</div><div class="dtflow-page-card dtflow-page-wide"><h2>Important</h2><p>This page is for research and educational context. It is not a recommendation to buy or sell '+page.symbol+'. Live quotes and current calculations require a connected market-data backend.</p></div>';
+  } else {
+    html+='<div class="dtflow-page-grid">';
+    (page.cards||[]).forEach(x=>html+='<div class="dtflow-page-card"><h2>'+x[0]+'</h2><p>'+x[1]+'</p></div>');
+    html+='</div>';
+  }
+  content.innerHTML=html;
+  root.classList.add("active");root.setAttribute("aria-hidden","false");
+  document.body.classList.add("dtflow-page-open");
+  // Keep the footer-page route visible: scroll to the page itself, not the top of the landing page.
+  requestAnimationFrame(() => {
+    root.scrollIntoView({behavior:"instant",block:"start"});
+  });
+}
+
+function closeDTFlowPage(){
+  const root=document.getElementById("dtflow-page");
+  root.classList.remove("active");root.setAttribute("aria-hidden","true");
+  document.body.classList.remove("dtflow-page-open");
+}
+
+function handleDTFlowRoute(){
+  const hash=location.hash||"#home";
+  if(hash.startsWith("#page/")){renderDTFlowPage(hash.slice(6));}else{closeDTFlowPage();}
+}
+window.addEventListener("hashchange",handleDTFlowRoute);
+handleDTFlowRoute();
+
+</script>
+
+<script>
+
+/* =========================
+   FAQ
+========================= */
+
+document.querySelectorAll(".faq-q").forEach(q => {
+
+  q.addEventListener("click", () => {
+
+    const item = q.parentElement;
+
+    document.querySelectorAll(".faq-item").forEach(other => {
+
+      if(other !== item){
+        other.classList.remove("open");
+      }
+
+    });
+
+    item.classList.toggle("open");
+
+  });
+
+});
+
+
+/* =========================
+   RADAR BLIPS
+========================= */
+
+const blips = document.querySelectorAll(".radar-blip");
+
+setInterval(() => {
+
+  blips.forEach((blip,index) => {
+
+    const positions = [
+      [68,27],
+      [29,35],
+      [65,70],
+      [39,72]
+    ];
+
+    const random = positions[Math.floor(Math.random()*positions.length)];
+
+    blip.style.left = random[0] + "%";
+    blip.style.top = random[1] + "%";
+
+  });
+
+},3500);
+
+
+/* =========================
+   DEMO FLOW CLOCK
+========================= */
+
+function updateTimes(){
+
+  const times = document.querySelectorAll(".flow-price small");
+
+  let counter = 2;
+
+  times.forEach((time,i) => {
+
+    if(i < 6){
+      time.textContent = (counter + i*2) + "m ago";
+    }
+
+  });
+
+}
+
+updateTimes();
+
+
+/* =========================
+   SMOOTH ANCHORS
+========================= */
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+  anchor.addEventListener("click",function(e){
+
+    const href = this.getAttribute("href") || "";
+
+    // Footer content pages are handled by the hash router below.
+    if(href.startsWith("#page/")) return;
+
+    const target = document.querySelector(href);
+
+    if(target){
+
+      e.preventDefault();
+
+      target.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+    }
+
+  });
+
+});
+
+
+/* =========================
+   TERMINAL TILT
+========================= */
+
+const terminal = document.querySelector(".terminal");
+
+if(terminal && window.innerWidth > 900){
+
+  terminal.addEventListener("mousemove",(e)=>{
+
+    const rect = terminal.getBoundingClientRect();
+
+    const x = (e.clientX - rect.left) / rect.width - .5;
+    const y = (e.clientY - rect.top) / rect.height - .5;
+
+    terminal.style.transform =
+      `perspective(900px) rotateY(${x*2}deg) rotateX(${-y*2}deg)`;
+
+  });
+
+  terminal.addEventListener("mouseleave",()=>{
+
+    terminal.style.transform =
+      "perspective(900px) rotateY(0deg) rotateX(0deg)";
+
+  });
+
+}
+
+
+/* =========================
+   SCROLL REVEAL
+========================= */
+
+const observer = new IntersectionObserver(
+  entries => {
+
+    entries.forEach(entry => {
+
+      if(entry.isIntersecting){
+
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+
+      }
+
+    });
+
+  },
+  {
+    threshold:.08
+  }
+);
+
+document.querySelectorAll(
+  ".flow-panel,.insight-card,.strategy,.review,.price-card,.dashboard,.coach-shell"
+).forEach(el => {
+
+  el.style.opacity = "0";
+  el.style.transform = "translateY(15px)";
+  el.style.transition = "opacity .6s ease, transform .6s ease";
+
+  observer.observe(el);
+
+});
+
+
+</script>
+
+
+<style id="dtflow-gold-trial-fix">
+a.hero-trial-btn,
+a.hero-trial-btn.btn,
+.hero-buttons a.hero-trial-btn {
+  background: linear-gradient(135deg, #F2D27A 0%, #D7B56D 48%, #B88A2A 100%) !important;
+  background-color: #D7B56D !important;
+  color: #09070A !important;
+  border: 1px solid #E8CB7A !important;
+  box-shadow: 0 0 24px rgba(215,181,109,.28) !important;
+  padding: 13px 18px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+a.hero-trial-btn:hover,
+a.hero-trial-btn.btn:hover,
+.hero-buttons a.hero-trial-btn:hover {
+  background: linear-gradient(135deg, #F6D987 0%, #DFC078 48%, #C39738 100%) !important;
+  color: #09070A !important;
+}
+</style>
+
+
+<script>
+/* DT FLOW auth tunnel configuration.
+   Leave empty when frontend and API share the same origin.
+   For CodePen/testing, set window.DT_FLOW_API_BASE before this script. */
+window.DT_FLOW_API_BASE = window.DT_FLOW_API_BASE || '';
+</script>
+</body>
+</html>
+
+<style>
+/* DT FLOW CTA refinement — same dimensions and typography as Explore Flow */
+.hero-trial-btn{
+  background:#fff;
+  color:#050308;
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:0 0 30px rgba(255,255,255,.08);
+  padding:13px 18px;
+  border-radius:10px;
+  font-weight:700;
+  font-size:13px;
+  line-height:normal;
+  letter-spacing:normal;
+  text-transform:none;
+  white-space:nowrap;
+  font-family:inherit;
+}
+.hero-trial-btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.02);
+  box-shadow:0 8px 26px rgba(255,255,255,.12);
+}
+</style>
