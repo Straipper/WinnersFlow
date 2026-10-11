@@ -42,10 +42,11 @@ app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
 }));
-const allowedOrigins = env.CORS_ORIGIN.split(',').map(v => v.trim()).filter(Boolean);
+function normalizeOrigin(value) { try { return new URL(value).origin; } catch { return value; } }
+const allowedOrigins = [...new Set([...env.CORS_ORIGIN.split(',').map(v => v.trim()).filter(Boolean), env.APP_URL].map(normalizeOrigin))];
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(normalizeOrigin(origin))) return callback(null, true);
     return callback(new Error('CORS origin denied'));
   },
   credentials: false,
