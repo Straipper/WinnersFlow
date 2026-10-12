@@ -14,7 +14,10 @@ router.get('/:symbol', async (req,res,next)=>{
     if(kind==='stocks') return res.json({ok:true,type:kind,status:'LIVE',data:getFlow(ticker),meta:{source:'dtflow_stock_flow',displayStatus:'LIVE'}});
     if(kind==='options'){
       const raw=await getOptionsFlow(ticker,{limit:Math.min(Number(req.query.limit||25),100)});
-      return res.json({ok:true,type:kind,status:'LIVE',data:normalizeOptionsRows(raw),meta:{source:'optionwhales',displayStatus:'LIVE',asOf:raw?.data?.as_of || raw?.as_of || null,delaySeconds:raw?.data?.delay_seconds ?? raw?.delay_seconds ?? null}});
+      const realtime = raw?.data?.realtime === true || raw?.realtime === true;
+      const delaySeconds = raw?.data?.delay_seconds ?? raw?.delay_seconds ?? null;
+      const displayStatus = realtime ? 'LIVE' : (Number(delaySeconds) > 0 ? 'DELAYED' : 'UNCONFIRMED');
+      return res.json({ok:true,type:kind,status:displayStatus,data:normalizeOptionsRows(raw),meta:{source:'optionwhales',displayStatus,asOf:raw?.data?.as_of || raw?.as_of || null,delaySeconds}});
     }
     const raw=await getDarkPoolPrints(ticker,{limit:Math.min(Number(req.query.limit||25),100)});
     return res.json({ok:true,type:kind,status:'LIVE',data:normalizeDarkRows(raw),meta:{source:'optionwhales',displayStatus:'LIVE',asOf:raw?.data?.as_of || raw?.as_of || null,delaySeconds:raw?.data?.delay_seconds ?? raw?.delay_seconds ?? 900}});

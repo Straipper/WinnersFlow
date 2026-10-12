@@ -104,82 +104,87 @@ export function normalizeOptionsRows(payload) {
   ]);
 
   return rows.map((r, i) => {
-    const order = r?.order && typeof r.order === 'object'
-      ? r.order
-      : {};
+    const order = r?.order && typeof r.order === 'object' ? r.order : {};
     const contract = firstValue(
-      r?.option_ticker, r?.contract, r?.contract_symbol,
+      r?.occ, r?.option_ticker, r?.contract, r?.contract_symbol,
       r?.option_symbol, r?.symbol,
-      order.option_ticker, order.contract, order.contract_symbol,
-      order.option_symbol, order.symbol
+      order.occ, order.option_ticker, order.contract,
+      order.contract_symbol, order.option_symbol, order.symbol
     );
     const occ = parseOccContract(contract);
-
     const timestamp = firstValue(
-      r?.timestamp, r?.ts, r?.time, r?.datetime,
-      r?.created_at, r?.trade_time, r?.executed_at,
+      r?.timestamp, r?.ts, r?.time, r?.datetime, r?.created_at,
+      r?.trade_time, r?.executed_at,
       order.timestamp, order.ts, order.time, order.datetime,
       order.created_at, order.trade_time, order.executed_at
     );
 
+    const optionTypeValue = firstValue(
+      r?.right, r?.option_type, r?.put_call, r?.call_put,
+      order.right, order.option_type, order.put_call, order.call_put,
+      occ.optionType
+    );
+    const optionType = optionTypeValue == null
+      ? null
+      : String(optionTypeValue).trim().toUpperCase();
+    const normalizedOptionType =
+      optionType === 'C' || optionType === 'CALL' ? 'CALL'
+      : optionType === 'P' || optionType === 'PUT' ? 'PUT'
+      : optionType;
+
     return {
-      id: String(firstValue(
-        r?.event_id, r?.id, order.event_id, order.id,
-        `${timestamp || 'unknown'}-${contract || i}`
-      )),
+      id: String(firstValue(r?.event_id, r?.id, order.event_id, order.id,
+        `${timestamp || 'unknown'}-${contract || i}`)),
       timestamp: timestamp ?? null,
+      ticker: firstValue(r?.ticker, order.ticker) ?? null,
       contract: contract ?? null,
-      optionType: (() => {
-        const value = firstValue(
-          r?.option_type, r?.put_call, r?.call_put,
-          order.option_type, order.put_call, order.call_put,
-          occ.optionType
-        );
-        if (value == null) return null;
-        const normalized = String(value).trim().toUpperCase();
-        if (normalized === 'C' || normalized === 'CALL') return 'CALL';
-        if (normalized === 'P' || normalized === 'PUT') return 'PUT';
-        return normalized;
-      })(),
-      strike: firstValue(
-        r?.strike, order.strike, occ.strike
-      ) ?? null,
+      optionType: normalizedOptionType,
+      strike: firstValue(r?.strike, order.strike, occ.strike) ?? null,
       expiration: firstValue(
         r?.expiration, r?.expiry, r?.expiration_date,
         order.expiration, order.expiry, order.expiration_date,
         occ.expiration
       ) ?? null,
       contracts: firstValue(
-        r?.total_contracts, r?.contracts, r?.contract_count,
-        r?.quantity, r?.size,
-        order.total_contracts, order.contracts,
-        order.contract_count, order.quantity, order.size
+        r?.contracts, r?.total_contracts, r?.contract_count, r?.quantity, r?.size,
+        order.contracts, order.total_contracts, order.contract_count,
+        order.quantity, order.size
       ) ?? null,
       premium: firstValue(
-        r?.premium, r?.total_premium, r?.total_notional,
-        r?.notional, r?.total_value,
+        r?.premium, r?.total_premium, r?.total_notional, r?.notional, r?.total_value,
         order.premium, order.total_premium, order.total_notional,
         order.notional, order.total_value
       ) ?? null,
+      notional: firstValue(r?.notional, order.notional) ?? null,
       direction: firstValue(
         r?.direction, r?.side, r?.sentiment,
         order.direction, order.side, order.sentiment
+      ) ?? null,
+      directionConfidence: firstValue(
+        r?.direction_confidence, order.direction_confidence
       ) ?? null,
       orderType: firstValue(
         r?.order_type, r?.trade_type, r?.execution_type,
         order.order_type, order.trade_type, order.execution_type
       ) ?? null,
+      avgPrice: firstValue(r?.avg_price, order.avg_price) ?? null,
+      avgBid: firstValue(r?.avg_bid, order.avg_bid) ?? null,
+      avgAsk: firstValue(r?.avg_ask, order.avg_ask) ?? null,
       spot: firstValue(
-        r?.spot_price, r?.underlying_price, r?.underlying_last,
-        r?.stock_price,
+        r?.spot_price, r?.underlying_price, r?.underlying_last, r?.stock_price,
         order.spot_price, order.underlying_price,
         order.underlying_last, order.stock_price
       ) ?? null,
+      impliedVolatility: firstValue(
+        r?.implied_volatility, order.implied_volatility
+      ) ?? null,
+      delta: firstValue(r?.delta, order.delta) ?? null,
+      weightedScore: firstValue(r?.weighted_score, order.weighted_score) ?? null,
+      tradeCount: firstValue(r?.trade_count, order.trade_count) ?? null,
       source: 'optionwhales',
     };
   });
 }
-
 export function normalizeDarkRows(payload) {
   const rows = findRows(payload, [
     'prints', 'rows', 'trades', 'ticks', 'dark_pool', 'darkpool',

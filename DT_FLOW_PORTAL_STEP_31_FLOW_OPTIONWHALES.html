@@ -4409,10 +4409,16 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
     list.innerHTML=rows.length?rows.slice(0,10).map(r=>`<div class="chart-flow-row"><span class="time">${esc(r.time)}</span><div class="main"><b>${esc(r.label)}</b><small>${esc(r.desc)}</small></div><span class="value ${r.tone||'green'}">${esc(r.value)}</span></div>`).join(''):'<div class="chart-flow-row"><span class="time">—</span><div class="main"><b>NO DATA</b><small>Waiting for the selected Flow feed.</small></div><span class="value">—</span></div>';
     const title={stocks:'NORMAL STOCK FLOW',options:'OPTIONS FLOW',dark:'DARK POOL PRINTS'}[kind];
     const t=document.getElementById('chartFlowTitle'); if(t)t.textContent='$'+state.ticker+' · '+title;
-    const head=document.querySelector('#chartFlowPanel .chart-flow-head small'); if(head)head.innerHTML='<span class="dt-flow-live-badge"><i></i>LIVE</span> <span class="dt-flow-live-meta">CONTINUOUS FEED</span>';
     const meta=payload?.meta||{};
-    const page=document.getElementById('chartFlowPageLabel'); if(page)page.textContent=meta.asOf?'AS OF '+String(meta.asOf).replace('T',' ').replace('Z',' UTC'):'LIVE FEED';
-    const pager=document.getElementById('chartFlowPagerText'); if(pager)pager.textContent='LIVE';
+    const status=String(meta.displayStatus||payload?.status||'UNCONFIRMED').toUpperCase();
+    const head=document.querySelector('#chartFlowPanel .chart-flow-head small');
+    if(head){
+      const badgeClass=status==='LIVE'?'dt-flow-live-badge':'dt-flow-live-meta';
+      head.innerHTML='<span class="'+badgeClass+'">'+(status==='LIVE'?'<i></i>':'')+esc(status)+'</span> <span class="dt-flow-live-meta">OPTIONWHALES</span>';
+    }
+    const page=document.getElementById('chartFlowPageLabel');
+    if(page)page.textContent=meta.asOf?'AS OF '+String(meta.asOf).replace('T',' ').replace('Z',' UTC'):status;
+    const pager=document.getElementById('chartFlowPagerText'); if(pager)pager.textContent=status;
     const back=document.getElementById('chartFlowBack'),forward=document.getElementById('chartFlowForward'); if(back)back.disabled=true;if(forward)forward.disabled=true;
   }
   function stockRows(payload){
