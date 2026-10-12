@@ -21,9 +21,24 @@ export async function getOptionsFlowSessions(){
   return owFetch('/options-flow/sessions');
 }
 
-export async function getOptionsFlow(ticker, {limit=25}={}){
-  const symbol=String(ticker).trim().toUpperCase();
-  return owFetch(`/options-flow/ticker/${encodeURIComponent(symbol)}/ticks`, {limit});
+export async function getOptionsFlow(ticker, {limit=25, session}={}){
+  const symbol = String(ticker).trim().toUpperCase();
+  let tradingSession = session;
+
+  if (!tradingSession) {
+    const sessions = await getOptionsFlowSessions();
+    tradingSession = sessions?.latest;
+  }
+
+  if (!tradingSession) {
+    throw new Error('OptionWhales did not provide a latest trading session');
+  }
+
+  return owFetch('/options-flow/tape', {
+    ticker: symbol,
+    session: tradingSession,
+    limit: Math.min(Math.max(Number(limit) || 25, 1), 2000),
+  });
 }
 
 export async function getDarkPoolPrints(ticker, {limit=25}={}){
@@ -114,11 +129,18 @@ export function normalizeOptionsRows(payload) {
       )),
       timestamp: timestamp ?? null,
       contract: contract ?? null,
-      optionType: firstValue(
-        r?.option_type, r?.put_call, r?.call_put,
-        order.option_type, order.put_call, order.call_put,
-        occ.optionType
-      ) ?? null,
+      optionType: (() => {
+        const value = firstValue(
+          r?.option_type, r?.put_call, r?.call_put,
+          order.option_type, order.put_call, order.call_put,
+          occ.optionType
+        );
+        if (value == null) return null;
+        const normalized = String(value).trim().toUpperCase();
+        if (normalized === 'C' || normalized === 'CALL') return 'CALL';
+        if (normalized === 'P' || normalized === 'PUT') return 'PUT';
+        return normalized;
+      })(),
       strike: firstValue(
         r?.strike, order.strike, occ.strike
       ) ?? null,
