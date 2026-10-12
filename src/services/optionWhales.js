@@ -17,6 +17,10 @@ async function owFetch(path, params={}){
   return data;
 }
 
+export async function getOptionsFlowSessions(){
+  return owFetch('/options-flow/sessions');
+}
+
 export async function getOptionsFlow(ticker, {limit=25}={}){
   const symbol=String(ticker).trim().toUpperCase();
   return owFetch(`/options-flow/ticker/${encodeURIComponent(symbol)}/ticks`, {limit});
@@ -185,9 +189,9 @@ export function normalizeDarkRows(payload) {
     );
     const notional = firstValue(
       r?.notional, r?.trade_value, r?.dollar_value,
-      r?.total_value, r?.amount,
+      r?.total_value, r?.amount, r?.premium,
       trade.notional, trade.trade_value, trade.dollar_value,
-      trade.total_value, trade.amount
+      trade.total_value, trade.amount, trade.premium
     );
 
     return {
@@ -204,8 +208,8 @@ export function normalizeDarkRows(payload) {
         trade.venue, trade.exchange, trade.market_center
       ) ?? null,
       nbboLocation: firstValue(
-        r?.nbbo_location, r?.location, r?.price_location,
-        trade.nbbo_location, trade.location, trade.price_location
+        r?.nbbo_location, r?.nbbo_label, r?.location, r?.price_location,
+        trade.nbbo_location, trade.nbbo_label, trade.location, trade.price_location
       ) ?? null,
       source: 'optionwhales',
     };

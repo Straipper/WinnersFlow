@@ -1,4 +1,4 @@
-import { getOptionsFlow, getDarkPoolPrints } from './optionWhales.js';
+import { getOptionsFlow, getDarkPoolPrints, getOptionsFlowSessions } from './optionWhales.js';
 
 function describe(value, depth = 0) {
   if (value === null) return { type: 'null' };
@@ -24,6 +24,13 @@ function describe(value, depth = 0) {
 
 export async function diagnoseOptionWhales() {
   const results = {};
+
+  try {
+    const raw = await getOptionsFlowSessions();
+    results.sessions = { ok: true, structure: describe(raw) };
+  } catch (error) {
+    results.sessions = { ok: false, error: String(error?.message || 'Request failed').slice(0, 200) };
+  }
 
   for (const [name, request] of [
     ['options', () => getOptionsFlow('NVDA', { limit: 3 })],
