@@ -601,11 +601,92 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   .dt-global-tick{font-size:9px;margin-right:26px;gap:7px}
 }
 </style>
+
+<style id="winnersflow-portal-signature-logo">
+.brand.wf-spectrum{gap:6px;padding:2px 4px 31px;min-width:0;overflow:hidden}
+.brand.wf-spectrum .wf-spectrum-mark{width:43px;height:29px;flex:0 0 43px;display:block}
+.brand.wf-spectrum .wf-spectrum-mark svg{width:100%;height:100%;display:block;overflow:visible}
+.brand.wf-spectrum .wf-spectrum-word,.mobile-brand.wf-spectrum .wf-spectrum-word{display:inline-flex;align-items:baseline;white-space:nowrap;line-height:.9;min-width:0}
+.brand.wf-spectrum .wf-spectrum-winners,.brand.wf-spectrum .wf-spectrum-flow,
+.mobile-brand.wf-spectrum .wf-spectrum-winners,.mobile-brand.wf-spectrum .wf-spectrum-flow{
+  display:inline-block;margin:0;padding:0;font-family:"Cormorant Garamond","Bodoni 72","Didot","Times New Roman",serif;
+  font-size:16px;font-weight:600;letter-spacing:-.55px;line-height:.95;
+  background:linear-gradient(180deg,#fff 0%,#e7edf2 52%,#bac5cf 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
+}
+.brand.wf-spectrum .wf-spectrum-flow,.mobile-brand.wf-spectrum .wf-spectrum-flow{
+  margin-left:3px;font-weight:500;letter-spacing:-.4px
+}
+.brand.wf-spectrum .portal-word{font-size:7px;letter-spacing:1px;white-space:nowrap}
+.brand.wf-spectrum .live{flex:0 0 6px;margin-left:auto}
+.mobile-brand.wf-spectrum{display:none;align-items:center;gap:5px;white-space:nowrap}
+.mobile-brand.wf-spectrum .wf-spectrum-mark{width:38px;height:25px;flex:0 0 38px}
+.mobile-brand.wf-spectrum .wf-spectrum-mark svg{width:100%;height:100%;display:block}
+.mobile-brand.wf-spectrum .wf-spectrum-winners,.mobile-brand.wf-spectrum .wf-spectrum-flow{font-size:15px;letter-spacing:-.45px}
+.mobile-brand.wf-spectrum .portal-word{font-size:7px;letter-spacing:.7px;color:#aeb9c9}
+@media(max-width:900px){
+  .mobile-brand.wf-spectrum{display:flex}
+  .brand.wf-spectrum{gap:4px;padding-left:0;padding-right:0}
+  .brand.wf-spectrum .wf-spectrum-mark{width:36px;height:24px;flex-basis:36px}
+  .brand.wf-spectrum .wf-spectrum-winners,.brand.wf-spectrum .wf-spectrum-flow{font-size:13px;letter-spacing:-.45px}
+  .brand.wf-spectrum .portal-word{font-size:6px;letter-spacing:.5px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
- <div class="brand"><span class="brand-word">WinnersFlow</span><span class="portal-word">PORTAL</span><i class="live"></i></div>
+ <div class="brand wf-spectrum"><span class="wf-spectrum-mark" aria-hidden="true">
+    <svg viewBox="0 0 118 72" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wfSpectrumA" x1="0" y1="0" x2="118" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#62E7A9"/>
+          <stop offset=".30" stop-color="#7CCBFF"/>
+          <stop offset=".58" stop-color="#B78CFF"/>
+          <stop offset=".82" stop-color="#FF8EDB"/>
+          <stop offset="1" stop-color="#F5C76A"/>
+        </linearGradient>
+        <linearGradient id="wfSpectrumB" x1="118" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF8EDB"/>
+          <stop offset=".34" stop-color="#B78CFF"/>
+          <stop offset=".66" stop-color="#7CCBFF"/>
+          <stop offset="1" stop-color="#62E7A9"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Ultra-thin geometric WF monogram: designed as one continuous signal form. -->
+      <path d="M7 12H23L32 50L42 22L52 50L63 12H79"
+            fill="none"
+            stroke="url(#wfSpectrumA)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <path d="M62 12H111L101 30H78L72 43H94"
+            fill="none"
+            stroke="url(#wfSpectrumB)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <!-- Precision inner geometry -->
+      <path d="M23 12L32 50L42 22L52 50L63 12"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width=".65"
+            opacity=".62"/>
+
+      <!-- Tiny color nodes, like market intelligence points rather than decoration -->
+      <circle cx="7" cy="12" r="2.1" fill="#62E7A9"/>
+      <circle cx="42" cy="22" r="1.9" fill="#B78CFF"/>
+      <circle cx="79" cy="12" r="2.1" fill="#7CCBFF"/>
+      <circle cx="111" cy="12" r="2.1" fill="#FF8EDB"/>
+    </svg>
+  </span>
+<span class="wf-spectrum-word" aria-label="WinnersFlow">
+    <span class="wf-spectrum-winners">WINNERS</span><span class="wf-spectrum-flow">FLOW</span>
+  </span><span class="portal-word">PORTAL</span><i class="live"></i></div>
  <div class="nav-title">CORE</div>
  <nav class="nav">
   <button class="active" data-page="scanner"><span class="ico">⌁</span><span>Scanner</span></button>
@@ -625,7 +706,56 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 
 <main class="main">
 <header class="topbar">
- <div class="mobile-brand"><span class="brand-word">WinnersFlow</span><span class="portal-word">PORTAL</span></div>
+ <div class="mobile-brand wf-spectrum"><span class="wf-spectrum-mark" aria-hidden="true">
+    <svg viewBox="0 0 118 72" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wfSpectrumA" x1="0" y1="0" x2="118" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#62E7A9"/>
+          <stop offset=".30" stop-color="#7CCBFF"/>
+          <stop offset=".58" stop-color="#B78CFF"/>
+          <stop offset=".82" stop-color="#FF8EDB"/>
+          <stop offset="1" stop-color="#F5C76A"/>
+        </linearGradient>
+        <linearGradient id="wfSpectrumB" x1="118" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF8EDB"/>
+          <stop offset=".34" stop-color="#B78CFF"/>
+          <stop offset=".66" stop-color="#7CCBFF"/>
+          <stop offset="1" stop-color="#62E7A9"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Ultra-thin geometric WF monogram: designed as one continuous signal form. -->
+      <path d="M7 12H23L32 50L42 22L52 50L63 12H79"
+            fill="none"
+            stroke="url(#wfSpectrumA)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <path d="M62 12H111L101 30H78L72 43H94"
+            fill="none"
+            stroke="url(#wfSpectrumB)"
+            stroke-width="2.6"
+            stroke-linecap="square"
+            stroke-linejoin="miter"/>
+
+      <!-- Precision inner geometry -->
+      <path d="M23 12L32 50L42 22L52 50L63 12"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width=".65"
+            opacity=".62"/>
+
+      <!-- Tiny color nodes, like market intelligence points rather than decoration -->
+      <circle cx="7" cy="12" r="2.1" fill="#62E7A9"/>
+      <circle cx="42" cy="22" r="1.9" fill="#B78CFF"/>
+      <circle cx="79" cy="12" r="2.1" fill="#7CCBFF"/>
+      <circle cx="111" cy="12" r="2.1" fill="#FF8EDB"/>
+    </svg>
+  </span>
+<span class="wf-spectrum-word" aria-label="WinnersFlow">
+    <span class="wf-spectrum-winners">WINNERS</span><span class="wf-spectrum-flow">FLOW</span>
+  </span><span class="portal-word">PORTAL</span></div>
  <div class="search"><span>⌕</span><input id="search" placeholder="Search any NASDAQ ticker…"></div>
  <div class="status"><i></i>MARKET OPEN · DEMO DATA</div>
  <button class="top-btn" onclick="toast('Notifications opened')">⚡</button>
