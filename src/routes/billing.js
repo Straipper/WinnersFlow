@@ -39,8 +39,7 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
       payment_method_types: ['card'],
       billing_address_collection: 'auto',
       subscription_data: {
-        trial_period_days: 3,
-        metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro', trial_days: '3', monthly_price_usd: '29' },
+          metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro', trial_days: '0', monthly_price_usd: '18.99' },
       },
       metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro' },
       success_url: `${env.APP_URL}/portal?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
@@ -48,7 +47,7 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
     });
 
     trackUniqueUserEvent({ eventName: 'checkout_started', userId: req.user.id, metadata: { external_id: session.id, checkout_session_id: session.id } }).catch(() => {});
-    res.json({ ok: true, checkoutUrl: session.url, sessionId: session.id, plan: { currency: 'USD', amount: 29, interval: 'month', trialDays: 3 } });
+    res.json({ ok: true, checkoutUrl: session.url, sessionId: session.id, plan: { currency: 'USD', amount: 18.99, interval: 'month', trialDays: 0 } });
   } catch (e) { next(e); }
 });
 
@@ -151,9 +150,11 @@ export async function handleStripeWebhook(rawBody, signature) {
         const trialData = { username:u?.display_name || u?.email?.split('@')[0], email:u?.email, trialEndsAt:sub.trial_end ? new Date(sub.trial_end*1000).toISOString() : null, userId, eventId:event.id };
         if(u) {
           await trackUniqueUserEvent({ eventName: 'checkout_completed', userId, metadata: { external_id: event.id, checkout_session_id: session.id } }).catch(()=>{});
-          await trackUniqueUserEvent({ eventName: 'trial_started', userId, metadata: { external_id: sub.id, stripe_subscription_id: sub.id } }).catch(()=>{});
-          sendTemplate('trialStarted', u.email, trialData).catch(()=>{});
-          sendAdminTemplate('adminTrialStarted', trialData).catch(()=>{});
+          if (sub.trial_end) {
+            await trackUniqueUserEvent({ eventName: 'trial_started', userId, metadata: { external_id: sub.id, stripe_subscription_id: sub.id } }).catch(()=>{});
+            sendTemplate('trialStarted', u.email, trialData).catch(()=>{});
+            sendAdminTemplate('adminTrialStarted', trialData).catch(()=>{});
+          }
         }
       }
     } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
@@ -186,7 +187,7 @@ export async function handleStripeWebhook(rawBody, signature) {
             sendAdminTemplate('adminPaymentFailed', failedData).catch(()=>{});
           } else {
             trackUniqueUserEvent({ eventName:'payment_succeeded', userId:uid, metadata:{ external_id:event.id, invoice_id:obj.id } }).catch(()=>{});
-            const amount = Number.isFinite(obj.amount_paid) ? (obj.amount_paid / 100).toFixed(2) : '29.00';
+            const amount = Number.isFinite(obj.amount_paid) ? (obj.amount_paid / 100).toFixed(2) : "—";
             const paidData={username:u.display_name || u.email.split('@')[0], email:u.email, amount, currency:obj.currency || 'usd', userId:uid, eventId:event.id, invoiceId:obj.id};
             sendTemplate('paymentSuccess', u.email, paidData).catch(()=>{});
             sendAdminTemplate('adminPaymentSuccess', paidData).catch(()=>{});

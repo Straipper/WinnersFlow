@@ -2787,15 +2787,55 @@ function filterFlowV28(){
  function renderTickerFlow(){
    const box=q('flowSelectedDemo'); if(!box)return;
    const d=demo[selectedTicker]||demo.NVDA;
-   let rows=(d[selectedView]||[]).slice();
+   let rows=selectedView==='dark'?[]:(d[selectedView]||[]).slice();
    if(rows.length)rows=buildMoreRows(rows);
    const names={stocks:'NORMAL STOCK FLOW',options:'OPTIONS FLOW',dark:'DARK POOL PRINTS'};
    const start=flowPage*flowPageSize,end=Math.min(start+flowPageSize,rows.length),pageRows=rows.slice(start,end),totalPages=Math.max(1,Math.ceil(rows.length/flowPageSize));
    const descriptions={stocks:'Illustrative stock transactions for the selected ticker.',options:'Illustrative options activity for the selected ticker.',dark:'Illustrative off-exchange prints for the selected ticker.'};
-   box.innerHTML='<div class="flow-demo-head"><b>$'+selectedTicker+' · '+names[selectedView]+'</b><span>DEMO DATA · NOT REAL TIME</span></div>'+
+   box.innerHTML='<div class="flow-demo-head"><b>$'+selectedTicker+' · '+names[selectedView]+'</b><span>'+(selectedView==='dark'?'CONNECTING':'DEMO DATA · NOT REAL TIME')+'</span></div>'+
+     (selectedView==='dark'?'<div class="flow-darkpool-note"><b>LIVE FEED · UP TO 15 MIN DELAY</b><p>Institutional off-exchange trade data, with reporting latency depending on venue and data-provider processing. Delays of up to 15 minutes may occur.</p></div>':'')+
      '<div class="flow-demo-list">'+(pageRows.length?pageRows.map(r=>'<div class="flow-demo-event"><span class="time">'+r[0]+'</span><div class="main"><b>'+r[1]+'</b><small>'+r[2]+'</small></div><span class="value '+r[4]+'">'+r[3]+'</span></div>').join(''):'<div class="flow-demo-empty">No demo prints are defined for this ticker in this Flow view yet. Live market data will populate this area when connected.</div>')+'</div>'+
      '<div class="flow-demo-pager"><button onclick="flowPageBack()" '+(flowPage<=0?'disabled':'')+'>← BACK</button><span>SHOWING '+(start+1)+'–'+end+' · PAGE '+(flowPage+1)+' / '+totalPages+'</span><button onclick="flowPageForward()" '+(end>=rows.length?'disabled':'')+'>FORWARD →</button></div>';
    const title=q('flowSelectedTitle'); if(title)title.textContent='$'+selectedTicker+' · '+names[selectedView];
+   if(selectedView==='dark')fetchDarkPoolHub();
+ }
+ let darkRequest=0;
+ async function fetchDarkPoolHub(){
+   const box=q('flowSelectedDemo'); if(!box||selectedView!=='dark')return;
+   const ticker=selectedTicker, request=++darkRequest;
+   const token=()=>localStorage.getItem('dtflow_token')||localStorage.getItem('dtflowToken')||localStorage.getItem('authToken')||localStorage.getItem('token')||'';
+   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+   const money=v=>{
+     const n=Number(v);if(!Number.isFinite(n))return '—';
+     const a=Math.abs(n),u=a>=1e9?'B':a>=1e6?'M':a>=1e3?'K':'';
+     return (n<0?'-$':'$')+(u?(a/(u==='B'?1e9:u==='M'?1e6:1e3)).toFixed(2):a.toFixed(2))+u;
+   };
+   try{
+     const base=(window.DT_FLOW_API_BASE||'/api').replace(/\/$/,'');
+     const t=token();
+     const res=await fetch(base+'/flow-data/'+encodeURIComponent(ticker)+'?type=dark',{
+       headers:t?{Authorization:'Bearer '+t}:{},
+       credentials:'same-origin'
+     });
+     const payload=await res.json();
+     if(request!==darkRequest||selectedView!=='dark'||selectedTicker!==ticker)return;
+     if(!res.ok)throw new Error('Dark Pool request failed');
+     const status=String(payload?.meta?.displayStatus||payload?.status||'UNCONFIRMED').toUpperCase();
+     const badge=box.querySelector('.flow-demo-head span');
+     if(badge)badge.textContent=status;
+     const list=box.querySelector('.flow-demo-list');
+     const rows=Array.isArray(payload?.data)?payload.data:[];
+     if(list)list.innerHTML=rows.length?rows.slice(0,10).map(r=>{
+       const price=Number(r.price);
+       const details=[r.venue,Number.isFinite(price)?'Price $'+price.toFixed(2):null].filter(Boolean).join(' · ')||'Off-exchange print';
+       return '<div class="flow-demo-event"><span class="time">'+esc(r.timestamp||'—')+'</span><div class="main"><b>DARK PRINT</b><small>'+esc(details)+'</small></div><span class="value gold">'+esc(money(r.notional))+'</span></div>';
+     }).join(''):'<div class="flow-demo-empty">No Dark Pool prints were returned for this ticker. Data availability and reporting latency depend on the provider.</div>';
+   }catch(e){
+     if(request!==darkRequest||selectedView!=='dark'||selectedTicker!==ticker)return;
+     const badge=box.querySelector('.flow-demo-head span');if(badge)badge.textContent='UNCONFIRMED';
+     const list=box.querySelector('.flow-demo-list');
+     if(list)list.innerHTML='<div class="flow-demo-empty">Dark Pool data is currently unavailable. No live status or prints could be verified.</div>';
+   }
  }
  window.flowPageBack=function(){if(flowPage>0){flowPage--;renderTickerFlow()}};
  window.flowPageForward=function(){const rows=(buildMoreRows((demo[selectedTicker]||demo.NVDA)[selectedView]||[]));if((flowPage+1)*flowPageSize<rows.length){flowPage++;renderTickerFlow()}};

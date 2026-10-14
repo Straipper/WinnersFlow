@@ -26,12 +26,12 @@ export async function getConfiguredPrice() {
   const isCorrect =
     price.active === true &&
     price.currency === 'usd' &&
-    price.unit_amount === 2900 &&
+    price.unit_amount === 1899 &&
     recurring?.interval === 'month' &&
     recurring?.interval_count === 1;
 
   if (!isCorrect) {
-    const error = new Error('Configured Stripe Price must be active, USD $29.00, recurring monthly.');
+    const error = new Error('Configured Stripe Price must be active, USD $18.99, recurring monthly.');
     error.status = 500;
     throw error;
   }
