@@ -11,8 +11,18 @@ const clients = new Map();
 const latestQuotes = new Map();
 let upstream = null;
 let upstreamSessionId = null;
+let upstreamConnecting = false;
 let upstreamSymbols = new Set();
-let mockTimer = null;
+function parseTimestampMs(value) {
+  if (value === undefined || value === null || value === '') return NaN;
+  if (typeof value === 'number' || (typeof value === 'string' && /^-?\d+(?:\.\d+)?$/.test(value.trim()))) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return NaN;
+    return Math.abs(n) < 1e12 ? n * 1000 : n;
+  }
+  return Date.parse(value);
+}
+
 
 function normalizeSymbols(symbols = []) {
   return [...new Set(symbols.map(s => String(s).trim().toUpperCase()).filter(Boolean))].slice(0, 100);
@@ -39,12 +49,7 @@ function broadcastCandle(symbol, candle, interval = DEFAULT_INTERVAL) {
 function providerConfig() {
   return {
     provider: getProvider().provider,
-    apiKey: process.env.MARKET_DATA_API_KEY || "",
     stockflowKey: process.env.STOCKFLOW_API_KEY || "",
-    alpacaKey: process.env.ALPACA_API_KEY || "",
-    alpacaSecret: process.env.ALPACA_API_SECRET || "",
-    url: process.env.MARKET_DATA_WS_URL || "wss://ws.twelvedata.com/v1/quotes/price",
-    alpacaUrl: process.env.ALPACA_DATA_WS_URL || "wss://stream.data.alpaca.markets/v2/iex",
   };
 }
 
@@ -57,7 +62,7 @@ async function sendHistoricalCandles(client, symbols) {
         symbol,
         interval: DEFAULT_INTERVAL,
         data,
-        source: ["twelve_data","alpaca"].includes(getProvider().provider) ? "market_data_rest" : getProvider().provider === "stockflow" ? "stockflow_tradier_rest" : "mock",
+        source: "stockflow_tradier_rest",
       });
     } catch (error) {
       send(client.ws, { type: 'error', scope: 'candle_snapshot', symbol, message: error.message });
@@ -67,27 +72,28 @@ async function sendHistoricalCandles(client, symbols) {
 
 function rebuildSubscriptions() {
   const all = new Set();
-  for (const c of clients.values()) for (const s of c.symbols) all.add(s);
+  for (const c of clients.values()) {
+    for (const symbol of c.symbols) all.add(symbol);
+  }
   upstreamSymbols = all;
   if (!upstream || upstream.readyState !== WebSocket.OPEN) return;
-
-  const provider = getProvider().provider;
-  if (provider === "stockflow") {
-    if (upstreamSessionId && all.size) upstream.send(JSON.stringify({ symbols: [...all], filter: ["quote", "tradex"], sessionid: upstreamSessionId, linebreak: true }));
-    return;
+  if (upstreamSessionId && all.size) {
+    upstream.send(JSON.stringify({
+      symbols: [...all],
+      filter: ["quote", "timesale"],
+      sessionid: upstreamSessionId,
+      linebreak: true,
+    }));
   }
-
-  if (provider === "alpaca") {
-    if (all.size) upstream.send(JSON.stringify({ action: "subscribe", trades: [...all], quotes: [...all] }));
-    return;
-  }
-
-  upstream.send(JSON.stringify({ action: "reset" }));
-  if (all.size) upstream.send(JSON.stringify({ action: "subscribe", params: { symbols: [...all].join(",") } }));
 }
 
-
 function handleQuote({ symbol, price, volume, tradeSize, tradeId, exchange, tradeSide, timestamp, source }) {
+  if (!String(source || "").startsWith("stockflow_tradier_")) return;
+  const timestampMs = parseTimestampMs(timestamp);
+  if (!Number.isFinite(timestampMs)) return;
+  const normalizedTimestamp = new Date(timestampMs).toISOString();
+  const normalizedPrice = Number(price);
+  if (!Number.isFinite(normalizedPrice) || normalizedPrice <= 0) return;
   const s = String(symbol).toUpperCase();
 const quoteBook = latestQuotes.get(s) || {};
 const bid = Number(quoteBook.bid) || null;
@@ -102,11 +108,11 @@ if (tradeSize > 0) {
   const quote = {
     type: 'quote',
     symbol: s,
-    price: Number(price) || null,
-    volume: Number(volume) || 0,
-    timestamp: timestamp || new Date().toISOString(),
+    price: normalizedPrice,
+    volume: volume == null ? (Number(quoteBook.volume) || 0) : (Number(volume) || 0),
+    timestamp: normalizedTimestamp,
     source,
-    market: getMarketSession(new Date(timestamp || Date.now())),
+    market: getMarketSession(new Date(normalizedTimestamp)),
   };
   broadcast(s, quote);
 
@@ -128,6 +134,7 @@ if (tradeSize > 0) {
     exchange,
     timestamp: quote.timestamp,
     tradeSide: inferredSide,
+    source,
 
   });
   if (flow) {
@@ -138,190 +145,109 @@ if (tradeSize > 0) {
 }
 
 function connectUpstream() {
-  const { provider, apiKey, stockflowKey, url, alpacaKey, alpacaSecret, alpacaUrl } = providerConfig();
-  if (provider === "stockflow" && !stockflowKey) return;
-  if (provider === "alpaca" && (!alpacaKey || !alpacaSecret)) return;
-  if (provider === "twelve_data" && !apiKey) return;
+  const { provider, stockflowKey } = providerConfig();
+  if (provider !== "stockflow" || !stockflowKey) return;
   if (upstream && [WebSocket.OPEN, WebSocket.CONNECTING].includes(upstream.readyState)) return;
+  if (upstreamConnecting) return;
+  upstreamConnecting = true;
 
-  if (provider === "stockflow") {
-    (async () => {
-      try {
-        const response = await fetch("https://api.tradier.com/v1/markets/events/session", {
-          method: "POST",
-          headers: { Accept: "application/json", Authorization: `Bearer ${stockflowKey}` }
-        });
-        const body = await response.json().catch(() => ({}));
-        if (!response.ok || !body.stream?.sessionid || !body.stream?.url) {
-          throw new Error(`Tradier streaming session HTTP ${response.status}`);
-        }
-        upstreamSessionId = body.stream.sessionid;
-        upstream = new WebSocket(body.stream.url);
+  (async () => {
+    try {
+      const response = await fetch("https://api.tradier.com/v1/markets/events/session", {
+        method: "POST",
+        headers: { Accept: "application/json", Authorization: `Bearer ${stockflowKey}` }
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body.stream?.sessionid || !body.stream?.url) {
+        throw new Error(`Tradier streaming session HTTP ${response.status}`);
+      }
 
-        upstream.on("open", () => rebuildSubscriptions());
-        upstream.on("message", raw => {
-          let events;
-          try { events = JSON.parse(raw.toString()); } catch { return; }
-          if (!Array.isArray(events)) events = [events];
-          for (const data of events) {
-            if (!data?.symbol) continue;
-            const timestampValue = data.date ?? data.biddate ?? data.askdate;
-            const timestamp = timestampValue != null && Number.isFinite(Number(timestampValue))
-              ? new Date(Number(timestampValue)).toISOString()
-              : new Date().toISOString();
+      upstreamSessionId = body.stream.sessionid;
+      upstream = new WebSocket(body.stream.url);
+      upstreamConnecting = false;
 
-            if (data.type === "quote") {
-              const symbol = String(data.symbol).toUpperCase();
-              const bid = Number(data.bid) || null;
-              const ask = Number(data.ask) || null;
-              const last = Number(data.last) || null;
-              latestQuotes.set(symbol, { bid, ask, timestamp });
-              broadcast(symbol, {
-                type: "quote",
-                symbol,
-                price: last,
-                bid,
-                ask,
-                volume: Number(data.volume) || 0,
-                timestamp,
-                source: "stockflow_tradier_quote",
-                market: getMarketSession(new Date(timestamp))
-              });
-            } else if (["trade", "tradex", "timesale"].includes(data.type)) {
-              handleQuote({
-                symbol: data.symbol,
-                price: data.price ?? data.last,
-                volume: Number(data.cvol) || 0,
-                tradeSize: Number(data.size) || 0,
-                tradeId: data.seq,
-                exchange: data.exch,
-                timestamp,
-                source: `stockflow_tradier_${data.type}`
-              });
-            }
+      upstream.on("open", () => rebuildSubscriptions());
+      upstream.on("message", raw => {
+        let events;
+        try { events = JSON.parse(raw.toString()); } catch { return; }
+        if (!Array.isArray(events)) events = [events];
+
+        for (const data of events) {
+          if (!data?.symbol) continue;
+          const timestampValue = data.date ?? data.biddate ?? data.askdate;
+          const timestampMs = parseTimestampMs(timestampValue);
+          if (!Number.isFinite(timestampMs)) continue;
+          const timestamp = new Date(timestampMs).toISOString();
+
+          if (data.type === "quote") {
+            const symbol = String(data.symbol).toUpperCase();
+            const bid = Number(data.bid) || null;
+            const ask = Number(data.ask) || null;
+            const last = Number(data.last) || null;
+            const previousQuote = latestQuotes.get(symbol) || {};
+            const quoteVolume = Number(data.volume);
+            latestQuotes.set(symbol, {
+              bid, ask, timestamp,
+              volume: Number.isFinite(quoteVolume) && quoteVolume >= 0
+                ? quoteVolume
+                : (Number(previousQuote.volume) || 0)
+            });
+            if (last === null || !Number.isFinite(last) || last <= 0) continue;
+            broadcast(symbol, {
+              type: "quote", symbol, price: last, bid, ask,
+              volume: Number(data.volume) || 0,
+              timestamp, source: "stockflow_tradier_quote",
+              market: getMarketSession(new Date(timestamp))
+            });
+          } else if (data.type === "timesale") {
+            if (
+              data.cancel === true || data.cancel === 1 || data.cancel === "true" ||
+              data.correction === true || data.correction === 1 || data.correction === "true"
+            ) continue;
+
+            const symbol = String(data.symbol).toUpperCase();
+            const previousQuote = latestQuotes.get(symbol) || {};
+            const bidValue = Number(data.bid);
+            const askValue = Number(data.ask);
+            latestQuotes.set(symbol, {
+              ...previousQuote,
+              bid: Number.isFinite(bidValue) && bidValue > 0 ? bidValue : previousQuote.bid,
+              ask: Number.isFinite(askValue) && askValue > 0 ? askValue : previousQuote.ask,
+              timestamp
+            });
+
+            handleQuote({
+              symbol,
+              price: data.last,
+              volume: undefined,
+              tradeSize: Number(data.size) || 0,
+              tradeId: data.seq,
+              exchange: data.exch,
+              timestamp,
+              source: "stockflow_tradier_timesale"
+            });
           }
-        });
-        upstream.on("close", () => {
-          upstream = null;
-          upstreamSessionId = null;
-          if (clients.size) setTimeout(connectUpstream, 3000);
-        });
-        upstream.on("error", error => {
-          console.error("[Stockflow] streaming socket error:", error.message);
-        });
-      } catch (error) {
+        }
+      });
+
+      upstream.on("close", () => {
         upstream = null;
         upstreamSessionId = null;
-        console.error("[Stockflow] streaming connection failed:", error.message);
-        if (clients.size) setTimeout(connectUpstream, 5000);
-      }
-    })();
-    return;
-  }
-
-  if (provider === "alpaca") {
-    upstream = new WebSocket(alpacaUrl);
-
-    upstream.on("open", () => {
-      upstream.send(JSON.stringify({
-        action: "auth",
-        key: alpacaKey,
-        secret: alpacaSecret
-      }));
-    });
-
-    upstream.on("message", raw => {
-      let messages;
-      try { messages = JSON.parse(raw.toString()); } catch { return; }
-      if (!Array.isArray(messages)) messages = [messages];
-
-      for (const data of messages) {
-        if (data.T === "success" && data.msg === "authenticated") {
-          rebuildSubscriptions();
-          continue;
-        }
-
-        if (data.T === "t" && data.S) {
-          handleQuote({
-            symbol: data.S,
-            price: data.p,
-            tradeSize: data.s,
-            tradeId: data.i,
-            exchange: data.x,
-            timestamp: data.t || new Date().toISOString(),
-            source: "alpaca_iex_trade"
-          });
-          continue;
-        }
-
-        if (data.T === "q" && data.S) {
-  latestQuotes.set(data.S, {
-    bid: Number(data.bp) || null,
-    ask: Number(data.ap) || null,
-    timestamp: data.t || new Date().toISOString(),
-  });
-
-  handleQuote({
-    symbol: data.S,
-    price: data.ap || data.bp,
-    volume: 0,
-    timestamp: data.t || new Date().toISOString(),
-    source: "alpaca_iex_quote"
-  });
-  continue;
-}
-
-        for (const c of clients.keys()) {
-          send(c, { type: "provider_event", data });
-        }
-      }
-    });
-  } else {
-    const wsUrl = `${url}?apikey=${encodeURIComponent(apiKey)}`;
-    upstream = new WebSocket(wsUrl);
-
-    upstream.on("open", () => rebuildSubscriptions());
-
-    upstream.on("message", raw => {
-      let data;
-      try { data = JSON.parse(raw.toString()); } catch { return; }
-
-      if (data.event === "price" && data.symbol) {
-        handleQuote({
-          symbol: data.symbol,
-          price: data.price,
-          volume: data.day_volume,
-          timestamp: data.timestamp ? new Date(Number(data.timestamp) * 1000).toISOString() : new Date().toISOString(),
-          source: "twelve_data_ws"
-        });
-      } else {
-        for (const c of clients.keys()) {
-          send(c, { type: "provider_event", data });
-        }
-      }
-    });
-  }
-
-  upstream.on("close", () => {
-    upstream = null;
-    if (clients.size) setTimeout(connectUpstream, 3000);
-  });
-
-  upstream.on("error", () => {});
-}
-
-function startMock() {
-  if (mockTimer) return;
-  mockTimer = setInterval(async () => {
-    for (const symbol of upstreamSymbols.size ? upstreamSymbols : DEFAULT_SYMBOLS) {
-      try {
-        const q = await getQuote(symbol);
-        const price = Number((q.price * (1 + (Math.random() - 0.5) * 0.001)).toFixed(4));
-        handleQuote({ symbol, price, volume: q.volume || 0, timestamp: new Date().toISOString(), source: 'mock_ws' });
-      } catch {}
+        if (clients.size) setTimeout(connectUpstream, 3000);
+      });
+      upstream.on("error", error => {
+        console.error("[Stockflow] streaming socket error:", error.message);
+      });
+    } catch (error) {
+      upstreamConnecting = false;
+      upstream = null;
+      upstreamSessionId = null;
+      console.error("[Stockflow] streaming connection failed:", error.message);
+      if (clients.size) setTimeout(connectUpstream, 5000);
     }
-  }, 1000);
+  })();
 }
+
 
 export function attachLiveMarket(server) {
   const wss = new WebSocketServer({
@@ -351,7 +277,7 @@ export function attachLiveMarket(server) {
         client.intervals = new Set(Array.isArray(msg.intervals) && msg.intervals.length ? msg.intervals : [DEFAULT_INTERVAL]);
         send(ws, { type:'subscribed', symbols:[...client.symbols], intervals:[...client.intervals] });
         rebuildSubscriptions();
-        if (["twelve_data","alpaca","stockflow"].includes(getProvider().provider)) connectUpstream();
+        if (getProvider().provider === "stockflow") connectUpstream();
         await sendHistoricalCandles(client, [...client.symbols]);
       } else if (msg.action === 'unsubscribe') {
         const remove = new Set(normalizeSymbols(Array.isArray(msg.symbols) ? msg.symbols : String(msg.symbols || '').split(',')));
@@ -365,7 +291,6 @@ export function attachLiveMarket(server) {
     ws.on('close', () => { clients.delete(ws); rebuildSubscriptions(); });
   });
 
-  if (["twelve_data","alpaca","stockflow"].includes(getProvider().provider)) connectUpstream();
-  else startMock();
+  if (getProvider().provider === "stockflow") connectUpstream();
   return wss;
 }

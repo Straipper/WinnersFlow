@@ -21,7 +21,7 @@ function key(symbol) {
 
 function getState(symbol) {
   const k = key(symbol);
-  if (!states.has(k)) states.set(k, { lastPrice: null, lastDayVolume: null, events: [] });
+  if (!states.has(k)) states.set(k, { lastPrice: null, lastDayVolume: null, lastTickAt: null, lastTradeAt: null, events: [], seenTradeIds: new Map() });
   return states.get(k);
 }
 
@@ -31,25 +31,57 @@ function prune(events, now, windowMs) {
 }
 
 /**
- * Builds a practical flow-pressure proxy from the live quote stream.
- * The current provider exposes price + cumulative day volume, not aggressor
- * side / individual trade size. Therefore this is NOT exchange-grade tape/order flow.
- * It classifies incremental volume by uptick/downtick direction.
+ * Builds flow metrics from individually identified, recent Tradier timesale events.
+ * Quote updates and cumulative-volume changes are not treated as individual trades.
+ * Buy/sell direction is inferred from the contemporaneous bid/ask when available;
+ * otherwise price movement is only a fallback classification, not verified aggressor side.
  */
-export function processFlowTick({ symbol, price, dayVolume = 0, tradeSize = 0, tradeId, exchange, tradeSide, timestamp = new Date().toISOString() }, options = {}) {
+export function processFlowTick({ symbol, price, dayVolume = 0, tradeSize = 0, tradeId, exchange, tradeSide, timestamp, source }, options = {}) {
   const s = normalizeSymbol(symbol);
   const p = num(price, NaN);
   if (!s || !Number.isFinite(p)) return null;
 
   const cfg = { ...DEFAULTS, ...options };
   const state = getState(s);
-  const now = new Date(timestamp).getTime();
+  const now = timestamp == null ? NaN : new Date(timestamp).getTime();
+  if (!Number.isFinite(now)) return null;
+  state.lastTickAt = new Date(now).toISOString();
   const previousPrice = state.lastPrice;
   const previousDayVolume = state.lastDayVolume;
   const currentDayVolume = num(dayVolume, NaN);
 const currentTradeSize = num(tradeSize, 0);
 
-if (currentTradeSize > 0) {
+const allowedTradeSources = new Set([
+  "stockflow_tradier_timesale",
+]);
+const tradeAgeMs = Date.now() - now;
+const verifiedLiveTrade =
+  currentTradeSize > 0 &&
+  tradeId !== undefined &&
+  tradeId !== null &&
+  String(tradeId).trim() !== "" &&
+  allowedTradeSources.has(String(source || "").toLowerCase()) &&
+  tradeAgeMs >= 0 &&
+  tradeAgeMs <= 60_000;
+
+if (currentTradeSize > 0 && verifiedLiveTrade) {
+  const normalizedTradeId = String(tradeId).trim();
+  const dedupeWindowMs = Math.max(cfg.windowMs, 5 * 60_000);
+
+  for (const [seenId, seenAt] of state.seenTradeIds) {
+    if (seenAt < now - dedupeWindowMs) state.seenTradeIds.delete(seenId);
+  }
+
+  if (state.seenTradeIds.has(normalizedTradeId)) {
+    return summarizeFlow(s, state.lastPrice, state.events, now, cfg);
+  }
+
+  state.seenTradeIds.set(normalizedTradeId, now);
+  while (state.seenTradeIds.size > 5000) {
+    state.seenTradeIds.delete(state.seenTradeIds.keys().next().value);
+  }
+
+  state.lastTradeAt = new Date(now).toISOString();
   const normalizedTradeSide = tradeSide === "buy" || tradeSide === "sell" ? tradeSide : null;
   const inferredTradeSide = normalizedTradeSide ?? (previousPrice !== null && p > previousPrice + cfg.minPriceMove ? "buy" : previousPrice !== null && p < previousPrice - cfg.minPriceMove ? "sell" : "neutral");
 
@@ -65,7 +97,7 @@ if (currentTradeSize > 0) {
     large: p * currentTradeSize >= 100000,
     tradeId,
     exchange,
-    source: 'alpaca_trade',
+    source: source || 'live_trade',
   };
 
   state.events.push(event);
@@ -95,20 +127,8 @@ let volumeDelta = 0;
     return summarizeFlow(s, p, state.events, now, cfg);
   }
 
-  const event = {
-    id: `${s}-${now}-${Math.round(Math.random() * 1e6)}`,
-    symbol: s,
-    side,
-    price: p,
-    volume: volumeDelta,
-    notional: p * volumeDelta,
-    timestamp: new Date(now).toISOString(),
-    timestampMs: now,
-    large: volumeDelta >= cfg.largeVolume,
-    source: 'quote_volume_proxy',
-  };
-
-  state.events.push(event);
+  // Quote-volume deltas are not verified individual trades.
+  // Do not add them to the active trade-flow event list.
   state.events = prune(state.events, now, cfg.windowMs);
   return summarizeFlow(s, p, state.events, now, cfg);
 }
@@ -136,6 +156,7 @@ function summarizeFlow(symbol, price, events, now, cfg) {
   return {
     symbol,
     price,
+    lastTickAt: null,
     windowMs: cfg.windowMs,
     from: new Date(now - cfg.windowMs).toISOString(),
     to: new Date(now).toISOString(),
@@ -151,8 +172,8 @@ function summarizeFlow(symbol, price, events, now, cfg) {
     largeSells,
     eventCount: events.length,
     latestEvents: events.slice(-20).reverse(),
-    source: events.some(e => e.tradeId !== undefined && e.tradeId !== null) ? 'live_trade_tape' : 'quote_volume_proxy',
-    caveat: events.some(e => e.tradeId !== undefined && e.tradeId !== null) ? 'Flow is based on live trade events with buy/sell side inference from bid/ask.' : 'Flow is inferred from live price direction and incremental cumulative volume.',
+    source: events.length > 0 ? 'live_trade_tape' : 'no_verified_trades',
+    caveat: events.length > 0 ? 'Flow uses verified individual Tradier timesale events; trade side is inferred from bid/ask when available, otherwise price movement.' : 'No verified individual trade events are available in the selected window; buy/sell flow is not confirmed.',
   };
 }
 
@@ -161,7 +182,7 @@ export function getFlow(symbol, options = {}) {
   const state = getState(s);
   const now = Date.now();
   state.events = prune(state.events, now, options.windowMs ?? DEFAULTS.windowMs);
-  return summarizeFlow(s, state.lastPrice, state.events, now, { ...DEFAULTS, ...options });
+  return { ...summarizeFlow(s, state.lastPrice, state.events, now, { ...DEFAULTS, ...options }), lastTickAt: state.lastTickAt, lastTradeAt: state.lastTradeAt };
 }
 
 export function resetFlow() {

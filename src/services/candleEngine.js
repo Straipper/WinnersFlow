@@ -24,7 +24,9 @@ export function updateCandle({ symbol, price, timestamp, dayVolume = 0, interval
   const p = Number(price);
   if (!s || !Number.isFinite(p)) return null;
 
-  const startMs = floorTime(timestamp || new Date().toISOString(), interval);
+  const timestampMs = timestamp == null ? NaN : new Date(timestamp).getTime();
+  if (!Number.isFinite(timestampMs)) return null;
+  const startMs = floorTime(timestampMs, interval);
   const k = key(s, interval);
   const previous = states.get(k);
   let volume = 0;
