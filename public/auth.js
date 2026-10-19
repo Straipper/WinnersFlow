@@ -15,10 +15,17 @@
     if(data && data.user) localStorage.setItem('dtflow_user',JSON.stringify(data.user));
   }
   async function access(){ return request('/api/access/status'); }
-  async function startCheckout(){
-    const data=await request('/api/billing/checkout',{method:'POST',body:'{}'});
-    if(!data.checkoutUrl) throw new Error('Stripe Checkout URL was not returned.');
-    location.href=data.checkoutUrl;
+  async function startCheckout(paymentMethod='card'){
+    const method=paymentMethod==='paypal'?'paypal':'card';
+    const endpoint=method==='paypal'
+      ? '/api/billing/paypal/create-subscription'
+      : '/api/billing/checkout';
+    const data=await request(endpoint,{method:'POST',body:'{}'});
+    const checkoutUrl=method==='paypal'?data.approvalUrl:data.checkoutUrl;
+    if(!checkoutUrl) throw new Error(method==='paypal'
+      ? 'PayPal approval URL was not returned.'
+      : 'Stripe Checkout URL was not returned.');
+    location.href=checkoutUrl;
   }
   window.DTAuth={api,request,token,saveAuth,access,startCheckout};
 })();

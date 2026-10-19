@@ -3511,6 +3511,11 @@ footer{
     </div>
 
 
+    <div class="market-data-notice" style="margin:0 0 18px;padding:0 4px;color:#9f98a8;font-size:12px;line-height:1.6;">
+      <strong style="display:block;margin-bottom:3px;color:#c8c0d2;font-size:11px;letter-spacing:.08em;">MARKET DATA &amp; LATENCY</strong>
+      Data availability and reporting delays vary by feed, instrument and underlying market-data provider. Stock flow may have a delay of up to 60 seconds, while options flow and dark pool data may have a delay of up to 15 minutes.
+    </div>
+
     <div class="flow-columns">
 
       <!-- NORMAL STOCK PRINTS -->
@@ -4395,8 +4400,8 @@ footer{
         <div class="features">
 
           <div class="feature"><strong>ALBERT — SETUP COACH</strong><span>AI-assisted confirmation that monitors setup conditions and waits for confirmation.</span></div>
-          <div class="feature"><strong>Real-Time Options Flow</strong><span>See notable options activity, contracts, size and directional context.</span></div>
-          <div class="feature"><strong>Real-Time Stock Prints</strong><span>Track notable stock transactions and buying or selling activity.</span></div>
+          <div class="feature"><strong>Options Flow</strong><span>See notable options activity, contracts, size and directional context. Data timing depends on the underlying provider.</span></div>
+          <div class="feature"><strong>Real-Time Normal Stock Flow</strong><span>Track notable stock transactions and buying or selling activity.</span></div>
           <div class="feature"><strong>Real-Time Dark Pools</strong><span>Monitor reported off-exchange activity and large prints.</span></div>
           <div class="feature"><strong>Setup Scanner</strong><span>Find symbols approaching the conditions that matter around levels, momentum and volume.</span></div>
           <div class="feature"><strong>Breakout Scanner</strong><span>Find breakout pressure and evaluate whether price is actually confirming the move.</span></div>
@@ -4409,9 +4414,18 @@ footer{
 
         </div>
 
-        <a href="#" class="btn btn-primary" style="display:block">
-          $18.99/MO
-        </a>
+        <div class="pricing-checkout-options" style="display:grid;gap:12px">
+          <div class="pricing-checkout-card">
+            <a href="/register.html?payment=card" class="btn btn-primary" style="display:block;text-align:center">Subscribe with Card</a>
+            <p style="margin:8px 0 4px;text-align:center;font-size:12px;line-height:1.6">Card · Apple Pay · Google Pay · Klarna · Cash App · Amazon Pay</p>
+            <p style="margin:0;text-align:center;font-size:12px;opacity:.72">You'll be asked to sign in first</p>
+          </div>
+          <div style="text-align:center;font-size:12px;opacity:.7">or pay with</div>
+          <div class="pricing-checkout-paypal">
+            <a href="/register.html?payment=paypal" class="btn btn-primary" style="display:block;text-align:center">Subscribe with PayPal</a>
+            <p style="margin:8px 0 0;text-align:center;font-size:12px;opacity:.72">You'll be asked to sign in first</p>
+          </div>
+        </div>
 
         <div class="pricing-payment-trust" aria-label="Secure checkout with Stripe and PayPal">
           <div class="pricing-payment-logos">
@@ -4722,9 +4736,9 @@ const DT_FLOW_PAGES = {
     ["WATCHLIST","Keep the symbols and developing setups that matter to you in one focused workspace."],
     ["MARKET TERMINAL","One workflow for FLOW → STRUCTURE → COACH → BACKTEST → ALERT. The goal is not more information. It is better context."]
   ]},
-  "pricing": {k:"PRICING",t:"WinnersFlow PRO",lead:"Access WinnersFlow Pro for $18.99 per month. No free trial.",cards:[
-    ["MONTHLY PLAN","Access WinnersFlow Pro for $18.99 per month. No free trial."],
-    ["$18.99 / MONTH","WinnersFlow Pro costs $18.99 per month. No free trial."],
+  "pricing": {k:"PRICING",t:"WinnersFlow PRO",lead:"Access WinnersFlow Pro for $18.99 per month.",cards:[
+    ["MONTHLY PLAN","Access WinnersFlow Pro for $18.99 per month."],
+    ["$18.99 / MONTH","WinnersFlow Pro costs $18.99 per month."],
     ["PRO INCLUDES","Real-time flow, Setup Coach, scanners, systematic strategy tools, backtesting and alerts as the connected product is developed."],
     ["NO PERFORMANCE PROMISES","WinnersFlow is designed to improve the decision process, not promise a profitable outcome. Historical results are descriptive and do not guarantee future performance."]
   ]},
