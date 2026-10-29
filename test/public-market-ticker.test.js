@@ -137,3 +137,64 @@ test('ticker merkitsee puuttuvan aikaleiman vanhaksi', async t => {
   assert.equal(body.data[0].isStale, true);
   assert.equal(body.data[0].ageMs, null);
 });
+
+test('ticker käyttää tuoretta WebSocket-hintaa REST-varadatan sijasta', async t => {
+  const nowMs = Date.parse('2026-10-30T14:00:00.000Z');
+  let restCalls = 0;
+  const symbols = ['NVDA', 'TSLA', 'AAPL', 'AMD', 'META', 'MSFT'];
+  const s = await setup({
+    now: () => nowMs,
+    getLiveQuotes: async requested => {
+      assert.deepEqual(requested, symbols);
+      return [{
+        symbol: 'NVDA',
+        price: 201.25,
+        changePct: 1.2,
+        timestamp: new Date(nowMs - 1000).toISOString(),
+        source: 'stockflow_tradier_timesale',
+      }];
+    },
+    getQuotes: async requested => {
+      restCalls++;
+      return requested.map(symbol => ({
+        symbol, price: 100, changePct: 0,
+        timestamp: new Date(nowMs - 30 * 60 * 1000).toISOString(),
+        source: 'stockflow_tradier',
+      }));
+    },
+  });
+  t.after(() => s.close());
+
+  const body = await (await fetch(s.url)).json();
+  const nvda = body.data.find(q => q.symbol === 'NVDA');
+  assert.equal(nvda.price, 201.25);
+  assert.equal(nvda.isStale, false);
+  assert.equal(nvda.source, 'stockflow_tradier_timesale');
+  assert.equal(restCalls, 1);
+  assert.equal(body.data.find(q => q.symbol === 'TSLA').isStale, true);
+});
+
+test('ticker ei käytä vanhaa WebSocket-hintaa vaan hakee REST-varadatan', async t => {
+  const nowMs = Date.parse('2026-10-30T14:00:00.000Z');
+  const s = await setup({
+    now: () => nowMs,
+    getLiveQuotes: async () => [{
+      symbol: 'NVDA',
+      price: 201.25,
+      timestamp: new Date(nowMs - 61_000).toISOString(),
+      source: 'stockflow_tradier_stream',
+    }],
+    getQuotes: async symbols => symbols.map(symbol => ({
+      symbol, price: 100, changePct: null,
+      timestamp: new Date(nowMs - 30 * 60 * 1000).toISOString(),
+      source: 'stockflow_tradier',
+    })),
+  });
+  t.after(() => s.close());
+
+  const body = await (await fetch(s.url)).json();
+  const nvda = body.data.find(q => q.symbol === 'NVDA');
+  assert.equal(nvda.price, 100);
+  assert.equal(nvda.isStale, true);
+  assert.equal(nvda.source, 'stockflow_tradier');
+});

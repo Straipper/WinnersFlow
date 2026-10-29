@@ -13,6 +13,31 @@ const DEFAULT_SYMBOLS = ['NVDA','AAPL','MSFT','AMD','TSLA','META'];
 const DEFAULT_INTERVAL = '5min';
 const clients = new Map();
 const latestQuotes = new Map();
+
+export function getLatestPublicQuotes(symbols = []) {
+  const now = Date.now();
+  return symbols.flatMap(rawSymbol => {
+    const symbol = String(rawSymbol).trim().toUpperCase();
+    const quote = latestQuotes.get(symbol);
+    if (!quote) return [];
+
+    const timestampMs = Number(quote.priceTimestampMs);
+    const price = Number(quote.price);
+    if (!isFreshMarketTimestamp(timestampMs, now) ||
+        !Number.isFinite(price) || price <= 0) return [];
+
+    return [{
+      symbol,
+      price,
+      changePct: quote.changePct != null &&
+        quote.changePct !== '' &&
+        Number.isFinite(Number(quote.changePct))
+        ? Number(quote.changePct) : null,
+      timestamp: new Date(timestampMs).toISOString(),
+      source: quote.priceSource || "stockflow_tradier_stream",
+    }];
+  });
+}
 let upstream = null;
 let upstreamSessionId = null;
 let upstreamConnecting = false;
@@ -220,6 +245,16 @@ function connectUpstream() {
                 ? timestampMs : previousQuote.bidTimestampMs,
               askTimestampMs: Number.isFinite(askValue) && askValue > 0
                 ? timestampMs : previousQuote.askTimestampMs,
+              ...(Number.isFinite(Number(data.last)) &&
+                  Number(data.last) > 0 &&
+                  (!Number.isFinite(Number(previousQuote.priceTimestampMs)) ||
+                   timestampMs >= Number(previousQuote.priceTimestampMs))
+                ? {
+                    price: Number(data.last),
+                    priceTimestampMs: timestampMs,
+                    priceSource: "stockflow_tradier_timesale",
+                  }
+                : {}),
               timestamp
             });
             upstreamTimesaleCount += 1;
@@ -258,6 +293,20 @@ function connectUpstream() {
               askTimestampMs: askValid && Number.isFinite(data.askTimestampMs)
                 ? data.askTimestampMs
                 : askValid ? timestampMs : previousQuote.askTimestampMs,
+              ...(Number.isFinite(last) && last > 0 &&
+                  (!Number.isFinite(Number(previousQuote.priceTimestampMs)) ||
+                   timestampMs >= Number(previousQuote.priceTimestampMs))
+                ? {
+                    price: last,
+                    priceTimestampMs: timestampMs,
+                    priceSource: "stockflow_tradier_quote",
+                    changePct: data.change_percentage != null &&
+                      data.change_percentage !== '' &&
+                      Number.isFinite(Number(data.change_percentage))
+                      ? Number(data.change_percentage)
+                      : previousQuote.changePct ?? null,
+                  }
+                : {}),
               volume: Number.isFinite(quoteVolume) && quoteVolume >= 0
                 ? quoteVolume
                 : (Number(previousQuote.volume) || 0)
