@@ -6,6 +6,7 @@ export function createPublicMarketTickerRouter({
   getQuotes,
   now = Date.now,
   cacheTtlMs = 15000,
+  staleAfterMs = 15 * 60 * 1000,
 }) {
   const router = express.Router();
   let cache = { expiresAt: 0, data: null };
@@ -17,13 +18,25 @@ export function createPublicMarketTickerRouter({
       if (!cache.data || now() >= cache.expiresAt) {
         const quotes = await getQuotes(SYMBOLS);
         cache = {
-          data: quotes.map(q => ({
-            symbol: q.symbol,
-            price: q.price,
-            changePct: q.changePct,
-            timestamp: q.timestamp,
-            source: q.source,
-          })),
+          data: quotes.map(q => {
+            const timestampMs = typeof q.timestamp === 'string'
+              ? Date.parse(q.timestamp)
+              : NaN;
+            const age = Number.isFinite(timestampMs)
+              ? now() - timestampMs
+              : null;
+            const ageMs = age !== null && age >= 0 ? age : null;
+
+            return {
+              symbol: q.symbol,
+              price: q.price,
+              changePct: q.changePct,
+              timestamp: q.timestamp,
+              source: q.source,
+              ageMs,
+              isStale: ageMs === null || ageMs > staleAfterMs,
+            };
+          }),
           expiresAt: now() + cacheTtlMs,
         };
       }

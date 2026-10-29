@@ -94,3 +94,46 @@ test('ticker palauttaa 503 eikä tekaistuja hintoja markkinavirheessä', async t
     error: 'Market quotes temporarily unavailable',
   });
 });
+
+
+test('ticker säilyttää hinnan ja merkitsee vanhan noteerauksen', async t => {
+  const nowMs = Date.parse('2026-10-29T20:30:00.000Z');
+  const s = await setup({
+    now: () => nowMs,
+    getQuotes: async symbols => symbols.map((symbol, i) => ({
+      symbol,
+      price: 123.45,
+      changePct: 1,
+      timestamp: i === 0
+        ? '2026-10-29T20:00:00.000Z'
+        : '2026-10-29T20:25:00.000Z',
+      source: 'stockflow_tradier',
+    })),
+  });
+  t.after(() => s.close());
+
+  const response = await fetch(s.url);
+  assert.equal(response.status, 200);
+  const body = await response.json();
+
+  assert.equal(body.data[0].price, 123.45);
+  assert.equal(body.data[0].isStale, true);
+  assert.equal(body.data[0].ageMs, 30 * 60 * 1000);
+  assert.equal(body.data[1].isStale, false);
+  assert.equal(body.data[1].ageMs, 5 * 60 * 1000);
+});
+
+test('ticker merkitsee puuttuvan aikaleiman vanhaksi', async t => {
+  const s = await setup({
+    getQuotes: async symbols => symbols.map(symbol => ({
+      symbol, price: 123.45, changePct: null,
+      timestamp: null, source: 'stockflow_tradier',
+    })),
+  });
+  t.after(() => s.close());
+
+  const body = await (await fetch(s.url)).json();
+  assert.equal(body.data[0].price, 123.45);
+  assert.equal(body.data[0].isStale, true);
+  assert.equal(body.data[0].ageMs, null);
+});
