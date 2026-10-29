@@ -29,7 +29,7 @@ import analytics from './routes/analytics.js';
 import { notFound, errorHandler } from './middleware/errors.js';
 import { requireAuth } from './middleware/auth.js';
 import { requireProductAccess } from './middleware/access.js';
-import { attachLiveMarket, closeLiveMarket } from './services/liveMarket.js';
+import { attachLiveMarket, closeLiveMarket, getLatestPublicQuotes } from './services/liveMarket.js';
 import { getQuotes } from './services/marketData.js';
 import { createPublicMarketTickerRouter } from './routes/publicMarketTicker.js';
 import { addRequestId, rateLimit, securityHeaders } from './middleware/security.js';
@@ -77,7 +77,7 @@ app.use('/api/analytics',analytics);
 
 
 // Public landing-page ticker: live quote freshness metadata and short cache.
-app.use('/api/public/market-ticker', createPublicMarketTickerRouter({ getQuotes }));
+app.use('/api/public/market-ticker', createPublicMarketTickerRouter({ getQuotes, getLiveQuotes: getLatestPublicQuotes }));
 
 // Core WinnersFlow product endpoints require both authentication and an active
 // trial/subscription. Admin accounts bypass billing through requireProductAccess.
