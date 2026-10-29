@@ -39,12 +39,14 @@ function prune(events, now, windowMs) {
 export function processFlowTick({ symbol, price, dayVolume = 0, tradeSize = 0, tradeId, exchange, tradeSide, timestamp, source }, options = {}) {
   const s = normalizeSymbol(symbol);
   const p = num(price, NaN);
-  if (!s || !Number.isFinite(p)) return null;
+  if (!s || !Number.isFinite(p) || p <= 0) return null;
 
   const cfg = { ...DEFAULTS, ...options };
   const state = getState(s);
   const now = timestamp == null ? NaN : new Date(timestamp).getTime();
   if (!Number.isFinite(now)) return null;
+  const tickAgeMs = Date.now() - now;
+  if (tickAgeMs < 0 || tickAgeMs > 60_000) return null;
   state.lastTickAt = new Date(now).toISOString();
   const previousPrice = state.lastPrice;
   const previousDayVolume = state.lastDayVolume;
@@ -54,7 +56,7 @@ const currentTradeSize = num(tradeSize, 0);
 const allowedTradeSources = new Set([
   "stockflow_tradier_timesale",
 ]);
-const tradeAgeMs = Date.now() - now;
+const tradeAgeMs = tickAgeMs;
 const verifiedLiveTrade =
   currentTradeSize > 0 &&
   tradeId !== undefined &&
@@ -64,7 +66,7 @@ const verifiedLiveTrade =
   tradeAgeMs >= 0 &&
   tradeAgeMs <= 60_000;
 
-if (currentTradeSize > 0 && verifiedLiveTrade) {
+if (Number.isFinite(currentTradeSize) && currentTradeSize > 0 && verifiedLiveTrade) {
   const normalizedTradeId = String(tradeId).trim();
   const dedupeWindowMs = Math.max(cfg.windowMs, 5 * 60_000);
 

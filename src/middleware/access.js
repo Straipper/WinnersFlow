@@ -37,7 +37,7 @@ export async function requireProductAccess(req, res, next) {
     const access = await getAccessState(req.user);
     if (!access.allowed) {
       return res.status(402).json({
-        error: 'DT FLOW subscription required',
+        error: 'WinnersFlow subscription required',
         code: access.reason,
         access,
       });

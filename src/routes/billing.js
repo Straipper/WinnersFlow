@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
-import { query } from '../db/pool.js';
+import { pool, query } from '../db/pool.js';
 import { env } from '../config/env.js';
 import { getStripe, requireStripeConfig, getConfiguredPrice } from '../services/stripe.js';
 import { sendTemplate, sendAdminTemplate } from '../services/email.js';
@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', windowMs: 10 * 60_000, max: 8 }), async (req, res, next) => {
   try {
     if (req.user.role === 'admin') {
-      return res.status(400).json({ error: 'Admin accounts have free DT FLOW access and do not need Checkout.' });
+      return res.status(400).json({ error: 'Admin accounts have free WinnersFlow access and do not need Checkout.' });
     }
     requireStripeConfig();
     const stripe = getStripe();
@@ -120,7 +120,7 @@ router.post('/paypal/create-subscription', requireAuth, rateLimit({ scope: 'payp
 });
 
 router.post('/paypal/webhook', async (req, res, next) => {
-  let paypalEventId = null;
+  let client = null;
   try {
     if (!env.PAYPAL_WEBHOOK_ID) {
       return res.status(503).json({ error: 'PayPal webhook is not configured.' });
@@ -167,15 +167,10 @@ router.post('/paypal/webhook', async (req, res, next) => {
       return res.json({ received: true, ignored: true, type: eventType || 'unknown' });
     }
 
-    const recorded = await query(
-      `INSERT INTO paypal_webhook_events (id, event_type)
-       VALUES ($1, $2) ON CONFLICT (id) DO NOTHING RETURNING id`,
-      [event.id, event.event_type || 'unknown']
-    );
-    if (!recorded.rowCount) {
-      return res.json({ received: true, duplicate: true });
+    const eventTime = new Date(event.create_time);
+    if (!event.create_time || !Number.isFinite(eventTime.getTime())) {
+      return res.status(400).json({ error: 'Invalid PayPal event create_time' });
     }
-    paypalEventId = event.id;
 
     const resource = event.resource || {};
     const isSubscriptionLifecycleEvent =
@@ -232,7 +227,8 @@ router.post('/paypal/webhook', async (req, res, next) => {
     const paymentFailed =
       eventType === 'BILLING.SUBSCRIPTION.PAYMENT.FAILED' ||
       eventType === 'PAYMENT.SALE.DENIED';
-    const status = statusMap[detail.status];
+    // A failed payment must revoke access even if PayPal still reports ACTIVE.
+    const status = paymentFailed ? 'past_due' : statusMap[detail.status];
     if (!status) {
       const error = new Error('Unrecognized PayPal subscription status.');
       error.status = 400;
@@ -245,21 +241,47 @@ router.post('/paypal/webhook', async (req, res, next) => {
       : null;
     const payerId = detail.subscriber?.payer_id || null;
 
-    await query(
+    client = await pool.connect();
+    await client.query('BEGIN');
+
+    const recorded = await client.query(
+      `INSERT INTO paypal_webhook_events (id, event_type)
+       VALUES ($1, $2) ON CONFLICT (id) DO NOTHING RETURNING id`,
+      [event.id, event.event_type || 'unknown']
+    );
+
+    if (!recorded.rowCount) {
+      await client.query('ROLLBACK');
+      client.release();
+      client = null;
+      return res.json({ received: true, duplicate: true });
+    }
+
+    const subscriptionWrite = await client.query(
       `INSERT INTO subscriptions
        (user_id,provider,provider_customer_id,provider_subscription_id,status,plan_code,
-        current_period_start,current_period_end,cancel_at_period_end,last_payment_status)
-       VALUES ($1,'paypal',$2,$3,$4,'dt_flow_pro',to_timestamp($5),to_timestamp($6),false,$7)
+        current_period_start,current_period_end,cancel_at_period_end,last_payment_status,
+        paypal_last_event_time)
+       VALUES ($1,'paypal',$2,$3,$4,'dt_flow_pro',to_timestamp($5),to_timestamp($6),false,$7,$8)
        ON CONFLICT (provider_subscription_id) DO UPDATE SET
         user_id=EXCLUDED.user_id,
         provider='paypal',
         provider_customer_id=EXCLUDED.provider_customer_id,
-        status=EXCLUDED.status,
+        status=CASE
+          WHEN EXCLUDED.status='active'
+            AND subscriptions.last_payment_status='failed'
+            AND EXCLUDED.last_payment_status IS DISTINCT FROM 'succeeded'
+          THEN 'past_due'
+          ELSE EXCLUDED.status
+        END,
         plan_code=EXCLUDED.plan_code,
         current_period_start=COALESCE(EXCLUDED.current_period_start,subscriptions.current_period_start),
         current_period_end=COALESCE(EXCLUDED.current_period_end,subscriptions.current_period_end),
         last_payment_status=COALESCE(EXCLUDED.last_payment_status,subscriptions.last_payment_status),
-        updated_at=now()`,
+        paypal_last_event_time=EXCLUDED.paypal_last_event_time,
+        updated_at=now()
+       WHERE subscriptions.paypal_last_event_time IS NULL
+          OR EXCLUDED.paypal_last_event_time > subscriptions.paypal_last_event_time`,
       [
         userId,
         payerId,
@@ -271,8 +293,21 @@ router.post('/paypal/webhook', async (req, res, next) => {
         eventType === 'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED'
           ? 'succeeded'
           : paymentFailed ? 'failed' : null
+      ,
+        eventTime
       ]
     );
+
+    if (!subscriptionWrite.rowCount) {
+      await client.query('COMMIT');
+      client.release();
+      client = null;
+      return res.json({ received: true, stale: true, type: eventType });
+    }
+
+    await client.query('COMMIT');
+    client.release();
+    client = null;
 
     if (status === 'active') {
       trackUniqueUserEvent({
@@ -284,8 +319,11 @@ router.post('/paypal/webhook', async (req, res, next) => {
 
     res.json({ received: true, type: eventType });
   } catch (e) {
-    if (paypalEventId) {
-      await query('DELETE FROM paypal_webhook_events WHERE id=$1', [paypalEventId]).catch(() => {});
+    if (client) {
+      try {
+        await client.query('ROLLBACK');
+      } catch {}
+      client.release();
     }
     next(e);
   }
@@ -294,7 +332,7 @@ router.post('/paypal/webhook', async (req, res, next) => {
 router.post('/portal', requireAuth, rateLimit({ scope: 'billing-portal', windowMs: 10 * 60_000, max: 12 }), async (req, res, next) => {
   try {
     if (req.user.role === 'admin') {
-      return res.status(400).json({ error: 'Admin accounts have free DT FLOW access and do not need billing management.' });
+      return res.status(400).json({ error: 'Admin accounts have free WinnersFlow access and do not need billing management.' });
     }
     requireStripeConfig();
     const stripe = getStripe();

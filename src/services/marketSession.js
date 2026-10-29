@@ -22,7 +22,7 @@ export function getMarketSession(date = new Date()) {
 
 export function decorateQuote(quote, now = new Date()) {
   const market = getMarketSession(now);
-  const extendedPrice = Number.isFinite(Number(quote.extendedPrice)) ? Number(quote.extendedPrice) : null;
+  const extendedPrice = quote.extendedPrice != null && quote.extendedPrice !== '' && Number.isFinite(Number(quote.extendedPrice)) ? Number(quote.extendedPrice) : null;
   const displayPrice = market.isExtendedHours && extendedPrice !== null ? extendedPrice : quote.price;
   return {
     ...quote,

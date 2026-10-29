@@ -3349,27 +3349,16 @@ footer{
 
 
 <!-- MARKET TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-
-    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
-    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
-    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
-    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
-    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
-    <div class="tick"><b>MSFT</b><span class="down">▼ 0.21%</span></div>
-    <div class="tick"><b>BTC</b><span class="up">▲ 2.18%</span></div>
-    <div class="tick"><b>ETH</b><span class="up">▲ 1.04%</span></div>
-
-    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
-    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
-    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
-    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
-    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
-
+<div class="ticker" aria-label="Market quotes">
+  <div class="ticker-track" id="wf-market-ticker">
+    <div class="tick"><b>NVDA</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>TSLA</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>AAPL</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>AMD</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>META</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>MSFT</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
   </div>
 </div>
-
 
 <!-- HERO -->
 <header class="hero">
@@ -3398,7 +3387,7 @@ footer{
           GET STARTED
         </a>
 
-        <a href="#flow" class="btn btn-secondary">
+        <a href="/portal" class="btn btn-secondary">
           VIEW TERMINAL
         </a>
       </div>
@@ -5030,6 +5019,47 @@ a.hero-trial-btn.btn:hover{
   box-shadow:inset 0 1px 0 rgba(255,249,216,.82),inset 0 -1px 0 rgba(92,61,11,.30),0 0 30px rgba(226,184,76,.25),0 10px 26px rgba(0,0,0,.32) !important;
 }
 </style>
+
+<script id="wf-live-market-ticker">
+(() => {
+  const track = document.getElementById('wf-market-ticker');
+  if (!track) return;
+  const symbols = ['NVDA', 'TSLA', 'AAPL', 'AMD', 'META', 'MSFT'];
+  const esc = value => String(value).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  async function refreshTicker() {
+    try {
+      const response = await fetch('/api/public/market-ticker', {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('Quotes unavailable');
+      const result = await response.json();
+      if (!result.ok || !Array.isArray(result.data)) throw new Error('Invalid quote response');
+      const quotes = new Map(result.data.map(q => [String(q.symbol || '').toUpperCase(), q]));
+      const rows = symbols.map(symbol => {
+        const q = quotes.get(symbol);
+        const price = Number(q?.price);
+        const pct = Number(q?.changePct);
+        const validPrice = q && Number.isFinite(price) && price > 0;
+        const validPct = q && q.changePct != null && q.changePct !== '' && Number.isFinite(pct);
+        const cls = validPct ? (pct >= 0 ? 'up' : 'down') : '';
+        const sign = validPct ? (pct >= 0 ? '▲ ' : '▼ ') : '';
+        return `<div class="tick"><b>${symbol}</b><span class="tick-price">${validPrice ? '$' + price.toFixed(2) : '—'}</span><span class="tick-change ${cls}">${validPct ? sign + Math.abs(pct).toFixed(2) + '%' : '—'}</span></div>`;
+      }).join('');
+      track.innerHTML = rows + rows;
+    } catch {
+      track.querySelectorAll('.tick-price,.tick-change,.up,.down').forEach(el => {
+        el.textContent = '—';
+        el.classList.remove('up', 'down');
+      });
+    }
+  }
+  refreshTicker();
+  window.setInterval(refreshTicker, 60000);
+})();
+</script>
+
 </body>
 </html>
 
