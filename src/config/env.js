@@ -18,6 +18,11 @@ const schema = z.object({
   STRIPE_SECRET_KEY: z.string().optional().default(""),
   STRIPE_WEBHOOK_SECRET: z.string().optional().default(""),
   STRIPE_PRICE_ID: z.string().optional().default(""),
+  PAYPAL_MODE: z.enum(["sandbox", "live"]).default("sandbox"),
+  PAYPAL_CLIENT_ID: z.string().optional().default(""),
+  PAYPAL_CLIENT_SECRET: z.string().optional().default(""),
+  PAYPAL_WEBHOOK_ID: z.string().optional().default(""),
+  PAYPAL_PLAN_ID: z.string().optional().default(""),
   APP_URL: z.string().default("http://localhost:5500"),
   APP_SIGNING_SECRET: z.string().optional().default(""),
   RESEND_API_KEY: z.string().optional().default(""),
@@ -31,6 +36,11 @@ if (parsed.MARKET_DATA_PROVIDER !== 'stockflow') {
 }
 if (!parsed.STOCKFLOW_API_KEY) {
   throw new Error('STOCKFLOW_API_KEY is required for Tradier stock data.');
+}
+if (parsed.PAYPAL_MODE === 'live') {
+  if (!parsed.PAYPAL_CLIENT_ID || !parsed.PAYPAL_CLIENT_SECRET) {
+    throw new Error('PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET are required when PAYPAL_MODE=live.');
+  }
 }
 if (parsed.NODE_ENV === 'production') {
   if (parsed.CORS_ORIGIN === '*') throw new Error('CORS_ORIGIN must not be * in production.');

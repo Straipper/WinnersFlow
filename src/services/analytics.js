@@ -91,7 +91,7 @@ export async function getAnalyticsOverview({ days = 30 } = {}) {
       SELECT count(*) FILTER (WHERE status='active')::int AS active_subscriptions,
              count(*) FILTER (WHERE status='trialing')::int AS trialing_subscriptions,
              count(*) FILTER (WHERE status='canceled')::int AS canceled_subscriptions,
-             COALESCE(sum(CASE WHEN status='active' THEN 29 ELSE 0 END),0)::numeric AS mrr_usd
+             COALESCE(sum(CASE WHEN status='active' THEN 18.99 ELSE 0 END),0)::numeric AS mrr_usd
       FROM subscriptions`),
   ]);
 

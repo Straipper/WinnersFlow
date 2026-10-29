@@ -29,7 +29,7 @@ import analytics from './routes/analytics.js';
 import { notFound, errorHandler } from './middleware/errors.js';
 import { requireAuth } from './middleware/auth.js';
 import { requireProductAccess } from './middleware/access.js';
-import { attachLiveMarket } from './services/liveMarket.js';
+import { attachLiveMarket, closeLiveMarket } from './services/liveMarket.js';
 import { getQuotes } from './services/marketData.js';
 import { createPublicMarketTickerRouter } from './routes/publicMarketTicker.js';
 import { addRequestId, rateLimit, securityHeaders } from './middleware/security.js';
@@ -75,10 +75,11 @@ app.use('/api/email',email);
 app.use('/api/admin',admin);
 app.use('/api/analytics',analytics);
 
-// Public landing-page ticker: approved symbols; live provider data with a short cache.
+
+// Public landing-page ticker: live quote freshness metadata and short cache.
 app.use('/api/public/market-ticker', createPublicMarketTickerRouter({ getQuotes }));
 
-// Core DT FLOW product endpoints require both authentication and an active
+// Core WinnersFlow product endpoints require both authentication and an active
 // trial/subscription. Admin accounts bypass billing through requireProductAccess.
 const productGuard = [requireAuth, requireProductAccess];
 app.use('/api/market',...productGuard,market);
@@ -99,8 +100,12 @@ app.use(errorHandler);
 
 const server=http.createServer(app);
 attachLiveMarket(server);
+let shutdownStarted = false;
 const shutdown = async (signal) => {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
   console.log(`Received ${signal}; shutting down DT FLOW...`);
+  closeLiveMarket();
   server.close(async () => {
     try {
       const { pool } = await import('./db/pool.js');

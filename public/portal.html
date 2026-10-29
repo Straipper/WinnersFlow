@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fi">
+<html lang="fi" class="wf-access-pending">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -633,6 +633,22 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
 }
 </style>
 
+
+<style id="wf-access-gate-css">
+html.wf-access-pending body{visibility:hidden!important}
+#wf-access-gate{box-sizing:border-box;min-height:100vh;padding:24px;display:grid;place-items:center;background:#050309;color:#fff;font-family:Arial,sans-serif}
+#wf-access-gate *{box-sizing:border-box}
+#wf-access-gate .wf-access-card{width:min(100%,430px);padding:30px;border:1px solid rgba(216,186,255,.2);border-radius:18px;background:linear-gradient(145deg,#100b19,#07060b);text-align:center}
+#wf-access-gate .wf-access-brand{font-size:23px;font-weight:800;letter-spacing:-.7px}
+#wf-access-gate .wf-access-brand span{color:#c7a2ff}
+#wf-access-gate h1{font-size:19px;margin:25px 0 10px}
+#wf-access-gate p{font-size:14px;line-height:1.65;color:#a9a1b4}
+#wf-access-gate button,#wf-access-gate a{display:block;width:100%;margin-top:12px;padding:13px;border:1px solid rgba(216,186,255,.22);border-radius:10px;background:#171020;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+#wf-access-gate button.primary{background:#d8baff;color:#170d22}
+#wf-access-gate button:disabled{opacity:.6;cursor:wait}
+#wf-access-gate .wf-access-error{color:#ffbdc7;font-size:13px}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1009,7 +1025,7 @@ body.dt-indicators-mode #dtBackbar{display:none!important;}
   <div class="chart-side">
 
    <div class="insight-card setup-state"><h3>SETUP STATE</h3><div class="state">WAITING FOR VERIFIED DATA</div><p>Flow, price and setup confirmation are unavailable until verified market data is received.</p><button onclick="toast('SOFIA: waiting for verified market data')">ASK SOFIA →</button></div>
-   
+
   </div>
   <div class="card chart-sofia" id="chartSofia">
    <div class="chart-sofia-head"><div class="sofia-head"><div class="sofia-mark">✦</div><div><b>SOFIA</b><small>SETUP CONTEXT · <span id="sofiaTicker">—</span></small></div></div><span class="sofia-state" id="sofiaState">DATA UNCONFIRMED</span></div>
@@ -2754,7 +2770,37 @@ function filterFlowV28(){
  const root=document.getElementById('flow'); if(!root)return;
  const flowInfo={};
  function q(id){return document.getElementById(id)}
- function candles(sym){ return []; }
+
+function flowApiBase(){return (window.DT_FLOW_API_BASE||'/api').replace(/\/$/,'');}
+function flowToken(){return localStorage.getItem('dtflow_token')||localStorage.getItem('dtflowToken')||localStorage.getItem('authToken')||localStorage.getItem('token')||'';}
+async function loadFlowCandles(sym){
+  const svg=q('flowTickerChart');
+  if(!svg)return;
+  svg.innerHTML='<text x="500" y="150" fill="#b8b8c8" text-anchor="middle">LOADING MARKET CANDLES…</text>';
+  try{
+    const t=flowToken();
+    const response=await fetch(flowApiBase()+'/market/candles/'+encodeURIComponent(sym)+'?interval=5min&outputsize=60',{
+      headers:t?{Authorization:'Bearer '+t}:{},
+      credentials:'same-origin'
+    });
+    if(!response.ok)throw new Error('Market data request failed ('+response.status+')');
+    const result=await response.json();
+    if(!result||result.ok!==true||!Array.isArray(result.data))throw new Error('Invalid candle response');
+    const rows=result.data.filter(c=>c&&['open','high','low','close'].every(k=>Number.isFinite(Number(c[k]))&&c[k]!==null));
+    if(!rows.length)throw new Error('No market candles available');
+    drawFlowChart(sym,rows);
+    const last=rows[rows.length-1];
+    q('flowTickerPrice').textContent=Number(last.close).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    q('flowTickerChange').textContent='5-MIN CANDLES · '+rows.length+' RECORDS';
+    q('flowChartLevelText').textContent='SUPPORT / RESISTANCE NOT VERIFIED';
+  }catch(err){
+    if(q('flowTickerPrice'))q('flowTickerPrice').textContent='—';
+    if(q('flowTickerChange'))q('flowTickerChange').textContent='MARKET DATA UNAVAILABLE';
+    if(q('flowChartLevelText'))q('flowChartLevelText').textContent='SUPPORT / RESISTANCE UNAVAILABLE';
+    if(svg)svg.innerHTML='<text x="500" y="140" fill="#b8b8c8" text-anchor="middle">NO MARKET CANDLES AVAILABLE</text><text x="500" y="166" fill="#88889a" text-anchor="middle">Check sign-in, subscription and live market data</text>';
+  }
+}
+
  window.openFlowTicker=function(sym){
   sym=(sym||'').replace(/\$/g,'').trim().toUpperCase();
   if(!/^[A-Z.]{1,10}$/.test(sym))return;
@@ -2777,7 +2823,7 @@ function filterFlowV28(){
   q('flowSofiaText').textContent='Analysis requires confirmed market data.';
   const t=q('flow-'+flowV28.tab+'-v28');
   if(t&&t.parentNode)t.parentNode.insertBefore(ws,t.nextSibling);
-  ws.classList.add('show');flowV28.ticker=sym;
+  ws.classList.add('show');flowV28.ticker=sym;loadFlowCandles(sym);
   if(q('flowTickerInput'))q('flowTickerInput').value=sym;
   if(q('flowViewingV28'))q('flowViewingV28').textContent=sym+' ONLY';
   root.querySelectorAll('.flow-row').forEach(r=>{
@@ -2799,17 +2845,37 @@ window.closeFlowTickerWorkspace=function(){
    filterFlowV28();
    toast('ALL NASDAQ FLOW');
  };
- function drawFlowChart(sym,d){
-   const svg=q('flowTickerChart'); if(!svg)return; const vals=candles(sym), W=1000,H=300,left=35,right=35,top=18,bottom=28; let min=Math.min(...vals)-10,max=Math.max(...vals)+10;
-   const y=v=>top+(max-v)/(max-min)*(H-top-bottom), step=(W-left-right)/(vals.length+1); let out='';
-   [0.2,0.4,0.6,0.8].forEach(f=>{const yy=top+(H-top-bottom)*f;out+=`<line class="flow-chart-grid" x1="${left}" y1="${yy}" x2="${W-right}" y2="${yy}"/>`});
-   const resVal=max-((max-min)*.23), supVal=min+((max-min)*.22); const ry=y(resVal), sy=y(supVal);
-   out+=`<line class="flow-level-res" x1="${left}" y1="${ry}" x2="${W-right}" y2="${ry}"/><text class="flow-level-label" fill="#62e5a7" x="${W-right-2}" y="${ry-5}" text-anchor="end">RESISTANCE ${d.res}</text>`;
-   out+=`<line class="flow-level-sup" x1="${left}" y1="${sy}" x2="${W-right}" y2="${sy}"/><text class="flow-level-label" fill="#b79cff" x="${W-right-2}" y="${sy+13}" text-anchor="end">SUPPORT ${d.sup}</text>`;
-   vals.forEach((v,i)=>{const x=left+(i+1)*step; const prev=i?vals[i-1]:v-2; const open=prev, close=v, high=Math.max(open,close)+3+(i%3), low=Math.min(open,close)-2-(i%2); const up=close>=open; const yo=y(open),yc=y(close),yh=y(high),yl=y(low); const bodyY=Math.min(yo,yc), bodyH=Math.max(3,Math.abs(yc-yo)); const cls=up?'flow-candle-up':'flow-candle-down'; out+=`<line class="flow-wick ${cls}" x1="${x}" y1="${yh}" x2="${x}" y2="${yl}"/><rect class="${cls}" x="${x-9}" y="${bodyY}" width="18" height="${bodyH}" rx="1"/>`;});
-   const lastX=left+vals.length*step, lastY=y(vals[vals.length-1]); out+=`<circle cx="${lastX}" cy="${lastY}" r="4" fill="#fff"/><circle cx="${lastX}" cy="${lastY}" r="10" fill="none" stroke="#62e5a7" stroke-opacity=".3"/>`;
-   svg.innerHTML=out;
- }
+ function drawFlowChart(sym,rows){
+  const svg=q('flowTickerChart');if(!svg)return;
+  if(!Array.isArray(rows)||!rows.length){svg.innerHTML='';return;}
+  const W=1000,H=300,left=35,right=35,top=18,bottom=28;
+  const min=Math.min(...rows.map(c=>Number(c.low)));
+  const max=Math.max(...rows.map(c=>Number(c.high)));
+  const span=max-min;
+  if(!Number.isFinite(min)||!Number.isFinite(max)||span<=0){
+    svg.innerHTML='<text x="500" y="150" fill="#b8b8c8" text-anchor="middle">INVALID MARKET CANDLES</text>';return;
+  }
+  const pad=span*.08,lo=min-pad,hi=max+pad;
+  const y=v=>top+(hi-v)/(hi-lo)*(H-top-bottom);
+  const step=(W-left-right)/(rows.length+1);
+  let out='';
+  [0.2,0.4,0.6,0.8].forEach(f=>{
+    const yy=top+(H-top-bottom)*f;
+    out+=`<line class="flow-chart-grid" x1="${left}" y1="${yy}" x2="${W-right}" y2="${yy}"/>`;
+  });
+  rows.forEach((c,i)=>{
+    const open=Number(c.open),close=Number(c.close),high=Number(c.high),low=Number(c.low);
+    if(![open,close,high,low].every(Number.isFinite)||high<low)return;
+    const x=left+(i+1)*step,up=close>=open;
+    const cls=up?'flow-candle-up':'flow-candle-down';
+    const bodyY=Math.min(y(open),y(close)),bodyH=Math.max(1,Math.abs(y(close)-y(open)));
+    out+=`<line class="flow-wick ${cls}" x1="${x}" y1="${y(high)}" x2="${x}" y2="${y(low)}"/>`;
+    out+=`<rect class="${cls}" x="${x-5}" y="${bodyY}" width="10" height="${bodyH}" rx="1"/>`;
+  });
+  const last=rows[rows.length-1],lastX=left+rows.length*step,lastY=y(Number(last.close));
+  out+=`<circle cx="${lastX}" cy="${lastY}" r="3" fill="#fff"/>`;
+  svg.innerHTML=out;
+}
  window.toggleFlowAI=function(which){const a=q('flowAlbertPanel'),s=q('flowSofiaPanel'); if(!a||!s)return; if(which==='albert'){const show=!a.classList.contains('show');a.classList.toggle('show',show);s.classList.remove('show')}else{const show=!s.classList.contains('show');s.classList.toggle('show',show);a.classList.remove('show')}};
  // ONLY Flow Hub rows open the dedicated Flow chart. Stop the existing global ticker handler here.
  root.addEventListener('click',function(e){
@@ -3002,7 +3068,7 @@ const tools={
  'OPTIONS FLOW LEVELS':{id:'opt',group:'WinnersFlow',kind:'overlay',calc:'OPTIONS',desc:'Options Flow Levels mark demo zones where options activity is concentrated. The level itself does not predict direction.',formula:'Reference zone derived from options-flow activity'}
 };
 const colors=['#d8baff','#63e6ff','#55e6a4','#ec72ff','#ffd76a','#ff8fb2','#9b5cff'];
-let state={tf:'5m',active:new Set(),explain:false};
+let state={tf:'5m',active:new Set(),explain:false,data:[]};
 const tfList=[['1m','1 MIN'],['3m','3 MIN'],['5m','5 MIN'],['15m','15 MIN'],['30m','30 MIN'],['1h','1 HOUR'],['2h','2 HOUR'],['4h','4 HOUR'],['1D','1 DAY'],['1W','1 WEEK'],['1M','1 MONTH']];
 function q(s){return root.querySelector(s)} function qa(s){return [...root.querySelectorAll(s)]}
 function makeUI(){
@@ -3017,17 +3083,71 @@ function makeUI(){
  wrap.addEventListener('click',e=>{const tf=e.target.closest('[data-v67tf]');if(tf){setTF(tf.dataset.v67tf);return}const b=e.target.closest('[data-v67tool]');if(b){toggle(b.dataset.v67tool);return}const ex=e.target.closest('[data-explain]');if(ex){showExplain(ex.dataset.explain)}});
  q('#v67ExplainToggle').onclick=()=>{state.explain=!state.explain;wrap.classList.toggle('explain-mode',state.explain);q('#v67ExplainToggle').textContent='EXPLAIN TOOLS · '+(state.explain?'ON':'OFF');q('#v67ExplainToggle').classList.toggle('on',state.explain)};
 }
-function baseSeries(sym,tf){const seeds={NVDA:180,AMD:170,TSLA:370,AAPL:265,MSFT:510,META:740};let base=seeds[sym]||180;let tfMul={'1m':.18,'3m':.25,'5m':.35,'15m':.55,'30m':.75,'1h':1,'2h':1.25,'4h':1.5,'1D':2.1,'1W':3.8,'1M':6}[tf]||.35;let arr=[];let prev=base;for(let i=0;i<120;i++){let drift=(Math.sin(i*.33+(sym.charCodeAt(0)||78))*.32+Math.cos(i*.11)*.16)*tfMul;let close=prev+drift+(i>88?tfMul*.08:0);let open=prev;let high=Math.max(open,close)+(.25+Math.abs(Math.sin(i*.7))*.55)*tfMul;let low=Math.min(open,close)-(.22+Math.abs(Math.cos(i*.5))*.45)*tfMul;let volume=Math.round((700000+Math.abs(Math.sin(i*.27))*900000)*(1+(i%17===0?1.8:0)));arr.push({open,high,low,close,volume});prev=close}return arr}
+const v67Intervals={'1m':'1min','5m':'5min','15m':'15min','30m':'30min','1h':'1h','2h':'2h','4h':'4h','1D':'1day','1W':'1week','1M':'1month'};
+let v67RequestId=0;
+function v67ApiBase(){return (window.DT_FLOW_API_BASE||'/api').replace(/\/$/,'')}
+function v67Token(){return localStorage.getItem('dtflow_token')||localStorage.getItem('dtflowToken')||localStorage.getItem('authToken')||localStorage.getItem('token')||''}
+function showV67Message(message){
+ const svg=q('.candle-svg');if(!svg)return;
+ const old=svg.querySelector('#dtDynamicCandles');if(old)old.remove();
+ const prior=svg.querySelector('#v67DataMessage');if(prior)prior.remove();
+ const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+ t.id='v67DataMessage';t.setAttribute('x','500');t.setAttribute('y','210');
+ t.setAttribute('text-anchor','middle');t.setAttribute('fill','#c7b9d8');
+ t.setAttribute('font-size','15');t.setAttribute('font-family','sans-serif');
+ t.textContent=message;svg.appendChild(t);
+}
+async function loadV67Series(){
+ const requestId=++v67RequestId;
+ const sym=(q('#chartTicker')?.textContent||'$NVDA').replace('$','').trim().toUpperCase();
+ const tf=state.tf,interval=v67Intervals[tf];
+ state.data=[];
+ qa('.v67-svg-layer').forEach(x=>x.remove());
+ renderPanes([]);
+ if(!interval){showV67Message('3-MIN CANDLES NOT SUPPORTED BY MARKET API');return}
+ showV67Message('LOADING MARKET CANDLES…');
+ try{
+  const token=v67Token();
+  const response=await fetch(v67ApiBase()+'/market/candles/'+encodeURIComponent(sym)+'?interval='+encodeURIComponent(interval)+'&outputsize=120',{
+   headers:token?{Authorization:'Bearer '+token}:{},
+   credentials:'same-origin'
+  });
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const result=await response.json();
+  if(!result||result.ok!==true||!Array.isArray(result.data))throw new Error('Invalid candle response');
+  const rows=result.data.filter(c=>c&&['open','high','low','close'].every(k=>c[k]!==null&&c[k]!==undefined&&Number.isFinite(Number(c[k]))))
+   .map(c=>({...c,open:Number(c.open),high:Number(c.high),low:Number(c.low),close:Number(c.close),volume:Number.isFinite(Number(c.volume))?Number(c.volume):0}))
+   .filter(c=>c.high>=c.low&&c.high>=Math.max(c.open,c.close)&&c.low<=Math.min(c.open,c.close));
+  if(!rows.length)throw new Error('No valid candles');
+  if(requestId!==v67RequestId)return;
+  state.data=rows;
+  draw();
+ }catch(err){
+  if(requestId!==v67RequestId)return;
+  state.data=[];
+  qa('.v67-svg-layer').forEach(x=>x.remove());
+  renderPanes([]);
+  showV67Message('MARKET CANDLES UNAVAILABLE · CHECK DATA ACCESS');
+ }
+}
 function renderDynamicPriceChart(){
- const svg=q('.candle-svg'); if(!svg)return;
- const sym=(q('#chartTicker')?.textContent||'$NVDA').replace('$','').trim();
- const d=baseSeries(sym,state.tf), min=Math.min(...d.map(x=>x.low)), max=Math.max(...d.map(x=>x.high)), range=max-min||1;
- const body=[]; const wick=[]; const n=d.length;
- d.forEach((x,i)=>{const X=18+(i/(n-1))*964; const y=v=>22+((max-v)/range)*340; const yo=y(x.open),yc=y(x.close),yh=y(x.high),yl=y(x.low); const up=x.close>=x.open; const col=up?'#55e6a4':'#ff6685'; wick.push(`<line x1="${X.toFixed(2)}" y1="${yh.toFixed(2)}" x2="${X.toFixed(2)}" y2="${yl.toFixed(2)}" stroke="${col}" stroke-width="1.2"/>`); const w=4.8; body.push(`<rect x="${(X-w/2).toFixed(2)}" y="${Math.min(yo,yc).toFixed(2)}" width="${w}" height="${Math.max(2,Math.abs(yc-yo)).toFixed(2)}" rx="1" fill="${col}" opacity=".92"/>`);});
- const old=svg.querySelector('#dtDynamicCandles'); if(old)old.remove();
+ const svg=q('.candle-svg');if(!svg)return;
+ const prior=svg.querySelector('#v67DataMessage');if(prior)prior.remove();
+ const old=svg.querySelector('#dtDynamicCandles');if(old)old.remove();
+ const d=Array.isArray(state.data)?state.data:[];
+ if(!d.length){showV67Message('NO VERIFIED MARKET CANDLES');return}
+ const min=Math.min(...d.map(x=>x.low)),max=Math.max(...d.map(x=>x.high)),range=max-min||1;
+ const body=[],wick=[],n=d.length;
+ d.forEach((x,i)=>{
+  const X=n===1?500:18+(i/(n-1))*964,y=v=>22+((max-v)/range)*340;
+  const yo=y(x.open),yc=y(x.close),yh=y(x.high),yl=y(x.low),up=x.close>=x.open,col=up?'#55e6a4':'#ff6685';
+  wick.push(`<line x1="${X.toFixed(2)}" y1="${yh.toFixed(2)}" x2="${X.toFixed(2)}" y2="${yl.toFixed(2)}" stroke="${col}" stroke-width="1.2"/>`);
+  const w=Math.min(4.8,900/n);
+  body.push(`<rect x="${(X-w/2).toFixed(2)}" y="${Math.min(yo,yc).toFixed(2)}" width="${w}" height="${Math.max(2,Math.abs(yc-yo)).toFixed(2)}" rx="1" fill="${col}" opacity=".92"/>`);
+ });
  const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.id='dtDynamicCandles';g.setAttribute('opacity','.96');g.innerHTML=wick.join('')+body.join('');
- const anchor=svg.querySelector('.c-fill')||svg.firstChild; svg.insertBefore(g,anchor);
- const tfLabel=q('#chartTfLabel'); if(tfLabel)tfLabel.textContent=state.tf.toUpperCase();
+ const anchor=svg.querySelector('.c-fill')||svg.firstChild;svg.insertBefore(g,anchor);
+ const tfLabel=q('#chartTfLabel');if(tfLabel)tfLabel.textContent=state.tf.toUpperCase();
 }
 function sma(a,n){return a.map((_,i)=>i<n-1?null:a.slice(i-n+1,i+1).reduce((x,y)=>x+y,0)/n)}
 function ema(a,n){let out=[],k=2/(n+1),prev=a[0];a.forEach((v,i)=>{prev=i?prev+k*(v-prev):v;out.push(prev)});return out}
@@ -3036,15 +3156,56 @@ function rsi(a,n){let out=Array(a.length).fill(null),g=0,l=0;for(let i=1;i<a.len
 function atr(d,n){let tr=d.map((x,i)=>i?Math.max(x.high-x.low,Math.abs(x.high-d[i-1].close),Math.abs(x.low-d[i-1].close)):x.high-x.low);return sma(tr,n)}
 function bb(a,n=20){let mid=sma(a,n),up=[],lo=[];a.forEach((_,i)=>{if(i<n-1){up.push(null);lo.push(null);return}let sl=a.slice(i-n+1,i+1),m=mid[i],sd=Math.sqrt(sl.reduce((z,v)=>z+(v-m)**2,0)/n);up.push(m+2*sd);lo.push(m-2*sd)});return {mid,up,lo}}
 function normalize(vals, d){let nums=d.map(x=>x.close), min=Math.min(...nums)*.995,max=Math.max(...nums)*1.005;return vals.map(v=>v==null?null:7+(max-v)/(max-min)*86)}
-function draw(){const svg=q('.candle-svg');if(!svg)return;renderDynamicPriceChart();svg.querySelectorAll('.v67-svg-layer').forEach(x=>x.remove());const sym=(q('#chartTicker')?.textContent||'$NVDA').replace('$','').trim();const d=baseSeries(sym,state.tf),cl=d.map(x=>x.close),layer=document.createElementNS('http://www.w3.org/2000/svg','g');layer.classList.add('v67-svg-layer');const addPath=(vals,label,stroke)=>{const y=normalize(vals,d),pts=y.map((v,i)=>v==null?null:`${(i/(y.length-1))*1000},${(v/100)*420}`).filter(Boolean);if(!pts.length)return;const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d','M'+pts.join(' L'));p.setAttribute('class','v67-overlay-path');p.setAttribute('stroke',stroke);layer.appendChild(p);};
- let idx=0;state.active.forEach(id=>{const t=Object.values(tools).find(x=>x.id===id);if(!t)return;if(t.calc==='SMA')addPath(sma(cl,t.period),id,colors[idx++%colors.length]);if(t.calc==='EMA')addPath(ema(cl,t.period),id,colors[idx++%colors.length]);if(t.calc==='VWAP')addPath(vwap(d),'VWAP','#63e6ff');if(t.calc==='BB'){const z=bb(cl);addPath(z.up,'BBU','#ec72ff');addPath(z.mid,'BBM','#9b5cff');addPath(z.lo,'BBL','#ec72ff')}if(['LEVELS','LEVELS2','LEVELS3','LEVELS4','FLOW','DARK','OPTIONS'].includes(t.calc)){const levels={LEVELS:[cl[cl.length-35],cl[cl.length-70]],LEVELS2:[cl[cl.length-20],cl[cl.length-45]],LEVELS3:[Math.max(...cl.slice(-30)),Math.min(...cl.slice(-30))],LEVELS4:[cl[20],cl[50]],FLOW:[cl[88],cl[96]],DARK:[cl[82],cl[90]],OPTIONS:[cl[92],cl[101]]}[t.calc]||[];levels.forEach((v,j)=>{const yy=normalize([v],d)[0];const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1','0');line.setAttribute('x2','1000');line.setAttribute('y1',yy/100*420);line.setAttribute('y2',yy/100*420);line.setAttribute('stroke',t.calc==='FLOW'?'#ec72ff':t.calc==='DARK'?'#ffd76a':'#55e6a4');line.setAttribute('stroke-dasharray','5 6');line.setAttribute('opacity','.7');layer.appendChild(line)})}if(t.calc==='VP'){let bins=12, min=Math.min(...cl),max=Math.max(...cl);for(let j=0;j<bins;j++){let lo=min+(max-min)*j/bins,hi=min+(max-min)*(j+1)/bins,vol=d.filter(x=>x.close>=lo&&x.close<hi).reduce((z,x)=>z+x.volume,0);let rect=document.createElementNS('http://www.w3.org/2000/svg','rect');rect.setAttribute('x',760);rect.setAttribute('y',40+j*27);rect.setAttribute('width',Math.min(220,vol/50000));rect.setAttribute('height',18);rect.setAttribute('fill','#9b5cff');rect.setAttribute('opacity','.22');layer.appendChild(rect)}}});svg.appendChild(layer);renderPanes(d)}
-function renderPanes(d){const pane=q('#v67Panes');if(!pane)return;pane.innerHTML='';const cl=d.map(x=>x.close);state.active.forEach(id=>{const t=Object.values(tools).find(x=>x.id===id);if(!t||t.kind!=='pane')return;const box=document.createElement('div');box.className='v67-pane show';box.innerHTML=`<div class="v67-pane-head"><span>${Object.keys(tools).find(k=>tools[k]===t)}</span><span>${state.tf.toUpperCase()} · DEMO CALCULATION</span></div>`;if(t.calc==='VOLUME'||t.calc==='RVOL'){const bars=document.createElement('div');bars.className='v67-volume-bars';const av=sma(d.map(x=>x.volume),20);d.slice(-60).forEach((x,i)=>{const b=document.createElement('i');let v=t.calc==='VOLUME'?x.volume:(av[d.length-60+i]?x.volume/av[d.length-60+i]:1);b.style.height=Math.min(100,Math.max(5,v/(t.calc==='VOLUME'?2500000:3)*70))+'%';bars.appendChild(b)});box.appendChild(bars)}else{const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');sv.setAttribute('viewBox','0 0 1000 160');let vals;if(t.calc==='RSI')vals=rsi(cl,14);else if(t.calc==='ATR')vals=atr(d,14);else if(t.calc==='STOCH')vals=d.map((x,i)=>{let sl=d.slice(Math.max(0,i-13),i+1),hi=Math.max(...sl.map(z=>z.high)),lo=Math.min(...sl.map(z=>z.low));return 100*(x.close-lo)/(hi-lo||1)});else if(t.calc==='MACD'){let a=ema(cl,12),b=ema(cl,26);vals=a.map((x,i)=>x-b[i])}else vals=cl.map((_,i)=>i<14?null:20+Math.abs(Math.sin(i*.18))*45);let min=Math.min(...vals.filter(v=>v!=null)),max=Math.max(...vals.filter(v=>v!=null));let pts=vals.map((v,i)=>v==null?null:`${i/(vals.length-1)*1000},${(1-(v-min)/(max-min||1))*140+10}`).filter(Boolean);const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M'+pts.join(' L'));path.setAttribute('fill','none');path.setAttribute('stroke','#d8baff');path.setAttribute('stroke-width','2');sv.appendChild(path);if(t.calc==='RSI'){[30,70].forEach(v=>{let y=(1-(v-min)/(max-min||1))*140+10;let l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1','0');l.setAttribute('x2','1000');l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('stroke','#4d4559');l.setAttribute('stroke-dasharray','4 6');sv.appendChild(l)})}box.appendChild(sv)}pane.appendChild(box)});pane.classList.toggle('show',pane.children.length>0)}
+function draw(){
+ const svg=q('.candle-svg');if(!svg)return;
+ svg.querySelectorAll('.v67-svg-layer').forEach(x=>x.remove());
+ const d=Array.isArray(state.data)?state.data:[];
+ if(!d.length){renderDynamicPriceChart();renderPanes([]);return}
+ renderDynamicPriceChart();
+ const cl=d.map(x=>x.close),layer=document.createElementNS('http://www.w3.org/2000/svg','g');
+ layer.classList.add('v67-svg-layer');
+ const addPath=(vals,label,stroke)=>{
+  if(!Array.isArray(vals)||!vals.length)return;
+  const y=normalize(vals,d),pts=y.map((v,i)=>v==null?null:`${(i/(y.length-1||1))*1000},${(v/100)*420}`).filter(Boolean);
+  if(!pts.length)return;
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d','M'+pts.join(' L'));p.setAttribute('class','v67-overlay-path');p.setAttribute('stroke',stroke);layer.appendChild(p);
+ };
+ let idx=0;
+ state.active.forEach(id=>{
+  const t=Object.values(tools).find(x=>x.id===id);if(!t)return;
+  if(t.calc==='SMA')addPath(sma(cl,t.period),id,colors[idx++%colors.length]);
+  if(t.calc==='EMA')addPath(ema(cl,t.period),id,colors[idx++%colors.length]);
+  if(t.calc==='VWAP')addPath(vwap(d),'VWAP','#63e6ff');
+  if(t.calc==='BB'){const z=bb(cl);addPath(z.up,'BBU','#ec72ff');addPath(z.mid,'BBM','#9b5cff');addPath(z.lo,'BBL','#ec72ff')}
+  // PDH/PDL, premarket, session, HTF, flow, dark-pool and options levels
+  // are not drawn until their own verified data sources are connected.
+  if(t.calc==='VP'){
+   const bins=12,min=Math.min(...cl),max=Math.max(...cl);
+   for(let j=0;j<bins;j++){
+    const lo=min+(max-min)*j/bins,hi=min+(max-min)*(j+1)/bins;
+    const vol=d.filter(x=>x.close>=lo&&(j===bins-1?x.close<=hi:x.close<hi)).reduce((z,x)=>z+x.volume,0);
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',760);rect.setAttribute('y',40+j*27);rect.setAttribute('width',Math.min(220,vol/50000));rect.setAttribute('height',18);rect.setAttribute('fill','#9b5cff');rect.setAttribute('opacity','.22');layer.appendChild(rect);
+   }
+  }
+ });
+ svg.appendChild(layer);renderPanes(d);
+}
+function renderPanes(d){const pane=q('#v67Panes');if(!pane)return;pane.innerHTML='';if(!Array.isArray(d)||!d.length){pane.classList.remove('show');return}const cl=d.map(x=>x.close);state.active.forEach(id=>{const t=Object.values(tools).find(x=>x.id===id);if(!t||t.kind!=='pane')return;const box=document.createElement('div');box.className='v67-pane show';box.innerHTML=`<div class="v67-pane-head"><span>${Object.keys(tools).find(k=>tools[k]===t)}</span><span>${state.tf.toUpperCase()} · CALCULATED FROM MARKET CANDLES</span></div>`;if(t.calc==='VOLUME'||t.calc==='RVOL'){const bars=document.createElement('div');bars.className='v67-volume-bars';const av=sma(d.map(x=>x.volume),20);d.slice(-60).forEach((x,i)=>{const b=document.createElement('i');let v=t.calc==='VOLUME'?x.volume:(av[d.length-60+i]?x.volume/av[d.length-60+i]:1);b.style.height=Math.min(100,Math.max(5,v/(t.calc==='VOLUME'?2500000:3)*70))+'%';bars.appendChild(b)});box.appendChild(bars)}else{const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');sv.setAttribute('viewBox','0 0 1000 160');let vals;if(t.calc==='RSI')vals=rsi(cl,14);else if(t.calc==='ATR')vals=atr(d,14);else if(t.calc==='STOCH')vals=d.map((x,i)=>{let sl=d.slice(Math.max(0,i-13),i+1),hi=Math.max(...sl.map(z=>z.high)),lo=Math.min(...sl.map(z=>z.low));return 100*(x.close-lo)/(hi-lo||1)});else if(t.calc==='MACD'){let a=ema(cl,12),b=ema(cl,26);vals=a.map((x,i)=>x-b[i])}else vals=Array(cl.length).fill(null);let min=Math.min(...vals.filter(v=>v!=null)),max=Math.max(...vals.filter(v=>v!=null));let pts=vals.map((v,i)=>v==null?null:`${i/(vals.length-1)*1000},${(1-(v-min)/(max-min||1))*140+10}`).filter(Boolean);const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M'+pts.join(' L'));path.setAttribute('fill','none');path.setAttribute('stroke','#d8baff');path.setAttribute('stroke-width','2');sv.appendChild(path);if(t.calc==='RSI'){[30,70].forEach(v=>{let y=(1-(v-min)/(max-min||1))*140+10;let l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1','0');l.setAttribute('x2','1000');l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('stroke','#4d4559');l.setAttribute('stroke-dasharray','4 6');sv.appendChild(l)})}box.appendChild(sv)}pane.appendChild(box)});pane.classList.toggle('show',pane.children.length>0)}
 function toggle(id){state.active.has(id)?state.active.delete(id):state.active.add(id);qa('[data-v67tool]').forEach(b=>{b.classList.toggle('active',state.active.has(b.dataset.v67tool))});draw();}
-function setTF(tf){state.tf=tf;qa('[data-v67tf]').forEach(b=>b.classList.toggle('active',b.dataset.v67tf===tf));const label=q('#chartTfLabel');if(label)label.textContent=tf.toUpperCase();const old=window.dtChartTF;/* keep the prototype's existing context messaging */if(typeof old==='function'&&['5m','15m','1h'].includes(tf))old(tf, q('[data-chart-tf="'+tf+'"]'));draw();toast('Chart timeframe · '+tf.toUpperCase());}
+function setTF(tf){
+ state.tf=tf;
+ qa('[data-v67tf]').forEach(b=>b.classList.toggle('active',b.dataset.v67tf===tf));
+ const label=q('#chartTfLabel');if(label)label.textContent=tf.toUpperCase();
+ const old=window.dtChartTF;
+ if(typeof old==='function'&&['5m','15m','1h'].includes(tf))old(tf,q('[data-chart-tf="'+tf+'"]'));
+ loadV67Series();toast('Chart timeframe · '+tf.toUpperCase());
+}
 function showExplain(id){const t=Object.values(tools).find(x=>x.id===id);if(!t)return;let pop=q('#v67ExplainPop');if(!pop){pop=document.createElement('div');pop.id='v67ExplainPop';pop.className='v67-explain-pop';pop.innerHTML='<div class="v67-explain-card"><div class="k">WinnersFlow · SIMPLE EXPLANATION</div><h3 id="v67ExTitle"></h3><p id="v67ExText"></p><div class="formula" id="v67ExFormula"></div><button class="v67-close">CLOSE</button></div>';root.body.appendChild(pop);pop.addEventListener('click',e=>{if(e.target===pop||e.target.closest('.v67-close'))pop.classList.remove('show')})}q('#v67ExTitle').textContent=Object.keys(tools).find(k=>tools[k]===t)||id;q('#v67ExText').textContent=t.desc;q('#v67ExFormula').textContent=t.formula;pop.classList.add('show')}
-window.addEventListener('load',()=>{makeUI();const pane=document.createElement('div');pane.id='v67Panes';pane.className='v67-panes';const chart=q('.candle-wrap');if(chart)chart.parentNode.insertBefore(pane,chart.nextSibling);draw()});
+window.addEventListener('load',()=>{makeUI();const pane=document.createElement('div');pane.id='v67Panes';pane.className='v67-panes';const chart=q('.candle-wrap');if(chart)chart.parentNode.insertBefore(pane,chart.nextSibling);loadV67Series()});
 // Re-draw when a different ticker is opened.
-const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTicker=function(sym){const r=oldOpen.apply(this,arguments);setTimeout(draw,80);return r}}
+const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTicker=function(sym){const r=oldOpen.apply(this,arguments);setTimeout(loadV67Series,80);return r}}
 })();
 </script>
 
@@ -3664,6 +3825,98 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
 }
 </style>
 
+
+
+<script src="/auth.js"></script>
+<script id="winnersflow-access-gate">
+(async function () {
+  const root = document.documentElement;
+  const loginUrl = '/login.html';
+  const token = window.DTAuth && window.DTAuth.token();
+
+  if (!token) {
+    window.location.replace(loginUrl);
+    return;
+  }
+
+  function showGate(title, message, canCheckout, canRetry) {
+    root.classList.remove('wf-access-pending');
+    document.body.innerHTML = `
+      <main id="wf-access-gate">
+        <section class="wf-access-card">
+          <div class="wf-access-brand">Winners<span>Flow</span></div>
+          <h1 id="wf-access-title"></h1>
+          <p id="wf-access-message"></p>
+          <div id="wf-access-error" class="wf-access-error" role="alert"></div>
+          <div id="wf-access-actions"></div>
+          <a href="/login.html">Return to login</a>
+        </section>
+      </main>`;
+    document.getElementById('wf-access-title').textContent = title;
+    document.getElementById('wf-access-message').textContent = message;
+
+    const actions = document.getElementById('wf-access-actions');
+    const error = document.getElementById('wf-access-error');
+
+    if (canCheckout) {
+      for (const method of ['card', 'paypal']) {
+        const button = document.createElement('button');
+        button.className = method === 'card' ? 'primary' : '';
+        button.textContent = method === 'card'
+          ? 'Continue with Card'
+          : 'Continue with PayPal';
+        button.addEventListener('click', async () => {
+          button.disabled = true;
+          error.textContent = '';
+          try {
+            await window.DTAuth.startCheckout(method);
+          } catch (e) {
+            error.textContent = e.message || 'Checkout could not be started. Please try again.';
+            button.disabled = false;
+          }
+        });
+        actions.appendChild(button);
+      }
+    }
+
+    if (canRetry) {
+      const retry = document.createElement('button');
+      retry.textContent = 'Retry access check';
+      retry.addEventListener('click', () => window.location.reload());
+      actions.appendChild(retry);
+    }
+  }
+
+  try {
+    const result = await window.DTAuth.access();
+    const access = result && result.access;
+
+    if (access && access.allowed === true) {
+      root.classList.remove('wf-access-pending');
+      return;
+    }
+
+    showGate(
+      'Active access required',
+      'Your account does not currently have active WinnersFlow access. Continue to checkout to review subscription options.',
+      true,
+      true
+    );
+  } catch (e) {
+    if (e && e.status === 401) {
+      window.location.replace(loginUrl);
+      return;
+    }
+
+    showGate(
+      'Access could not be verified',
+      'WinnersFlow could not verify your access. The terminal remains locked until verification succeeds.',
+      false,
+      true
+    );
+  }
+})();
+</script>
 
 </body>
 
@@ -4479,7 +4732,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
     const head=document.querySelector("#chartFlowPanel .chart-flow-head small");
     const status=String(meta.displayStatus||payload?.status||"UNCONFIRMED").toUpperCase();
     const shownStatus=status==="LIVE"?"LIVE":"UNCONFIRMED";
-    if(head)head.innerHTML='<span class="dt-flow-live-badge"><i></i>LIVE</span>';
+    const isLive=rows.length>0&&shownStatus==="LIVE"&&!!meta.asOf;if(head)head.innerHTML=isLive?'<span class="dt-flow-live-badge"><i></i>LIVE</span>':'WAITING FOR LIVE DATA';
     const page=document.getElementById("chartFlowPageLabel"); if(page)page.textContent=rows.length&&shownStatus==="LIVE"&&meta.asOf?"AS OF "+String(meta.asOf).replace("T"," ").replace("Z"," UTC"):"WAITING FOR LIVE DATA";
     const pager=document.getElementById("chartFlowPagerText"); if(pager)pager.textContent="LIVE";
     const back=document.getElementById('chartFlowBack'),forward=document.getElementById('chartFlowForward'); if(back)back.disabled=true;if(forward)forward.disabled=true;
@@ -4512,7 +4765,7 @@ const oldOpen=window.openTicker; if(typeof oldOpen==='function'){window.openTick
       renderRows(kind,json);
     }catch(e){
       const list=document.getElementById('chartFlowRows');
-      if(list)list.innerHTML='<div class="chart-flow-row"><span class="time">—</span><div class="main"><b>NO DATA</b><small>Waiting for the selected Flow feed.</small></div><span class="value">—</span></div>';const head=document.querySelector("#chartFlowPanel .chart-flow-head small");if(head)head.innerHTML='<span class="dt-flow-live-badge"><i></i>LIVE</span>';const page=document.getElementById("chartFlowPageLabel");if(page)page.textContent="WAITING FOR LIVE DATA";const pager=document.getElementById("chartFlowPagerText");if(pager)pager.textContent="LIVE";
+      if(list)list.innerHTML='<div class="chart-flow-row"><span class="time">—</span><div class="main"><b>NO DATA</b><small>Waiting for the selected Flow feed.</small></div><span class="value">—</span></div>';const head=document.querySelector("#chartFlowPanel .chart-flow-head small");if(head)head.textContent="WAITING FOR LIVE DATA";const page=document.getElementById("chartFlowPageLabel");if(page)page.textContent="WAITING FOR LIVE DATA";const pager=document.getElementById("chartFlowPagerText");if(pager)pager.textContent="NO LIVE DATA";
     }
   }
   function setView(kind){

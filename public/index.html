@@ -3349,27 +3349,16 @@ footer{
 
 
 <!-- MARKET TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-
-    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
-    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
-    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
-    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
-    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
-    <div class="tick"><b>MSFT</b><span class="down">▼ 0.21%</span></div>
-    <div class="tick"><b>BTC</b><span class="up">▲ 2.18%</span></div>
-    <div class="tick"><b>ETH</b><span class="up">▲ 1.04%</span></div>
-
-    <div class="tick"><b>NVDA</b><span class="up">▲ 2.41%</span></div>
-    <div class="tick"><b>TSLA</b><span class="up">▲ 1.84%</span></div>
-    <div class="tick"><b>AAPL</b><span class="down">▼ 0.72%</span></div>
-    <div class="tick"><b>AMD</b><span class="up">▲ 1.32%</span></div>
-    <div class="tick"><b>META</b><span class="up">▲ 0.91%</span></div>
-
+<div class="ticker" aria-label="Market quotes">
+  <div class="ticker-track" id="wf-market-ticker">
+    <div class="tick"><b>NVDA</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>TSLA</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>AAPL</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>AMD</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>META</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
+    <div class="tick"><b>MSFT</b><span class="tick-price">—</span><span class="tick-change">—</span></div>
   </div>
 </div>
-
 
 <!-- HERO -->
 <header class="hero">
@@ -3398,7 +3387,7 @@ footer{
           GET STARTED
         </a>
 
-        <a href="#flow" class="btn btn-secondary">
+        <a href="/portal" class="btn btn-secondary">
           VIEW TERMINAL
         </a>
       </div>
@@ -3510,6 +3499,11 @@ footer{
 
     </div>
 
+
+    <div class="market-data-notice" style="margin:0 0 18px;padding:0 4px;color:#9f98a8;font-size:12px;line-height:1.6;">
+      <strong style="display:block;margin-bottom:3px;color:#c8c0d2;font-size:11px;letter-spacing:.08em;">MARKET DATA &amp; LATENCY</strong>
+      Data availability and reporting delays vary by feed, instrument and underlying market-data provider. Stock flow may have a delay of up to 60 seconds, while options flow and dark pool data may have a delay of up to 15 minutes.
+    </div>
 
     <div class="flow-columns">
 
@@ -4395,9 +4389,9 @@ footer{
         <div class="features">
 
           <div class="feature"><strong>ALBERT — SETUP COACH</strong><span>AI-assisted confirmation that monitors setup conditions and waits for confirmation.</span></div>
-          <div class="feature"><strong>Real-Time Options Flow</strong><span>See notable options activity, contracts, size and directional context.</span></div>
-          <div class="feature"><strong>Real-Time Stock Prints</strong><span>Track notable stock transactions and buying or selling activity.</span></div>
-          <div class="feature"><strong>Real-Time Dark Pools</strong><span>Monitor reported off-exchange activity and large prints.</span></div>
+          <div class="feature"><strong>Options Flow</strong><span>See notable options activity, contracts, size and directional context. Data timing depends on the underlying provider.</span></div>
+          <div class="feature"><strong>Real-Time Normal Stock Flow</strong><span>Track notable stock transactions and buying or selling activity.</span></div>
+          <div class="feature"><strong>Dark Pool Activity (15-Minute Delayed)</strong><span>Review reported off-exchange activity and large prints with a 15-minute delay.</span></div>
           <div class="feature"><strong>Setup Scanner</strong><span>Find symbols approaching the conditions that matter around levels, momentum and volume.</span></div>
           <div class="feature"><strong>Breakout Scanner</strong><span>Find breakout pressure and evaluate whether price is actually confirming the move.</span></div>
           <div class="feature"><strong>Support &amp; Resistance</strong><span>See the key levels where price is being tested, rejected or accepted.</span></div>
@@ -4409,9 +4403,18 @@ footer{
 
         </div>
 
-        <a href="#" class="btn btn-primary" style="display:block">
-          $18.99/MO
-        </a>
+        <div class="pricing-checkout-options" style="display:grid;gap:12px">
+          <div class="pricing-checkout-card">
+            <a href="/register.html?payment=card" class="btn btn-primary" style="display:block;text-align:center">Subscribe with Card</a>
+            <p style="margin:8px 0 4px;text-align:center;font-size:12px;line-height:1.6">Card · Apple Pay · Google Pay · Klarna · Cash App · Amazon Pay</p>
+            <p style="margin:0;text-align:center;font-size:12px;opacity:.72">You'll be asked to sign in first</p>
+          </div>
+          <div style="text-align:center;font-size:12px;opacity:.7">or pay with</div>
+          <div class="pricing-checkout-paypal">
+            <a href="/register.html?payment=paypal" class="btn btn-primary" style="display:block;text-align:center">Subscribe with PayPal</a>
+            <p style="margin:8px 0 0;text-align:center;font-size:12px;opacity:.72">You'll be asked to sign in first</p>
+          </div>
+        </div>
 
         <div class="pricing-payment-trust" aria-label="Secure checkout with Stripe and PayPal">
           <div class="pricing-payment-logos">
@@ -4722,9 +4725,9 @@ const DT_FLOW_PAGES = {
     ["WATCHLIST","Keep the symbols and developing setups that matter to you in one focused workspace."],
     ["MARKET TERMINAL","One workflow for FLOW → STRUCTURE → COACH → BACKTEST → ALERT. The goal is not more information. It is better context."]
   ]},
-  "pricing": {k:"PRICING",t:"WinnersFlow PRO",lead:"Access WinnersFlow Pro for $18.99 per month. No free trial.",cards:[
-    ["MONTHLY PLAN","Access WinnersFlow Pro for $18.99 per month. No free trial."],
-    ["$18.99 / MONTH","WinnersFlow Pro costs $18.99 per month. No free trial."],
+  "pricing": {k:"PRICING",t:"WinnersFlow PRO",lead:"Access WinnersFlow Pro for $18.99 per month.",cards:[
+    ["MONTHLY PLAN","Access WinnersFlow Pro for $18.99 per month."],
+    ["$18.99 / MONTH","WinnersFlow Pro costs $18.99 per month."],
     ["PRO INCLUDES","Real-time flow, Setup Coach, scanners, systematic strategy tools, backtesting and alerts as the connected product is developed."],
     ["NO PERFORMANCE PROMISES","WinnersFlow is designed to improve the decision process, not promise a profitable outcome. Historical results are descriptive and do not guarantee future performance."]
   ]},
@@ -5016,6 +5019,47 @@ a.hero-trial-btn.btn:hover{
   box-shadow:inset 0 1px 0 rgba(255,249,216,.82),inset 0 -1px 0 rgba(92,61,11,.30),0 0 30px rgba(226,184,76,.25),0 10px 26px rgba(0,0,0,.32) !important;
 }
 </style>
+
+<script id="wf-live-market-ticker">
+(() => {
+  const track = document.getElementById('wf-market-ticker');
+  if (!track) return;
+  const symbols = ['NVDA', 'TSLA', 'AAPL', 'AMD', 'META', 'MSFT'];
+  const esc = value => String(value).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  async function refreshTicker() {
+    try {
+      const response = await fetch('/api/public/market-ticker', {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('Quotes unavailable');
+      const result = await response.json();
+      if (!result.ok || !Array.isArray(result.data)) throw new Error('Invalid quote response');
+      const quotes = new Map(result.data.map(q => [String(q.symbol || '').toUpperCase(), q]));
+      const rows = symbols.map(symbol => {
+        const q = quotes.get(symbol);
+        const price = Number(q?.price);
+        const pct = Number(q?.changePct);
+        const validPrice = q && Number.isFinite(price) && price > 0;
+        const validPct = q && q.changePct != null && q.changePct !== '' && Number.isFinite(pct);
+        const cls = validPct ? (pct >= 0 ? 'up' : 'down') : '';
+        const sign = validPct ? (pct >= 0 ? '▲ ' : '▼ ') : '';
+        return `<div class="tick"><b>${symbol}</b><span class="tick-price">${validPrice ? '$' + price.toFixed(2) : '—'}</span><span class="tick-change ${cls}">${validPct ? sign + Math.abs(pct).toFixed(2) + '%' : '—'}</span></div>`;
+      }).join('');
+      track.innerHTML = rows + rows;
+    } catch {
+      track.querySelectorAll('.tick-price,.tick-change,.up,.down').forEach(el => {
+        el.textContent = '—';
+        el.classList.remove('up', 'down');
+      });
+    }
+  }
+  refreshTicker();
+  window.setInterval(refreshTicker, 60000);
+})();
+</script>
+
 </body>
 </html>
 

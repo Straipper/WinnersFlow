@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
-import { query } from '../db/pool.js';
+import { pool, query } from '../db/pool.js';
 import { env } from '../config/env.js';
 import { getStripe, requireStripeConfig, getConfiguredPrice } from '../services/stripe.js';
 import { sendTemplate, sendAdminTemplate } from '../services/email.js';
@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', windowMs: 10 * 60_000, max: 8 }), async (req, res, next) => {
   try {
     if (req.user.role === 'admin') {
-      return res.status(400).json({ error: 'Admin accounts have free DT FLOW access and do not need Checkout.' });
+      return res.status(400).json({ error: 'Admin accounts have free WinnersFlow access and do not need Checkout.' });
     }
     requireStripeConfig();
     const stripe = getStripe();
@@ -52,10 +52,287 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
 });
 
 
+
+router.post('/paypal/create-subscription', requireAuth, rateLimit({ scope: 'paypal-checkout', windowMs: 10 * 60_000, max: 8 }), async (req, res, next) => {
+  try {
+    if (req.user.role === 'admin') {
+      return res.status(400).json({ error: 'Admin accounts have free WinnersFlow access.' });
+    }
+    if (env.PAYPAL_MODE === 'live' && (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET || !env.PAYPAL_PLAN_ID)) {
+      return res.status(503).json({ error: 'PayPal is not fully configured.' });
+    }
+    if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET || !env.PAYPAL_PLAN_ID) {
+      return res.status(503).json({ error: 'PayPal is not configured yet.' });
+    }
+
+    const existing = await query(
+      `SELECT provider, status FROM subscriptions
+       WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1`,
+      [req.user.id]
+    );
+    if (existing.rows[0] && ['active', 'trialing', 'past_due', 'unpaid', 'incomplete'].includes(existing.rows[0].status)) {
+      return res.status(409).json({ error: 'This account already has an active or unresolved subscription.', status: existing.rows[0].status });
+    }
+
+    const created = await paypalRequest('/v1/billing/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify({
+        plan_id: env.PAYPAL_PLAN_ID,
+        custom_id: String(req.user.id),
+        subscriber: { email_address: req.user.email },
+        application_context: {
+          brand_name: 'WinnersFlow',
+          user_action: 'SUBSCRIBE_NOW',
+          return_url: `${env.APP_URL}/welcome.html?payment=paypal&paypal=return`,
+          cancel_url: `${env.APP_URL}/pricing?checkout=cancelled`
+        }
+      })
+    });
+
+    const approvalUrl = created.links?.find(link => link.rel === 'approve')?.href;
+    if (!created.id || !approvalUrl) {
+      throw new Error('PayPal did not return a subscription approval URL.');
+    }
+
+    await query(
+      `INSERT INTO subscriptions
+       (user_id,provider,provider_customer_id,provider_subscription_id,status,plan_code)
+       VALUES ($1,'paypal',NULL,$2,'incomplete','dt_flow_pro')
+       ON CONFLICT (provider_subscription_id) DO NOTHING`,
+      [req.user.id, created.id]
+    );
+
+    trackUniqueUserEvent({
+      eventName: 'checkout_started',
+      userId: req.user.id,
+      metadata: { external_id: created.id, provider: 'paypal' }
+    }).catch(() => {});
+
+    res.json({
+      ok: true,
+      approvalUrl,
+      subscriptionId: created.id,
+      plan: { currency: 'USD', amount: 18.99, interval: 'month', trialDays: 0 }
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post('/paypal/webhook', async (req, res, next) => {
+  let client = null;
+  try {
+    if (!env.PAYPAL_WEBHOOK_ID) {
+      return res.status(503).json({ error: 'PayPal webhook is not configured.' });
+    }
+
+    const headers = req.headers;
+    const verification = await paypalRequest('/v1/notifications/verify-webhook-signature', {
+      method: 'POST',
+      body: JSON.stringify({
+        transmission_id: headers['paypal-transmission-id'],
+        transmission_time: headers['paypal-transmission-time'],
+        cert_url: headers['paypal-cert-url'],
+        auth_algo: headers['paypal-auth-algo'],
+        transmission_sig: headers['paypal-transmission-sig'],
+        webhook_id: env.PAYPAL_WEBHOOK_ID,
+        webhook_event: req.body
+      })
+    });
+
+    if (verification.verification_status !== 'SUCCESS') {
+      return res.status(400).json({ error: 'PayPal webhook signature verification failed.' });
+    }
+
+    const event = req.body || {};
+    if (!event.id) {
+      return res.status(400).json({ error: 'PayPal webhook event ID is missing.' });
+    }
+
+    const eventType = event.event_type || '';
+    const supportedEventTypes = new Set([
+      'BILLING.SUBSCRIPTION.CREATED',
+      'BILLING.SUBSCRIPTION.ACTIVATED',
+      'BILLING.SUBSCRIPTION.UPDATED',
+      'BILLING.SUBSCRIPTION.SUSPENDED',
+      'BILLING.SUBSCRIPTION.CANCELLED',
+      'BILLING.SUBSCRIPTION.EXPIRED',
+      'BILLING.SUBSCRIPTION.RE-ACTIVATED',
+      'BILLING.SUBSCRIPTION.PAYMENT.FAILED',
+      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED',
+      'PAYMENT.SALE.COMPLETED',
+      'PAYMENT.SALE.DENIED'
+    ]);
+    if (!supportedEventTypes.has(eventType)) {
+      return res.json({ received: true, ignored: true, type: eventType || 'unknown' });
+    }
+
+    const eventTime = new Date(event.create_time);
+    if (!event.create_time || !Number.isFinite(eventTime.getTime())) {
+      return res.status(400).json({ error: 'Invalid PayPal event create_time' });
+    }
+
+    const resource = event.resource || {};
+    const isSubscriptionLifecycleEvent =
+      /^BILLING\.SUBSCRIPTION\.(CREATED|ACTIVATED|UPDATED|SUSPENDED|CANCELLED|EXPIRED|RE-ACTIVATED)$/.test(eventType);
+    const subscriptionId = (isSubscriptionLifecycleEvent ? resource.id : null) ||
+      resource.billing_agreement_id ||
+      resource.subscription_id ||
+      resource.supplementary_data?.related_ids?.subscription_id;
+
+    if (!subscriptionId) {
+      const error = new Error(`PayPal ${eventType} event is missing a subscription ID.`);
+      error.status = 400;
+      throw error;
+    }
+
+    const detail = await paypalRequest(`/v1/billing/subscriptions/${encodeURIComponent(subscriptionId)}`);
+    const existing = await query(
+      `SELECT user_id FROM subscriptions
+       WHERE provider='paypal' AND provider_subscription_id=$1 LIMIT 1`,
+      [subscriptionId]
+    );
+    const storedUserId = existing.rows[0]?.user_id;
+    const paypalUserId = detail.custom_id ? String(detail.custom_id) : null;
+
+    if (storedUserId && paypalUserId && String(storedUserId) !== paypalUserId) {
+      const error = new Error('PayPal subscription account mismatch.');
+      error.status = 400;
+      throw error;
+    }
+
+    const userId = storedUserId || paypalUserId;
+    if (!userId) {
+      const error = new Error('PayPal subscription is not linked to a WinnersFlow account.');
+      error.status = 400;
+      throw error;
+    }
+    if (!storedUserId) {
+      const user = await query('SELECT id FROM users WHERE id=$1 LIMIT 1', [userId]);
+      if (!user.rows[0]) {
+        const error = new Error('PayPal subscription references an unknown WinnersFlow account.');
+        error.status = 400;
+        throw error;
+      }
+    }
+
+    const statusMap = {
+      ACTIVE: 'active',
+      APPROVAL_PENDING: 'incomplete',
+      APPROVED: 'incomplete',
+      SUSPENDED: 'paused',
+      CANCELLED: 'canceled',
+      EXPIRED: 'canceled'
+    };
+    const paymentFailed =
+      eventType === 'BILLING.SUBSCRIPTION.PAYMENT.FAILED' ||
+      eventType === 'PAYMENT.SALE.DENIED';
+    // A failed payment must revoke access even if PayPal still reports ACTIVE.
+    const status = paymentFailed ? 'past_due' : statusMap[detail.status];
+    if (!status) {
+      const error = new Error('Unrecognized PayPal subscription status.');
+      error.status = 400;
+      throw error;
+    }
+
+    const periodStart = detail.start_time ? Math.floor(Date.parse(detail.start_time) / 1000) : null;
+    const periodEnd = detail.billing_info?.next_billing_time
+      ? Math.floor(Date.parse(detail.billing_info.next_billing_time) / 1000)
+      : null;
+    const payerId = detail.subscriber?.payer_id || null;
+
+    client = await pool.connect();
+    await client.query('BEGIN');
+
+    const recorded = await client.query(
+      `INSERT INTO paypal_webhook_events (id, event_type)
+       VALUES ($1, $2) ON CONFLICT (id) DO NOTHING RETURNING id`,
+      [event.id, event.event_type || 'unknown']
+    );
+
+    if (!recorded.rowCount) {
+      await client.query('ROLLBACK');
+      client.release();
+      client = null;
+      return res.json({ received: true, duplicate: true });
+    }
+
+    const subscriptionWrite = await client.query(
+      `INSERT INTO subscriptions
+       (user_id,provider,provider_customer_id,provider_subscription_id,status,plan_code,
+        current_period_start,current_period_end,cancel_at_period_end,last_payment_status,
+        paypal_last_event_time)
+       VALUES ($1,'paypal',$2,$3,$4,'dt_flow_pro',to_timestamp($5),to_timestamp($6),false,$7,$8)
+       ON CONFLICT (provider_subscription_id) DO UPDATE SET
+        user_id=EXCLUDED.user_id,
+        provider='paypal',
+        provider_customer_id=EXCLUDED.provider_customer_id,
+        status=CASE
+          WHEN EXCLUDED.status='active'
+            AND subscriptions.last_payment_status='failed'
+            AND EXCLUDED.last_payment_status IS DISTINCT FROM 'succeeded'
+          THEN 'past_due'
+          ELSE EXCLUDED.status
+        END,
+        plan_code=EXCLUDED.plan_code,
+        current_period_start=COALESCE(EXCLUDED.current_period_start,subscriptions.current_period_start),
+        current_period_end=COALESCE(EXCLUDED.current_period_end,subscriptions.current_period_end),
+        last_payment_status=COALESCE(EXCLUDED.last_payment_status,subscriptions.last_payment_status),
+        paypal_last_event_time=EXCLUDED.paypal_last_event_time,
+        updated_at=now()
+       WHERE subscriptions.paypal_last_event_time IS NULL
+          OR EXCLUDED.paypal_last_event_time > subscriptions.paypal_last_event_time`,
+      [
+        userId,
+        payerId,
+        subscriptionId,
+        status,
+        periodStart,
+        periodEnd,
+        eventType === 'PAYMENT.SALE.COMPLETED' ||
+        eventType === 'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED'
+          ? 'succeeded'
+          : paymentFailed ? 'failed' : null
+      ,
+        eventTime
+      ]
+    );
+
+    if (!subscriptionWrite.rowCount) {
+      await client.query('COMMIT');
+      client.release();
+      client = null;
+      return res.json({ received: true, stale: true, type: eventType });
+    }
+
+    await client.query('COMMIT');
+    client.release();
+    client = null;
+
+    if (status === 'active') {
+      trackUniqueUserEvent({
+        eventName: 'subscription_active',
+        userId,
+        metadata: { external_id: subscriptionId, provider: 'paypal' }
+      }).catch(() => {});
+    }
+
+    res.json({ received: true, type: eventType });
+  } catch (e) {
+    if (client) {
+      try {
+        await client.query('ROLLBACK');
+      } catch {}
+      client.release();
+    }
+    next(e);
+  }
+});
+
 router.post('/portal', requireAuth, rateLimit({ scope: 'billing-portal', windowMs: 10 * 60_000, max: 12 }), async (req, res, next) => {
   try {
     if (req.user.role === 'admin') {
-      return res.status(400).json({ error: 'Admin accounts have free DT FLOW access and do not need billing management.' });
+      return res.status(400).json({ error: 'Admin accounts have free WinnersFlow access and do not need billing management.' });
     }
     requireStripeConfig();
     const stripe = getStripe();
@@ -232,6 +509,45 @@ async function upsertSubscription({ userId, customerId, subscription, priceId })
     subscription.trial_end || null, subscription.current_period_start || null,
     subscription.current_period_end || null, Boolean(subscription.cancel_at_period_end),
   ]);
+}
+
+
+async function paypalRequest(path, options = {}) {
+  const base = env.PAYPAL_MODE === 'live'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
+
+  const auth = await fetch(`${base}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_CLIENT_SECRET}`).toString('base64')}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'grant_type=client_credentials'
+  });
+
+  const authData = await auth.json().catch(() => ({}));
+  if (!auth.ok || !authData.access_token) {
+    const error = new Error('PayPal authentication failed.');
+    error.status = 502;
+    throw error;
+  }
+
+  const response = await fetch(`${base}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${authData.access_token}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error('PayPal API request failed.');
+    error.status = 502;
+    throw error;
+  }
+  return data;
 }
 
 export default router;

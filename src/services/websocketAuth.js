@@ -17,7 +17,7 @@ function sign(value) {
 export async function issueMarketSocketTicket(user) {
   const access = await getAccessState(user);
   if (!access.allowed) {
-    const error = new Error('Active DT FLOW access is required for live market data.');
+    const error = new Error('Active WinnersFlow access is required for live market data.');
     error.status = 402;
     throw error;
   }

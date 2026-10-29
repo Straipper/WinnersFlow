@@ -1,9 +1,13 @@
 import WebSocket, { WebSocketServer } from 'ws';
+import { createReconnectScheduler } from './upstreamReconnect.js';
 import { getProvider, getQuote, getCandles } from './marketData.js';
 import { updateCandle } from './candleEngine.js';
 import { processFlowTick } from './flowEngine.js';
+import { inferTradeSide } from './tradeSide.js';
 import { verifyMarketSocketTicket } from './websocketAuth.js';
 import { getMarketSession } from './marketSession.js';
+import { normalizeTradierMessage } from './tradierMessage.js';
+import { isFreshMarketTimestamp } from './marketTimestamp.js';
 
 const DEFAULT_SYMBOLS = ['NVDA','AAPL','MSFT','AMD','TSLA','META'];
 const DEFAULT_INTERVAL = '5min';
@@ -12,7 +16,11 @@ const latestQuotes = new Map();
 let upstream = null;
 let upstreamSessionId = null;
 let upstreamConnecting = false;
+let liveMarketClosing = false;
+let marketWss = null;
 let upstreamSymbols = new Set();
+let upstreamMessageCount = 0;
+let upstreamTimesaleCount = 0;
 function parseTimestampMs(value) {
   if (value === undefined || value === null || value === '') return NaN;
   if (typeof value === 'number' || (typeof value === 'string' && /^-?\d+(?:\.\d+)?$/.test(value.trim()))) {
@@ -71,7 +79,7 @@ async function sendHistoricalCandles(client, symbols) {
 }
 
 function rebuildSubscriptions() {
-  const all = new Set();
+  const all = new Set(DEFAULT_SYMBOLS);
   for (const c of clients.values()) {
     for (const symbol of c.symbols) all.add(symbol);
   }
@@ -83,28 +91,32 @@ function rebuildSubscriptions() {
       filter: ["quote", "timesale"],
       sessionid: upstreamSessionId,
       linebreak: true,
+      advancedDetails: true,
     }));
+    console.log(`[Stockflow] subscription sent: ${all.size} symbols (${[...all].join(", ")})`);
   }
 }
 
 function handleQuote({ symbol, price, volume, tradeSize, tradeId, exchange, tradeSide, timestamp, source }) {
   if (!String(source || "").startsWith("stockflow_tradier_")) return;
   const timestampMs = parseTimestampMs(timestamp);
-  if (!Number.isFinite(timestampMs)) return;
+  if (!isFreshMarketTimestamp(timestampMs)) return;
   const normalizedTimestamp = new Date(timestampMs).toISOString();
   const normalizedPrice = Number(price);
   if (!Number.isFinite(normalizedPrice) || normalizedPrice <= 0) return;
   const s = String(symbol).toUpperCase();
 const quoteBook = latestQuotes.get(s) || {};
-const bid = Number(quoteBook.bid) || null;
-const ask = Number(quoteBook.ask) || null;
+const bidAgeMs = timestampMs - Number(quoteBook.bidTimestampMs);
+const askAgeMs = timestampMs - Number(quoteBook.askTimestampMs);
+const bidFresh = Number.isFinite(bidAgeMs) &&
+  bidAgeMs >= 0 && bidAgeMs <= 15_000;
+const askFresh = Number.isFinite(askAgeMs) &&
+  askAgeMs >= 0 && askAgeMs <= 15_000;
+const bid = bidFresh ? (Number(quoteBook.bid) || null) : null;
+const ask = askFresh ? (Number(quoteBook.ask) || null) : null;
 
 let inferredSide = null;
-if (tradeSize > 0) {
-  const tradePrice = Number(price);
-  if (ask !== null && tradePrice >= ask) inferredSide = 'buy';
-  else if (bid !== null && tradePrice <= bid) inferredSide = 'sell';
-}
+if (tradeSize > 0) inferredSide = inferTradeSide(Number(price), bid, ask);
   const quote = {
     type: 'quote',
     symbol: s,
@@ -140,13 +152,19 @@ if (tradeSize > 0) {
   if (flow) {
     for (const c of clients.values()) {
       if (c.symbols.has(s)) send(c.ws, { type: 'flow', symbol: s, data: flow });
+      }
     }
   }
+
+const upstreamReconnect = createReconnectScheduler(() => connectUpstream());
+
+function scheduleUpstreamReconnect(delayMs) {
+  upstreamReconnect.schedule(delayMs);
 }
 
 function connectUpstream() {
   const { provider, stockflowKey } = providerConfig();
-  if (provider !== "stockflow" || !stockflowKey) return;
+  if (liveMarketClosing || provider !== "stockflow" || !stockflowKey) return;
   if (upstream && [WebSocket.OPEN, WebSocket.CONNECTING].includes(upstream.readyState)) return;
   if (upstreamConnecting) return;
   upstreamConnecting = true;
@@ -158,54 +176,39 @@ function connectUpstream() {
         headers: { Accept: "application/json", Authorization: `Bearer ${stockflowKey}` }
       });
       const body = await response.json().catch(() => ({}));
+      if (liveMarketClosing) {
+        upstreamConnecting = false;
+        return;
+      }
       if (!response.ok || !body.stream?.sessionid || !body.stream?.url) {
         throw new Error(`Tradier streaming session HTTP ${response.status}`);
       }
 
+      console.log("[Stockflow] streaming session created");
       upstreamSessionId = body.stream.sessionid;
-      upstream = new WebSocket(body.stream.url);
+      const socket = new WebSocket(body.stream.url);
+      upstream = socket;
       upstreamConnecting = false;
 
-      upstream.on("open", () => rebuildSubscriptions());
-      upstream.on("message", raw => {
-        let events;
-        try { events = JSON.parse(raw.toString()); } catch { return; }
-        if (!Array.isArray(events)) events = [events];
+      socket.on("open", () => {
+        upstreamMessageCount = 0;
+        console.log("[Stockflow] streaming socket connected");
+        rebuildSubscriptions();
+      });
+      socket.on("message", raw => {
+        const events = normalizeTradierMessage(raw);
+        if (!events.length) return;
+
+        upstreamMessageCount += 1;
+        if (upstreamMessageCount <= 5) {
+          const types = events.map(event => String(event.type || "unknown"));
+          console.log(`[Stockflow] message ${upstreamMessageCount}: ${events.length} valid event(s), types=${[...new Set(types)].join(",")}`);
+        }
 
         for (const data of events) {
-          if (!data?.symbol) continue;
-          const timestampValue = data.date ?? data.biddate ?? data.askdate;
-          const timestampMs = parseTimestampMs(timestampValue);
-          if (!Number.isFinite(timestampMs)) continue;
-          const timestamp = new Date(timestampMs).toISOString();
-
-          if (data.type === "quote") {
-            const symbol = String(data.symbol).toUpperCase();
-            const bid = Number(data.bid) || null;
-            const ask = Number(data.ask) || null;
-            const last = Number(data.last) || null;
-            const previousQuote = latestQuotes.get(symbol) || {};
-            const quoteVolume = Number(data.volume);
-            latestQuotes.set(symbol, {
-              bid, ask, timestamp,
-              volume: Number.isFinite(quoteVolume) && quoteVolume >= 0
-                ? quoteVolume
-                : (Number(previousQuote.volume) || 0)
-            });
-            if (last === null || !Number.isFinite(last) || last <= 0) continue;
-            broadcast(symbol, {
-              type: "quote", symbol, price: last, bid, ask,
-              volume: Number(data.volume) || 0,
-              timestamp, source: "stockflow_tradier_quote",
-              market: getMarketSession(new Date(timestamp))
-            });
-          } else if (data.type === "timesale") {
-            if (
-              data.cancel === true || data.cancel === 1 || data.cancel === "true" ||
-              data.correction === true || data.correction === 1 || data.correction === "true"
-            ) continue;
-
-            const symbol = String(data.symbol).toUpperCase();
+          const { symbol, timestamp, timestampMs } = data;
+          if (!isFreshMarketTimestamp(timestampMs)) continue;
+          if (data.type === "timesale") {
             const previousQuote = latestQuotes.get(symbol) || {};
             const bidValue = Number(data.bid);
             const askValue = Number(data.ask);
@@ -213,8 +216,16 @@ function connectUpstream() {
               ...previousQuote,
               bid: Number.isFinite(bidValue) && bidValue > 0 ? bidValue : previousQuote.bid,
               ask: Number.isFinite(askValue) && askValue > 0 ? askValue : previousQuote.ask,
+              bidTimestampMs: Number.isFinite(bidValue) && bidValue > 0
+                ? timestampMs : previousQuote.bidTimestampMs,
+              askTimestampMs: Number.isFinite(askValue) && askValue > 0
+                ? timestampMs : previousQuote.askTimestampMs,
               timestamp
             });
+            upstreamTimesaleCount += 1;
+            if (upstreamTimesaleCount <= 5) {
+              console.log(`[Stockflow] timesale ${upstreamTimesaleCount} received for ${symbol}`);
+            }
 
             handleQuote({
               symbol,
@@ -226,28 +237,107 @@ function connectUpstream() {
               timestamp,
               source: "stockflow_tradier_timesale"
             });
+          } else if (data.type === "quote") {
+            const bid = Number(data.bid) || null;
+            const ask = Number(data.ask) || null;
+            const last = Number(data.last) || null;
+            const previousQuote = latestQuotes.get(symbol) || {};
+            const quoteVolume = Number(data.volume);
+
+            const bidValid = Number.isFinite(Number(data.bid)) && Number(data.bid) > 0;
+            const askValid = Number.isFinite(Number(data.ask)) && Number(data.ask) > 0;
+            latestQuotes.set(symbol, {
+              ...previousQuote,
+              bid: bidValid ? bid : previousQuote.bid,
+              ask: askValid ? ask : previousQuote.ask,
+              timestamp,
+              quoteTimestampMs: timestampMs,
+              bidTimestampMs: bidValid && Number.isFinite(data.bidTimestampMs)
+                ? data.bidTimestampMs
+                : bidValid ? timestampMs : previousQuote.bidTimestampMs,
+              askTimestampMs: askValid && Number.isFinite(data.askTimestampMs)
+                ? data.askTimestampMs
+                : askValid ? timestampMs : previousQuote.askTimestampMs,
+              volume: Number.isFinite(quoteVolume) && quoteVolume >= 0
+                ? quoteVolume
+                : (Number(previousQuote.volume) || 0)
+            });
+
+            if (last === null || !Number.isFinite(last) || last <= 0) continue;
+
+            broadcast(symbol, {
+              type: "quote", symbol, price: last, bid, ask,
+              volume: Number(data.volume) || 0,
+              timestamp, source: "stockflow_tradier_quote",
+              market: getMarketSession(new Date(timestamp))
+            });
           }
         }
       });
-
-      upstream.on("close", () => {
-        upstream = null;
-        upstreamSessionId = null;
-        if (clients.size) setTimeout(connectUpstream, 3000);
+      socket.on("close", (code, reason) => {
+        console.error("[Stockflow] streaming socket closed:", code, reason?.toString?.() || "");
+        if (upstream === socket) {
+          upstream = null;
+          upstreamSessionId = null;
+          scheduleUpstreamReconnect(3000);
+        }
       });
-      upstream.on("error", error => {
-        console.error("[Stockflow] streaming socket error:", error.message);
+      socket.on("error", error => {
+        if (!liveMarketClosing) {
+          console.error("[Stockflow] streaming socket error:", error.message);
+        }
+        if (upstream === socket && socket.readyState !== WebSocket.CLOSED) {
+          socket.close();
+        }
       });
     } catch (error) {
       upstreamConnecting = false;
       upstream = null;
       upstreamSessionId = null;
       console.error("[Stockflow] streaming connection failed:", error.message);
-      if (clients.size) setTimeout(connectUpstream, 5000);
+      if (!liveMarketClosing) scheduleUpstreamReconnect(5000);
     }
   })();
 }
 
+
+export function closeLiveMarket() {
+  liveMarketClosing = true;
+  upstreamReconnect.cancel();
+  upstreamConnecting = false;
+  upstreamSessionId = null;
+
+  if (upstream) {
+    const socket = upstream;
+    upstream = null;
+    try {
+      socket.removeAllListeners("close");
+      if (socket.readyState === WebSocket.OPEN ||
+          socket.readyState === WebSocket.CONNECTING) {
+        socket.close();
+      }
+      if (socket.readyState !== WebSocket.CLOSED) {
+        socket.terminate();
+      }
+    } catch (error) {
+      console.error("[Stockflow] error during shutdown:", error.message);
+    }
+  }
+
+  for (const client of clients.values()) {
+    try { client.ws.close(1001, "Server shutting down"); } catch {}
+  }
+  clients.clear();
+
+  if (marketWss) {
+    const wss = marketWss;
+    marketWss = null;
+    for (const client of wss.clients) {
+      try { client.terminate(); } catch {}
+    }
+    try { wss.close(); } catch {}
+  }
+}
 
 export function attachLiveMarket(server) {
   const wss = new WebSocketServer({
@@ -263,6 +353,7 @@ export function attachLiveMarket(server) {
       }).catch(() => done(false, 401, 'Unauthorized'));
     },
   });
+  marketWss = wss;
   wss.on('connection', (ws, req) => {
     const client = { ws, user: req.dtFlowAuth?.user, symbols: new Set(), intervals: new Set([DEFAULT_INTERVAL]) };
     clients.set(ws, client);
