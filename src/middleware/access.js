@@ -1,3 +1,4 @@
+import { isSubscriptionAccessAllowed } from '../services/subscriptionAccess.js';
 import { query } from '../db/pool.js';
 
 export async function getAccessState(user) {
@@ -9,7 +10,7 @@ export async function getAccessState(user) {
   }
 
   const { rows } = await query(`
-    SELECT id, status, plan_code, trial_ends_at, current_period_start,
+    SELECT id, provider, status, plan_code, trial_ends_at, current_period_start,
            current_period_end, cancel_at_period_end, last_payment_status
     FROM subscriptions
     WHERE user_id=$1
@@ -23,7 +24,7 @@ export async function getAccessState(user) {
   }
 
   // Access is deliberately fail-closed: only a live trial or paid subscription grants access.
-  const allowed = subscription.status === 'trialing' || subscription.status === 'active';
+  const allowed = isSubscriptionAccessAllowed(subscription);
   return {
     allowed,
     reason: allowed ? (subscription.status === 'trialing' ? 'TRIAL_ACTIVE' : 'SUBSCRIPTION_ACTIVE') : 'SUBSCRIPTION_NOT_ACTIVE',
