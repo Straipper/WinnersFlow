@@ -30,6 +30,8 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
 
     const customerId = previous?.provider_customer_id || undefined;
     const session = await stripe.checkout.sessions.create({
+      branding_settings: { display_name: 'WinnersFlow' },
+
       mode: 'subscription',
       customer: customerId,
       customer_email: customerId ? undefined : req.user.email,
