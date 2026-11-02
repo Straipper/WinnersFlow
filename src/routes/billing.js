@@ -6,6 +6,11 @@ import { getStripe, requireStripeConfig, getConfiguredPrice } from '../services/
 import { sendTemplate, sendAdminTemplate } from '../services/email.js';
 import { trackUniqueUserEvent } from '../services/analytics.js';
 import { rateLimit } from '../middleware/security.js';
+import {
+  PAYPAL_SUBSCRIPTION_EVENT_TYPES,
+  getPayPalPaymentOutcome,
+  resolvePayPalRefundOutcome
+} from '../services/paypalWebhookEvents.js';
 
 const router = express.Router();
 
@@ -152,19 +157,7 @@ router.post('/paypal/webhook', async (req, res, next) => {
     }
 
     const eventType = event.event_type || '';
-    const supportedEventTypes = new Set([
-      'BILLING.SUBSCRIPTION.CREATED',
-      'BILLING.SUBSCRIPTION.ACTIVATED',
-      'BILLING.SUBSCRIPTION.UPDATED',
-      'BILLING.SUBSCRIPTION.SUSPENDED',
-      'BILLING.SUBSCRIPTION.CANCELLED',
-      'BILLING.SUBSCRIPTION.EXPIRED',
-      'BILLING.SUBSCRIPTION.RE-ACTIVATED',
-      'BILLING.SUBSCRIPTION.PAYMENT.FAILED',
-      'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED',
-      'PAYMENT.SALE.COMPLETED',
-      'PAYMENT.SALE.DENIED'
-    ]);
+    const supportedEventTypes = new Set(PAYPAL_SUBSCRIPTION_EVENT_TYPES);
     if (!supportedEventTypes.has(eventType)) {
       return res.json({ received: true, ignored: true, type: eventType || 'unknown' });
     }
@@ -177,14 +170,39 @@ router.post('/paypal/webhook', async (req, res, next) => {
     const resource = event.resource || {};
     const isSubscriptionLifecycleEvent =
       /^BILLING\.SUBSCRIPTION\.(CREATED|ACTIVATED|UPDATED|SUSPENDED|CANCELLED|EXPIRED|RE-ACTIVATED)$/.test(eventType);
-    const subscriptionId = (isSubscriptionLifecycleEvent ? resource.id : null) ||
+    let subscriptionId = (isSubscriptionLifecycleEvent ? resource.id : null) ||
       resource.billing_agreement_id ||
       resource.subscription_id ||
       resource.supplementary_data?.related_ids?.subscription_id;
 
+    // Refund resources have their own ID. Resolve the original sale first,
+    // then use its billing_agreement_id to identify the subscription.
+    if (
+      !subscriptionId &&
+      (eventType === 'PAYMENT.SALE.REFUNDED' ||
+       eventType === 'PAYMENT.SALE.REVERSED')
+    ) {
+      const saleId = eventType === 'PAYMENT.SALE.REFUNDED'
+        ? resource.sale_id
+        : resource.id;
+
+      if (saleId) {
+        const saleDetail = await paypalRequest(
+          `/v1/payments/sale/${encodeURIComponent(saleId)}`
+        );
+        subscriptionId = saleDetail.billing_agreement_id ||
+          saleDetail.subscription_id ||
+          saleDetail.billing_agreement?.id ||
+          null;
+      }
+    }
+
     if (!subscriptionId) {
       const error = new Error(`PayPal ${eventType} event is missing a subscription ID.`);
-      error.status = 400;
+      error.status = (
+        eventType === 'PAYMENT.SALE.REFUNDED' ||
+        eventType === 'PAYMENT.SALE.REVERSED'
+      ) ? 502 : 400;
       throw error;
     }
 
@@ -226,10 +244,47 @@ router.post('/paypal/webhook', async (req, res, next) => {
       CANCELLED: 'canceled',
       EXPIRED: 'canceled'
     };
-    const paymentFailed =
-      eventType === 'BILLING.SUBSCRIPTION.PAYMENT.FAILED' ||
-      eventType === 'PAYMENT.SALE.DENIED';
-    // A failed payment must revoke access even if PayPal still reports ACTIVE.
+    let paymentOutcome = getPayPalPaymentOutcome(eventType);
+
+    if (
+      eventType === 'PAYMENT.SALE.REFUNDED' ||
+      eventType === 'PAYMENT.SALE.REVERSED'
+    ) {
+      const transactionStart = detail.start_time || detail.create_time;
+      const transactionStartMs = Date.parse(transactionStart || '');
+
+      if (!Number.isFinite(transactionStartMs)) {
+        const error = new Error('PayPal subscription transaction start time is unavailable.');
+        error.status = 502;
+        throw error;
+      }
+
+      const transactionEnd = new Date(
+        Math.max(Date.now(), eventTime.getTime()) + 60_000
+      ).toISOString();
+
+      const transactionPath =
+        `/v1/billing/subscriptions/${encodeURIComponent(subscriptionId)}/transactions` +
+        `?start_time=${encodeURIComponent(new Date(transactionStartMs).toISOString())}` +
+        `&end_time=${encodeURIComponent(transactionEnd)}`;
+
+      const transactionData = await paypalRequest(transactionPath);
+      paymentOutcome = resolvePayPalRefundOutcome(
+        eventType,
+        resource,
+        transactionData.transactions
+      );
+
+      if (!paymentOutcome) {
+        const error = new Error('PayPal refund status could not be verified.');
+        error.status = 502;
+        throw error;
+      }
+    }
+
+    const paymentFailed = paymentOutcome === 'failed';
+    // Failed, refunded, and reversed subscription payments revoke access,
+    // even if PayPal still reports ACTIVE. A later successful sale restores it.
     const status = paymentFailed ? 'past_due' : statusMap[detail.status];
     if (!status) {
       const error = new Error('Unrecognized PayPal subscription status.');
@@ -291,11 +346,7 @@ router.post('/paypal/webhook', async (req, res, next) => {
         status,
         periodStart,
         periodEnd,
-        eventType === 'PAYMENT.SALE.COMPLETED' ||
-        eventType === 'BILLING.SUBSCRIPTION.PAYMENT.COMPLETED'
-          ? 'succeeded'
-          : paymentFailed ? 'failed' : null
-      ,
+        paymentOutcome,
         eventTime
       ]
     );
