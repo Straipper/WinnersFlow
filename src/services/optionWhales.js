@@ -2,7 +2,10 @@ import WebSocket from 'ws';
 
 const BASE = 'https://api.optionwhales.io/v1';
 
-function key(){ return process.env.OPTIONFLOW_API_KEY || ''; }
+function key(){
+  return process.env.OPTIONFLOW_API_KEY ||
+    process.env.OPTIONWHALES_API_KEY || '';
+}
 function headers(){ return { 'X-API-Key': key(), 'Accept': 'application/json' }; }
 function requireKey(){ if(!key()) throw new Error('OptionWhales API is not configured'); }
 
@@ -21,7 +24,9 @@ export async function getOptionsFlowSessions(){
   return owFetch('/options-flow/sessions');
 }
 
-export async function getOptionsFlow(ticker, {limit=25, session}={}){
+export async function getOptionsFlow(ticker, {
+  limit=25, session, olderThan, minPremium
+}={}){
   const symbol = String(ticker).trim().toUpperCase();
   let tradingSession = session;
 
@@ -38,6 +43,8 @@ export async function getOptionsFlow(ticker, {limit=25, session}={}){
     ticker: symbol,
     session: tradingSession,
     limit: Math.min(Math.max(Number(limit) || 25, 1), 2000),
+    older_than: olderThan,
+    min_premium: minPremium,
   });
 }
 
@@ -81,7 +88,7 @@ function parseOccContract(value) {
   if (typeof value !== 'string') return {};
 
   // OCC: symbol padded to 6 chars + YYMMDD + C/P + 8-digit strike
-  const match = value.trim().match(/^([A-Z]{1,6})\s*(\d{6})([CP])(\d{8})$/i);
+  const match = value.trim().match(/^(?:O:)?([A-Z]{1,6})\s*(\d{6})([CP])(\d{8})$/i);
   if (!match) return {};
 
   const [, underlying, date, cp, strikeDigits] = match;
@@ -136,7 +143,7 @@ export function normalizeOptionsRows(payload) {
       id: String(firstValue(r?.event_id, r?.id, order.event_id, order.id,
         `${timestamp || 'unknown'}-${contract || i}`)),
       timestamp: timestamp ?? null,
-      ticker: firstValue(r?.ticker, order.ticker) ?? null,
+      ticker: firstValue(r?.ticker, order.ticker, occ.underlying) ?? null,
       contract: contract ?? null,
       optionType: normalizedOptionType,
       strike: firstValue(r?.strike, order.strike, occ.strike) ?? null,
@@ -151,14 +158,15 @@ export function normalizeOptionsRows(payload) {
         order.quantity, order.size
       ) ?? null,
       premium: firstValue(
-        r?.premium, r?.total_premium, r?.total_notional, r?.notional, r?.total_value,
-        order.premium, order.total_premium, order.total_notional,
-        order.notional, order.total_value
+        r?.premium, r?.total_premium,
+        order.premium, order.total_premium
       ) ?? null,
-      notional: firstValue(r?.notional, order.notional) ?? null,
+      notional: firstValue(
+        r?.notional, r?.total_notional,
+        order.notional, order.total_notional
+      ) ?? null,
       direction: firstValue(
-        r?.direction, r?.side, r?.sentiment,
-        order.direction, order.side, order.sentiment
+        r?.direction, order.direction
       ) ?? null,
       directionConfidence: firstValue(
         r?.direction_confidence, order.direction_confidence

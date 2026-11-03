@@ -30,8 +30,10 @@ import { notFound, errorHandler } from './middleware/errors.js';
 import { requireAuth } from './middleware/auth.js';
 import { requireProductAccess } from './middleware/access.js';
 import { attachLiveMarket, closeLiveMarket, getLatestPublicQuotes } from './services/liveMarket.js';
+import { startOptionsFlowCollector, stopOptionsFlowCollector } from './services/optionsFlowCollector.js';
 import { getQuotes } from './services/marketData.js';
 import { createPublicMarketTickerRouter } from './routes/publicMarketTicker.js';
+import { createPublicFlowFeedRouter } from './routes/publicFlowFeed.js';
 import { addRequestId, rateLimit, securityHeaders } from './middleware/security.js';
 
 const PUBLIC_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../public");
@@ -78,6 +80,7 @@ app.use('/api/analytics',analytics);
 
 // Public landing-page ticker: live quote freshness metadata and short cache.
 app.use('/api/public/market-ticker', createPublicMarketTickerRouter({ getQuotes, getLiveQuotes: getLatestPublicQuotes }));
+app.use('/api/public/flow-feed', createPublicFlowFeedRouter());
 
 // Core WinnersFlow product endpoints require both authentication and an active
 // trial/subscription. Admin accounts bypass billing through requireProductAccess.
@@ -100,11 +103,13 @@ app.use(errorHandler);
 
 const server=http.createServer(app);
 attachLiveMarket(server);
+startOptionsFlowCollector();
 let shutdownStarted = false;
 const shutdown = async (signal) => {
   if (shutdownStarted) return;
   shutdownStarted = true;
   console.log(`Received ${signal}; shutting down DT FLOW...`);
+  stopOptionsFlowCollector();
   closeLiveMarket();
   server.close(async () => {
     try {
