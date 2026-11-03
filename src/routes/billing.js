@@ -50,7 +50,7 @@ router.post('/checkout', requireAuth, rateLimit({ scope: 'billing-checkout', win
       },
       metadata: { user_id: req.user.id, plan_code: 'dt_flow_pro' },
       success_url: `${env.APP_URL}/portal?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${env.APP_URL}/pricing?checkout=cancelled`,
+      cancel_url: `${env.APP_URL}/?checkout=cancelled#pricing`,
     });
 
     trackUniqueUserEvent({ eventName: 'checkout_started', userId: req.user.id, metadata: { external_id: session.id, checkout_session_id: session.id } }).catch(() => {});
@@ -91,7 +91,7 @@ router.post('/paypal/create-subscription', requireAuth, rateLimit({ scope: 'payp
           brand_name: 'WinnersFlow',
           user_action: 'SUBSCRIBE_NOW',
           return_url: `${env.APP_URL}/welcome.html?payment=paypal&paypal=return`,
-          cancel_url: `${env.APP_URL}/pricing?checkout=cancelled`
+          cancel_url: `${env.APP_URL}/?checkout=cancelled#pricing`
         }
       })
     });
