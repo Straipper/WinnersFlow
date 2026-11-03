@@ -596,6 +596,11 @@ async function paypalRequest(path, options = {}) {
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
+    console.error('[PayPal] API request failed:', JSON.stringify({
+      httpStatus: response.status,
+      errorName: typeof data.name === 'string' ? data.name : undefined,
+      debugId: typeof data.debug_id === 'string' ? data.debug_id : undefined
+    }));
     const error = new Error('PayPal API request failed.');
     error.status = 502;
     throw error;
