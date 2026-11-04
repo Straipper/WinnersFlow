@@ -475,7 +475,7 @@ export async function handleStripeWebhook(rawBody, signature) {
       const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
       if (subId && userId) {
         const sub = await stripe.subscriptions.retrieve(subId);
-        await upsertSubscription({ userId, customerId: session.customer, subscription: sub, priceId: sub.items.data[0]?.price?.id });
+        await upsertSubscription({ userId, customerId: session.customer, subscription: sub, priceId: sub.items.data[0]?.price?.id, eventCreated: event.created });
         const ur = await query('SELECT email,display_name FROM users WHERE id=$1', [userId]); const u=ur.rows[0];
         const trialData = { username:u?.display_name || u?.email?.split('@')[0], email:u?.email, trialEndsAt:sub.trial_end ? new Date(sub.trial_end*1000).toISOString() : null, userId, eventId:event.id };
         if(u) {
@@ -491,7 +491,7 @@ export async function handleStripeWebhook(rawBody, signature) {
       const sub = obj;
       const uid = userId || await findUserIdByCustomer(customerId);
       if (uid) {
-        await upsertSubscription({ userId: uid, customerId, subscription: sub, priceId: sub.items.data[0]?.price?.id });
+        await upsertSubscription({ userId: uid, customerId, subscription: sub, priceId: sub.items.data[0]?.price?.id, eventCreated: event.created });
         const ur = await query('SELECT email,display_name FROM users WHERE id=$1', [uid]); const u=ur.rows[0];
         if(u && event.type==='customer.subscription.updated' && sub.status === 'active') trackUniqueUserEvent({ eventName: 'subscription_active', userId:uid, metadata: { external_id: sub.id, stripe_subscription_id: sub.id } }).catch(()=>{});
         if(u && event.type==='customer.subscription.deleted') {
@@ -501,26 +501,45 @@ export async function handleStripeWebhook(rawBody, signature) {
         }
       }
     } else if (event.type === 'invoice.paid' || event.type === 'invoice.payment_failed') {
+      const invoiceSubscription =
+        typeof obj.subscription === 'string'
+          ? obj.subscription
+          : obj.subscription?.id || obj.parent?.subscription_details?.subscription || null;
       const uid = userId || await findUserIdByCustomer(customerId);
-      if (uid) {
-        await query(
-          `UPDATE subscriptions SET last_invoice_id=$1,last_payment_status=$2,updated_at=now()
-           WHERE user_id=$3`,
-          [obj.id, event.type === 'invoice.payment_failed' ? 'failed' : 'succeeded', uid]
+
+      if (uid && invoiceSubscription && Number.isInteger(event.created)) {
+        const paymentStatus = event.type === 'invoice.payment_failed' ? 'failed' : 'succeeded';
+        const updated = await query(
+          `UPDATE subscriptions
+           SET last_invoice_id=$1,
+               last_payment_status=$2,
+               stripe_last_event_time=to_timestamp($5),
+               updated_at=now()
+           WHERE user_id=$3
+             AND provider='stripe'
+             AND provider_subscription_id=$4
+             AND (stripe_last_event_time IS NULL
+                  OR stripe_last_event_time <= to_timestamp($5))`,
+          [obj.id, paymentStatus, uid, invoiceSubscription, event.created]
         );
-        const ur = await query('SELECT email,display_name FROM users WHERE id=$1', [uid]); const u=ur.rows[0];
-        if(u) {
-          if(event.type === 'invoice.payment_failed') {
-            trackUniqueUserEvent({ eventName:'payment_failed', userId:uid, metadata:{ external_id:event.id, invoice_id:obj.id } }).catch(()=>{});
-            const failedData={username:u.display_name || u.email.split('@')[0], email:u.email, userId:uid, eventId:event.id, invoiceId:obj.id};
-            sendTemplate('paymentFailed', u.email, failedData).catch(()=>{});
-            sendAdminTemplate('adminPaymentFailed', failedData).catch(()=>{});
-          } else {
-            trackUniqueUserEvent({ eventName:'payment_succeeded', userId:uid, metadata:{ external_id:event.id, invoice_id:obj.id } }).catch(()=>{});
-            const amount = Number.isFinite(obj.amount_paid) ? (obj.amount_paid / 100).toFixed(2) : "—";
-            const paidData={username:u.display_name || u.email.split('@')[0], email:u.email, amount, currency:obj.currency || 'usd', userId:uid, eventId:event.id, invoiceId:obj.id};
-            sendTemplate('paymentSuccess', u.email, paidData).catch(()=>{});
-            sendAdminTemplate('adminPaymentSuccess', paidData).catch(()=>{});
+
+        // Notifications are sent only when this event updated the matching subscription.
+        if (updated.rowCount > 0) {
+          const ur = await query('SELECT email,display_name FROM users WHERE id=$1', [uid]);
+          const u = ur.rows[0];
+          if (u) {
+            if (event.type === 'invoice.payment_failed') {
+              trackUniqueUserEvent({ eventName:'payment_failed', userId:uid, metadata:{ external_id:event.id, invoice_id:obj.id } }).catch(()=>{});
+              const failedData = {username:u.display_name || u.email.split('@')[0], email:u.email, userId:uid, eventId:event.id, invoiceId:obj.id};
+              sendTemplate('paymentFailed', u.email, failedData).catch(()=>{});
+              sendAdminTemplate('adminPaymentFailed', failedData).catch(()=>{});
+            } else {
+              trackUniqueUserEvent({ eventName:'payment_succeeded', userId:uid, metadata:{ external_id:event.id, invoice_id:obj.id } }).catch(()=>{});
+              const amount = Number.isFinite(obj.amount_paid) ? (obj.amount_paid / 100).toFixed(2) : "—";
+              const paidData = {username:u.display_name || u.email.split('@')[0], email:u.email, amount, currency:obj.currency || 'usd', userId:uid, eventId:event.id, invoiceId:obj.id};
+              sendTemplate('paymentSuccess', u.email, paidData).catch(()=>{});
+              sendAdminTemplate('adminPaymentSuccess', paidData).catch(()=>{});
+            }
           }
         }
       }
@@ -536,16 +555,24 @@ export async function handleStripeWebhook(rawBody, signature) {
 
 async function findUserIdByCustomer(customerId) {
   if (!customerId) return null;
-  const r = await query(`SELECT user_id FROM subscriptions WHERE provider_customer_id=$1 ORDER BY created_at DESC LIMIT 1`, [customerId]);
+  const r = await query(`SELECT user_id FROM subscriptions WHERE provider='stripe' AND provider_customer_id=$1 ORDER BY created_at DESC LIMIT 1`, [customerId]);
   return r.rows[0]?.user_id || null;
 }
 
-async function upsertSubscription({ userId, customerId, subscription, priceId }) {
+async function upsertSubscription({ userId, customerId, subscription, priceId, eventCreated }) {
+  if (!Number.isInteger(eventCreated)) {
+    throw new Error('Stripe event timestamp is required for subscription ordering.');
+  }
+
   await query(`
     INSERT INTO subscriptions (
       user_id,provider,provider_customer_id,provider_subscription_id,status,plan_code,
-      stripe_price_id,trial_ends_at,current_period_start,current_period_end,cancel_at_period_end
-    ) VALUES ($1,'stripe',$2,$3,$4,'dt_flow_pro',$5,to_timestamp($6),to_timestamp($7),to_timestamp($8),$9)
+      stripe_price_id,trial_ends_at,current_period_start,current_period_end,
+      cancel_at_period_end,stripe_last_event_time
+    ) VALUES (
+      $1,'stripe',$2,$3,$4,'dt_flow_pro',$5,
+      to_timestamp($6),to_timestamp($7),to_timestamp($8),$9,to_timestamp($10)
+    )
     ON CONFLICT (provider_subscription_id) DO UPDATE SET
       user_id=EXCLUDED.user_id,
       provider_customer_id=EXCLUDED.provider_customer_id,
@@ -556,11 +583,16 @@ async function upsertSubscription({ userId, customerId, subscription, priceId })
       current_period_start=EXCLUDED.current_period_start,
       current_period_end=EXCLUDED.current_period_end,
       cancel_at_period_end=EXCLUDED.cancel_at_period_end,
+      stripe_last_event_time=EXCLUDED.stripe_last_event_time,
       updated_at=now()
+    WHERE subscriptions.provider='stripe'
+      AND (subscriptions.stripe_last_event_time IS NULL
+           OR subscriptions.stripe_last_event_time <= EXCLUDED.stripe_last_event_time)
   `, [
     userId, customerId, subscription.id, subscription.status, priceId || null,
     subscription.trial_end || null, subscription.current_period_start || null,
     subscription.current_period_end || null, Boolean(subscription.cancel_at_period_end),
+    eventCreated,
   ]);
 }
 

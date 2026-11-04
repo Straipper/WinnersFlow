@@ -8,6 +8,7 @@ import { verifyMarketSocketTicket } from './websocketAuth.js';
 import { getMarketSession } from './marketSession.js';
 import { normalizeTradierMessage } from './tradierMessage.js';
 import { isFreshMarketTimestamp } from './marketTimestamp.js';
+import { archiveStockPrint } from './stockPrintArchive.js';
 
 const DEFAULT_SYMBOLS = ['NVDA','AAPL','MSFT','AMD','TSLA','META'];
 const DEFAULT_INTERVAL = '5min';
@@ -261,6 +262,28 @@ function connectUpstream() {
             if (upstreamTimesaleCount <= 5) {
               console.log(`[Stockflow] timesale ${upstreamTimesaleCount} received for ${symbol}`);
             }
+
+            // Archive only verified, non-cancelled/non-corrected Tradier timesales.
+            // Persistence is intentionally asynchronous and never blocks the live feed.
+            void archiveStockPrint({
+              symbol,
+              tradeId: data.seq,
+              timestamp,
+              price: data.last,
+              size: data.size,
+              exchange: data.exch,
+              tradeSide: (() => {
+                const bid = Number(data.bid);
+                const ask = Number(data.ask);
+                const price = Number(data.last);
+                if (!Number.isFinite(bid) || bid <= 0 ||
+                    !Number.isFinite(ask) || ask < bid ||
+                    !Number.isFinite(price) || price <= 0) return null;
+                return inferTradeSide(price, bid, ask);
+              })(),
+            }).catch(error => {
+              console.error('[StockPrintArchive] write failed:', error.message);
+            });
 
             handleQuote({
               symbol,
