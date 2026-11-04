@@ -48,7 +48,7 @@ export function createOptionsFlowCollector({
   pageLimit = PAGE_LIMIT,
   maxPages = MAX_PAGES_PER_TICKER,
   logger = console,
-}) {
+} = {}) {
   let timer = null;
   let running = false;
   const cursors = new Map();
