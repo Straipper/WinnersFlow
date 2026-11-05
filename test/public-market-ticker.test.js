@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { createPublicMarketTickerRouter } from '../src/routes/publicMarketTicker.js';
 
-const require = createRequire(new URL('../../backend/package.json', import.meta.url));
+const require = createRequire(new URL('../package.json', import.meta.url));
 const express = require('express');
 
 async function setup(options) {
