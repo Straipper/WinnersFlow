@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { query } from '../db/pool.js';
+import pkg from '../../package.json' with { type: 'json' };
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.get('/', async (req, res) => {
       ok: true,
       service: 'dt-flow-api',
       status: 'ready',
-      version: 'step-30',
+      version: pkg.version,
       timestamp: new Date().toISOString(),
     });
   } catch {
