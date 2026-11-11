@@ -86,4 +86,46 @@ router.get('/database', async (req, res, next) => {
   }
 });
 
+
+router.get('/admin-account', async (req, res, next) => {
+  const expected = process.env.WF_DIAGNOSTICS_TOKEN;
+  const provided = req.get('x-winnersflow-diagnostics-token') ?? '';
+
+  if (
+    !expected ||
+    expected.length < 32 ||
+    provided.length !== expected.length ||
+    !timingSafeEqual(Buffer.from(provided), Buffer.from(expected))
+  ) {
+    return res.sendStatus(404);
+  }
+
+  try {
+    const result = await query(`
+      SELECT
+        EXISTS (
+          SELECT 1 FROM public.users
+          WHERE lower(email) = lower($1)
+        ) AS email_found,
+        EXISTS (
+          SELECT 1 FROM public.users
+          WHERE lower(email) = lower($1) AND role = 'admin'
+        ) AS email_is_admin,
+        EXISTS (
+          SELECT 1 FROM public.users
+          WHERE lower(username) = lower($2)
+        ) AS admin_username_in_use,
+        EXISTS (
+          SELECT 1 FROM public.users
+          WHERE lower(username) = lower($2)
+            AND lower(email) <> lower($1)
+        ) AS admin_username_conflict
+    `, ['admstripe@proton.me', 'admin']);
+
+    res.json({ ok: true, adminAccount: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
